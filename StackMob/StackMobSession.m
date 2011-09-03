@@ -85,20 +85,24 @@ static StackMobSession* sharedSession = nil;
 	return session;
 }
 
-- (NSMutableString*)urlForMethod:(NSString*)method isUserBased:(BOOL)userBasedRequest
+- (NSMutableString*)urlForMethod:(NSString*)method isUserBased:(BOOL)userBasedRequest isSecure:(BOOL)isSecure
 {
-    NSMutableArray *parts = [NSMutableArray array];
-    [parts addObject:regularURL];
+  NSMutableArray *parts = [NSMutableArray array];
+  [parts addObject:(isSecure ? secureURL : regularURL)];
     
-    if(userBasedRequest) [parts addObject:self.userObjectName];
-    [parts addObject:method];
+  if(userBasedRequest) [parts addObject:self.userObjectName];
+  [parts addObject:method];
     
-    NSMutableString *urlString = [NSMutableString stringWithString:[parts componentsJoinedByString:@"/"]];
-    return urlString;
+  NSMutableString *urlString = [NSMutableString stringWithString:[parts componentsJoinedByString:@"/"]];
+  return urlString;
 }
 
-- (NSMutableString*)secureURLForMethod:(NSString*)method {
-	return [NSMutableString stringWithFormat:@"%@%@/",secureURL, method];
+- (NSMutableString*)secureURLForMethod:(NSString*)method isUserBased:(BOOL)userBasedRequest {
+  return  [self urlForMethod:method isUserBased:userBasedRequest isSecure:YES];
+}
+
+- (NSMutableString*)urlForMethod:(NSString*)method isUserBased:(BOOL)userBasedRequest {
+  return  [self urlForMethod:method isUserBased:userBasedRequest isSecure:NO];
 }
 
 - (StackMobSession*)initWithKey:(NSString*)key 

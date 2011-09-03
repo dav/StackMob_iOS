@@ -29,24 +29,26 @@ typedef enum {
 	NSURLConnection*		mConnection;
 	id<SMRequestDelegate>	mDelegate;
 	SEL						mSelector;
+  BOOL          mIsSecure;
 	NSString*				mMethod;
 	NSMutableDictionary*	mArguments;
-    NSData*                 mBody;
+  NSData*                 mBody;
 	NSMutableData*			mConnectionData;
 	NSDictionary*			mResult;
-    NSError*                mConnectionError;
+  NSError*                mConnectionError;
 	BOOL					_requestFinished;
 	NSString*				mHttpMethod;
 	NSHTTPURLResponse*		mHttpResponse;
 	
 	@protected
         BOOL userBased;
-		StackMobSession *session;
+  StackMobSession *session;
 }
 
 @property(readwrite, assign) id delegate;
 @property(readwrite, copy) NSString* method;
 @property(readwrite, copy) NSString* httpMethod;
+@property(readwrite) BOOL isSecure;
 @property(readwrite, retain) NSURLConnection* connection;
 @property(readwrite, retain) NSDictionary* result;
 @property(readwrite, retain) NSError* connectionError;
