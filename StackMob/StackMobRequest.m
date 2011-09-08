@@ -30,6 +30,7 @@
 @synthesize connection = mConnection;
 @synthesize delegate = mDelegate;
 @synthesize method = mMethod;
+@synthesize isSecure = mIsSecure;
 @synthesize result = mResult;
 @synthesize connectionError = _connectionError;
 @synthesize body;
@@ -142,7 +143,14 @@
     
     // add query string
     NSMutableArray *urlComponents = [NSMutableArray arrayWithCapacity:2];
-    [urlComponents addObject:[session urlForMethod:self.method isUserBased:userBased]];
+    NSMutableString* sessionUrlString;
+    if (mIsSecure) { 
+      sessionUrlString = [session secureURLForMethod:self.method isUserBased:userBased];
+    } else {
+      sessionUrlString = [session urlForMethod:self.method isUserBased:userBased];
+    }
+    [urlComponents addObject:sessionUrlString];
+  
 	if ([[self httpMethod] isEqualToString:@"GET"] &&
 		[mArguments count] > 0) {
 		[urlComponents addObject:[mArguments queryString]];
@@ -230,7 +238,7 @@
         [request addValue:contentType forHTTPHeaderField: @"Content-Type"]; 
 	}
 		
-    SMLogVerbose(@"StackMobRequest: sending asynchronous oauth request: %@", request);
+  SMLogVerbose(@"StackMobRequest: sending asynchronous oauth request: %@", request);
     
 	[mConnectionData setLength:0];		
 	self.result = nil;

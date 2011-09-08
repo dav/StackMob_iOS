@@ -195,8 +195,10 @@ static NSString *const SMDefaultDomain = @"stackmob.com";
  * Returns the formatted SSL url for the passedMethod.
  *
  * @param name of the method to be called
+ * @param userBasedRequest whether or not to prepend the user with the user
+ * model name
  */
-- (NSMutableString*)secureURLForMethod:(NSString*)method;
+- (NSMutableString*)secureURLForMethod:(NSString*)method isUserBased:(BOOL)userBasedRequest;
 
 /**
  * returns a a base url for the method
