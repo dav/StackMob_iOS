@@ -32,17 +32,17 @@ typedef enum {
   BOOL          mIsSecure;
 	NSString*				mMethod;
 	NSMutableDictionary*	mArguments;
-    NSData*                 mBody;
+  NSData*                 mBody;
 	NSMutableData*			mConnectionData;
 	NSDictionary*			mResult;
-    NSError*                mConnectionError;
+  NSError*                mConnectionError;
 	BOOL					_requestFinished;
 	NSString*				mHttpMethod;
 	NSHTTPURLResponse*		mHttpResponse;
 	
 	@protected
         BOOL userBased;
-		StackMobSession *session;
+  StackMobSession *session;
 }
 
 @property(readwrite, retain) id delegate;

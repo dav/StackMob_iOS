@@ -89,10 +89,10 @@ static StackMobSession* sharedSession = nil;
 {
   NSMutableArray *parts = [NSMutableArray array];
   [parts addObject:(isSecure ? secureURL : regularURL)];
-  
+    
   if(userBasedRequest) [parts addObject:self.userObjectName];
   [parts addObject:method];
-  
+    
   NSMutableString *urlString = [NSMutableString stringWithString:[parts componentsJoinedByString:@"/"]];
   return urlString;
 }

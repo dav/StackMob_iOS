@@ -138,7 +138,7 @@
 
 - (NSURL*)getURL
 {
-    // nil method is an invalid request
+  // nil method is an invalid request
 	if(!self.method) return nil;
     
     // add query string
