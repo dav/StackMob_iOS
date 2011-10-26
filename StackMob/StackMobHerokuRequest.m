@@ -27,7 +27,6 @@
 	return request;
 }
 
-
 - (NSURL*)getURL {
     NSString *urlString = [NSString stringWithFormat:@"http://%@.%@/api/%@/%@/heroku/proxy/%@", session.subDomain, session.domain, session.apiVersionNumber, session.appName, self.method];
 	return [NSURL URLWithString:urlString];

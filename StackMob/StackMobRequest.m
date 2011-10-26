@@ -16,6 +16,7 @@
 #import "Reachability.h"
 #import "OAConsumer.h"
 #import "OAMutableURLRequest.h"
+#import "StackMobAdditions.h"
 #import "StackMobClientData.h"
 #import "StackMobSession.h"
 #import "StackMobPushRequest.h"
@@ -42,7 +43,6 @@
 # pragma mark - Memory Management
 - (void)dealloc
 {
-	SMLogVerbose(@"StackMobRequest: dealloc");
 	[self cancel];
 	[mConnectionData release];
 	[mConnection release];
@@ -52,7 +52,6 @@
 	[mHttpMethod release];
 	[mHttpResponse release];
 	[super dealloc];
-	SMLogVerbose(@"StackMobRequest: dealloc finished");
 }
 
 # pragma mark - Initialization
@@ -84,7 +83,7 @@
 	return [StackMobRequest userRequestForMethod:method withArguments:nil withHttpVerb:httpVerb];    
 }
 
-+ (id)requestForMethod:(NSString*)method withArguments:(NSDictionary*)arguments  withHttpVerb:(SMHttpVerb)httpVerb
++ (id)requestForMethod:(NSString*)method withArguments:(NSDictionary*)arguments withHttpVerb:(SMHttpVerb)httpVerb
 {
 	StackMobRequest* request = [StackMobRequest request];
 	request.method = method;
@@ -106,6 +105,15 @@
 	return request;
 }
 
++ (id)userRequestForMethod:(NSString *)method withQuery:(StackMobQuery *)query withHttpVerb:(SMHttpVerb)httpVerb {
+    return [StackMobRequest userRequestForMethod:method withArguments:query.dictionary withHttpVerb:httpVerb];
+}
+
++ (id)requestForMethod:(NSString*)method withQuery:(StackMobQuery *)query withHttpVerb:(SMHttpVerb) httpVerb {
+    return [StackMobRequest requestForMethod:method withArguments:[query dictionary] withHttpVerb:httpVerb];
+}
+
+
 + (id)requestForMethod:(NSString *)method withData:(NSData *)data{
     StackMobRequest *request = [StackMobRequest request];
     request.method = method;
@@ -123,7 +131,8 @@
 	return request;
 }
 
-+ (NSString*)stringFromHttpVerb:(SMHttpVerb)httpVerb {
++ (NSString*)stringFromHttpVerb:(SMHttpVerb)httpVerb
+{
 	switch (httpVerb) {
 		case POST:
 			return @"POST";	
@@ -141,7 +150,7 @@
   // nil method is an invalid request
 	if(!self.method) return nil;
     
-    // add query string
+    // build URL and add query string if necessary
     NSMutableArray *urlComponents = [NSMutableArray arrayWithCapacity:2];
     NSMutableString* sessionUrlString;
     if (mIsSecure) { 
@@ -151,13 +160,13 @@
     }
     [urlComponents addObject:sessionUrlString];
   
-	if ([[self httpMethod] isEqualToString:@"GET"] &&
+    if (([[self httpMethod] isEqualToString:@"GET"] || [[self httpMethod] isEqualToString:@"DELETE"]) &&    
 		[mArguments count] > 0) {
 		[urlComponents addObject:[mArguments queryString]];
 	}
     
     NSString *urlString = [urlComponents componentsJoinedByString:@"?"];
-    SMLogVerbose(@"%@", urlString);
+    SMLog(@"%@", urlString);
     
 	return [NSURL URLWithString:urlString];
 }
@@ -210,9 +219,9 @@
 {
 	_requestFinished = NO;
 
-    SMLogVerbose(@"StackMob method: %@", self.method);
-    SMLogVerbose(@"Request Request with url: %@", self.url);
-    SMLogVerbose(@"Request Request with HTTP Method: %@", self.httpMethod);
+    SMLog(@"StackMob method: %@", self.method);
+    SMLog(@"Request Request with url: %@", self.url);
+    SMLog(@"Request Request with HTTP Method: %@", self.httpMethod);
 				
 	OAConsumer *consumer = [[OAConsumer alloc] initWithKey:session.apiKey
 														secret:session.apiSecret];
@@ -224,21 +233,26 @@
 
 														  signatureProvider:nil]; // use the default method, HMAC-SHA1
     SMLog(@"httpMethod %@", [self httpMethod]);
+    if([self.method isEqualToString:@"startsession"]){
+        [mArguments setValue:[StackMobClientData sharedClientData].clientDataString forKey:@"cd"];
+    }
 	[request setHTTPMethod:[self httpMethod]];
 		
 	[request addValue:@"gzip" forHTTPHeaderField:@"Accept-Encoding"];
 	[request addValue:@"deflate" forHTTPHeaderField:@"Accept-Encoding"];
+    [request addValue:[session userAgentString] forHTTPHeaderField:@"User-Agent"];
     
 	[request prepare];
-	if (![[self httpMethod] isEqualToString: @"GET"]) {
-        NSData* postData = [[mArguments yajl_JSONString] dataUsingEncoding:NSUTF8StringEncoding];
-        SMLogVerbose(@"POST Data: %d", [postData length]);
+
+	if (!([[self httpMethod] isEqualToString: @"GET"] || [[self httpMethod] isEqualToString:@"DELETE"])) {
+        NSData* postData = [[mArguments JSONString] dataUsingEncoding:NSUTF8StringEncoding];
+        SMLog(@"POST Data: %d", [postData length]);
         [request setHTTPBody:postData];	
         NSString *contentType = [NSString stringWithFormat:@"application/json"];
         [request addValue:contentType forHTTPHeaderField: @"Content-Type"]; 
 	}
 		
-  SMLogVerbose(@"StackMobRequest: sending asynchronous oauth request: %@", request);
+  SMLog(@"StackMobRequest: sending asynchronous oauth request: %@", request);
     
 	[mConnectionData setLength:0];		
 	self.result = nil;
@@ -266,7 +280,7 @@
 
 	[mConnectionData appendData:data];
 	
-    SMLogVerbose(@"StackMobRequest: Got data of length %u", [mConnectionData length]);
+    SMLog(@"StackMobRequest: Got data of length %u", [mConnectionData length]);
 }
 
 - (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error
@@ -276,7 +290,7 @@
 	SMLog(@"StackMobRequest %p: Connection failed! Error - %@ %@",
     self,
 		[error localizedDescription],
-		[[error userInfo] objectForKey:NSErrorFailingURLStringKey]);
+		[[error userInfo] objectForKey:NSURLErrorFailingURLStringErrorKey]);
     
 	// inform the user
 	self.result = [NSDictionary dictionaryWithObjectsAndKeys:[error localizedDescription], @"statusDetails", nil];  
@@ -289,65 +303,75 @@
 {
 	_requestFinished = YES;
 
-	if(kLogRequestSteps) SMLog(@"Received Request: %@", self.method);
     SMLog(@"StackMobRequest %p: Received Request: %@", self, self.method);
     
 	NSString *textResult = nil;
 	NSDictionary *result = nil;
     NSInteger statusCode = [self getStatusCode];
 
-    SMLogVerbose(@"RESPONSE CODE %d", statusCode);
+    SMLog(@"RESPONSE CODE %d", statusCode);
     if ([mConnectionData length] > 0) {
         textResult = [[[NSString alloc] initWithData:mConnectionData encoding:NSUTF8StringEncoding] autorelease];
-        SMLogVerbose(@"RESPONSE BODY %@", textResult);
+        SMLog(@"RESPONSE BODY %@", textResult);
     }
 
 
-    // If it's a 500, it probably isn't JSON so don't attempt to parse it as such
-    if (statusCode < 500) {
-        if (textResult == nil) {
-            result = [NSDictionary dictionary];
+    if (textResult == nil) {
+        result = [NSDictionary dictionary];
+    }   
+    else {
+        @try{
+            [mConnectionData setLength:0];
+            if (statusCode < 400) {
+                result = [textResult objectFromJSONString];
+            } else {
+                NSDictionary *errResult = (NSDictionary *)[textResult objectFromJSONString]; 
+                NSString *failMsg;
+                if ([errResult objectForKey:@"error"] == nil) {
+                    failMsg = [NSString stringWithFormat:@"Response failed with code: %d", statusCode];
+                    
+                } else {
+                    failMsg = [errResult objectForKey:@"error"];
+                }
+                result = [NSError errorWithDomain:@"StackMob"         
+                                            code:1 
+                                        userInfo:[NSDictionary dictionaryWithObjectsAndKeys:failMsg, NSLocalizedDescriptionKey, nil]];   
+            }
         }
-        else {
-            @try{
-                [mConnectionData setLength:0];
-                result = [textResult yajl_JSON];
-            }
-            @catch (NSException *e) {
-                result = nil;
-                SMLog(@"Unable to parse json '%@'", textResult);
-            }
+        @catch (NSException *e) { // catch parsing errors
+            NSString *failMsg = [NSString stringWithFormat:@"Response failed with code: %d", statusCode];
+            result = [NSError errorWithDomain:@"StackMob"         
+                                         code:1 
+                                     userInfo:[NSDictionary dictionaryWithObjectsAndKeys:failMsg, NSLocalizedDescriptionKey, nil]];
+            SMLog(@"Unable to parse json '%@'", textResult);
         }
     }
   
-    if (kLogRequestSteps)
-        SMLog(@"Request Processed: %@", self.method);
+    SMLog(@"Request Processed: %@", self.method);
 
     self.result = result;
 	
-    if (!self.delegate) SMLogVerbose(@"No delegate");
+    if (!self.delegate) SMLog(@"No delegate");
     
 	if (self.delegate && [self.delegate respondsToSelector:@selector(requestCompleted:)]){
-        SMLogVerbose(@"Calling delegate %d, self %d", [mDelegate retainCount], [self retainCount]);
+        SMLog(@"Calling delegate %d, self %d", [mDelegate retainCount], [self retainCount]);
         [self.delegate requestCompleted:self];
     } else {
-        SMLogVerbose(@"Delegate does not respond to selector\ndelegate: %@", mDelegate);
+        SMLog(@"Delegate does not respond to selector\ndelegate: %@", mDelegate);
     }
 }
 
 - (id) sendSynchronousRequestProvidingError:(NSError**)error {
-    SMLogVerbose(@"Sending Request: %@", self.method);
-    SMLogVerbose(@"Request URL: %@", self.url);
-    SMLogVerbose(@"Request HTTP Method: %@", self.httpMethod);
+    SMLog(@"Sending Request: %@", self.method);
+    SMLog(@"Request URL: %@", self.url);
+    SMLog(@"Request HTTP Method: %@", self.httpMethod);
     id result = [self sendSynchronousRequest];
     *error = self.connectionError;
     return result;
 }
 
 - (id) sendSynchronousRequest {
-	if (kLogVersbose == YES) {
-		SMLog(@"StackMobRequest %p: Sending Synch Request httpMethod=%@ method=%@ url=%@", self, self.httpMethod, self.method, self.url);
-	}
+    SMLog(@"StackMobRequest %p: Sending Synch Request httpMethod=%@ method=%@ url=%@", self, self.httpMethod, self.method, self.url);
 	
 	OAConsumer *consumer = [[OAConsumer alloc] initWithKey:session.apiKey
 													secret:session.apiSecret];
@@ -364,16 +388,14 @@
 	[request addValue:@"deflate" forHTTPHeaderField:@"Accept-Encoding"];
 	[request prepare];
 	if (![[self httpMethod] isEqualToString: @"GET"]) {
-		[request setHTTPBody:[[mArguments yajl_JSONString] dataUsingEncoding:NSUTF8StringEncoding]];	
+		[request setHTTPBody:[[mArguments JSONString] dataUsingEncoding:NSUTF8StringEncoding]];	
 		NSString *contentType = [NSString stringWithFormat:@"application/json"];
 		[request addValue:contentType forHTTPHeaderField: @"Content-Type"];
 	}
 	
 	[mConnectionData setLength:0];
 
-	if (kLogVersbose) {
-		SMLog(@"StackMobRequest %p: sending synchronous oauth request: %@", self, request);
-	}
+    SMLog(@"StackMobRequest %p: sending synchronous oauth request: %@", self, request);
   
     _requestFinished = NO;
     self.connectionError = nil;

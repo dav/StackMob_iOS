@@ -12,6 +12,5 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#import "Constants.h"
 
-//NSString * const kAPIVersion = @"1";
+#define STACKMOB_SDK_VERSION @"0.3.0"

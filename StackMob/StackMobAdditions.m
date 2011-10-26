@@ -21,11 +21,20 @@
 	NSMutableArray* encodedPieces = [NSMutableArray array];
 	
 	for(NSString* argumentKey in self){
-		NSString* argumentValue = [self objectForKey:argumentKey];
+		id argumentValue = [self objectForKey:argumentKey];
 		if(!argumentValue)
 			continue;
-		
-		argumentValue = [(NSString*)CFURLCreateStringByAddingPercentEscapes(NULL, (CFStringRef)argumentValue, NULL, CFSTR("?=&+"), CFStringConvertNSStringEncodingToEncoding(NSUTF8StringEncoding)) autorelease];
+        
+		NSString *preparedArgVal;
+        if ([argumentValue isKindOfClass:[NSArray class]]) {
+            preparedArgVal = [(NSArray *)argumentValue componentsJoinedByString:@","];
+        } else if([argumentValue isKindOfClass:[NSNumber class]]) {
+            preparedArgVal = [argumentValue stringValue];
+        } else {
+            preparedArgVal = argumentValue;
+        }
+                   
+		argumentValue = [(NSString*)CFURLCreateStringByAddingPercentEscapes(NULL, (CFStringRef)preparedArgVal, NULL, CFSTR("?=&+"), CFStringConvertNSStringEncodingToEncoding(NSUTF8StringEncoding)) autorelease];
 		[encodedPieces addObject:[NSString stringWithFormat:@"%@=%@", argumentKey, argumentValue]];
 	}
 	

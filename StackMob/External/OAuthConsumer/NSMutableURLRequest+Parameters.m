@@ -41,7 +41,6 @@
         encodedParameters = [[NSString alloc] initWithData:[self HTTPBody] encoding:NSASCIIStringEncoding];
     }
     
-    SMLogVerbose(@"encodedParameters %@", encodedParameters);
     if ((encodedParameters == nil) || ([encodedParameters isEqualToString:@""]))
         return nil;
     

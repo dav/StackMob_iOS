@@ -9,8 +9,7 @@
 #import "AppDelegate.h"
 
 #import "MainViewController.h"
-
-#import <StackMob/StackMob.h>
+#import "StackMob.h"
 
 @implementation AppDelegate
 
@@ -29,6 +28,15 @@
     [self.window makeKeyAndVisible];
     
     [[StackMob stackmob] startSession];
+    [[StackMob stackmob] get:@"listapi" withCallback:^(BOOL success, id result){
+        NSLog(@"listapi %@", result);
+    }];
+    
+    NSDictionary *args = [NSDictionary dictionaryWithObjectsAndKeys:@"subject 123", @"subject", nil];
+    [[StackMob stackmob] post:@"meeting" withArguments:args andCallback:^(BOOL success, id result){
+        NSLog(@"result %@", result);
+    }];
+    
     return YES;
 }
 

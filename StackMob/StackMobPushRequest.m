@@ -17,7 +17,9 @@
 @implementation StackMobPushRequest
 
 + (StackMobRequest*)request	{
-	return [[[StackMobPushRequest alloc] init] autorelease];
+	StackMobRequest *r = [[[StackMobPushRequest alloc] init] autorelease];
+    r.httpMethod = [self stringFromHttpVerb:POST];
+    return r;
 }
 
 - (NSURL*)getURL {

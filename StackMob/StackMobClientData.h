@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #import <CoreLocation/CoreLocation.h>
+#import "StackMobConfiguration.h"
+#import "JSONKit.h"
 
 #define DEVICE_TAG_NAME						@"u"			
 #define DEVICE_NAME							@"dn"	

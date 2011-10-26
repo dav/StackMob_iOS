@@ -16,7 +16,7 @@
 
 #import <SenTestingKit/SenTestingKit.h>
 #import <UIKit/UIKit.h>
-#import <StackMob/StackMob.h>
+#import "StackMob.h"
 
 //#import "application_headers" as required
 

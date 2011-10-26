@@ -12,8 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 #import "StackMobSession.h"
+#import "StackMobConfiguration.h"
+#import "StackMobQuery.h"
+#import "JSONKit.h"
+
+@class StackMob;
 
 typedef enum {
 	GET,
@@ -68,6 +72,7 @@ typedef enum {
 + (id)requestForMethod:(NSString*)method;
 + (id)requestForMethod:(NSString*)method withHttpVerb:(SMHttpVerb) httpVerb;
 + (id)requestForMethod:(NSString*)method withArguments:(NSDictionary*)arguments withHttpVerb:(SMHttpVerb) httpVerb;
++ (id)requestForMethod:(NSString*)method withQuery:(StackMobQuery *)query withHttpVerb:(SMHttpVerb) httpVerb;
 + (id)requestForMethod:(NSString *)method withData:(NSData *)data;
 
 /* 
@@ -77,6 +82,7 @@ typedef enum {
 + (id)userRequest;
 + (id)userRequestForMethod:(NSString *)method withHttpVerb:(SMHttpVerb)httpVerb;
 + (id)userRequestForMethod:(NSString*)method withArguments:(NSDictionary*)arguments withHttpVerb:(SMHttpVerb)httpVerb;
++ (id)userRequestForMethod:(NSString *)method withQuery:(StackMobQuery *)query withHttpVerb:(SMHttpVerb)httpVerb;
 
 /*
  * Create a request for an iOS PUSH notification
@@ -108,6 +114,9 @@ typedef enum {
  */
 - (id)sendSynchronousRequestProvidingError:(NSError**)error __attribute__((deprecated));
 - (id)sendSynchronousRequest;
+
+/* translate enum to string */
++ (NSString*)stringFromHttpVerb:(SMHttpVerb)httpVerb;
 
 @end
 

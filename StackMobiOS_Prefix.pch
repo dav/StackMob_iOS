@@ -14,7 +14,6 @@
 
 #ifdef __OBJC__
     #import <Foundation/Foundation.h>
-	#import <YAJLIOS/YAJLIOS.h>
 	#import "StackMobAdditions.h"
 	
 	#define kLogVersbose YES

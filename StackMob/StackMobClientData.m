@@ -42,7 +42,8 @@ static StackMobClientData * _sharedInstance=nil;
 
 @implementation StackMobClientData
 
-- (id)init {
+- (id)init
+{
 	if((self = [super init])) {
 		// Device info.
 		UIDevice *device = [UIDevice currentDevice];
@@ -69,10 +70,9 @@ static StackMobClientData * _sharedInstance=nil;
 	return self;
 }
 
-+ (StackMobClientData*) sharedClientData;
++ (StackMobClientData*) sharedClientData
 {
-	if(!_sharedInstance)
-	{
+	if(!_sharedInstance){
 		_sharedInstance = [[StackMobClientData alloc] init];
 	}
 	return _sharedInstance;
@@ -124,7 +124,6 @@ static StackMobClientData * _sharedInstance=nil;
 }
 
 - (void)dealloc {
-	
 	[_locationManager release];
 	[_sharedInstance release];
 	[super dealloc];
@@ -158,13 +157,11 @@ static StackMobClientData * _sharedInstance=nil;
 											 language, DEVICE_LANGUAGE,
 											 jailBroken, DEVICE_IS_JAILBORKEN,
 											 nil];
-	
-		
 	if(_locationUpdatesStarted) {
 		[clientDataObject setValue:[NSNumber numberWithDouble:_location.latitude] forKey:LATITUDE];
 		[clientDataObject setValue:[NSNumber numberWithDouble:_location.longitude] forKey:LONGITUDE];  
 	}
-	
+	SMLog(@"data %@", clientDataObject);
 	NetworkStatus newStatus = [[Reachability reachabilityForInternetConnection] currentReachabilityStatus];
 	switch (newStatus) {
 		case ReachableViaWWAN:
@@ -175,10 +172,8 @@ static StackMobClientData * _sharedInstance=nil;
 			break;
 	}
 	
-		
-	
-	self.clientDataString = [clientDataObject yajl_JSONString];
-  [clientDataObject release];
+	self.clientDataString = [clientDataObject JSONString];
+    [clientDataObject release];
 }
 
 #pragma mark - Location

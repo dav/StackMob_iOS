@@ -2,25 +2,32 @@ Getting Started
 =========
 1. Clone the repository from GitHub
 `git clone git://github.com/stackmob/StackMob_iOS.git`
-2. Open the StackMobiOS project in XCode
-3.  Build the target "Build Framework" (Note: if your are not building for iOS 4.3, modify lines 8 and 9 in ```script/build.sh```)
-4.  Copy $\{StackMobiOSHome\}/build/Framework/StackMob.framework to your project as a framework
-5. Add the following to Other Linker Flags in the build configuration of your project: -ObjC -all_load
-6.  Add the following Frameworks to your project:
+2. Open the Demo project.
+3. Drag the 'StackMob' folder from the Demo project into your app's project
+4. Add the following Frameworks to your project:
 
     - CFNetwork.framework
     - CoreLocation.framework
     - SystemConfiguration.framework
-    - YAJLiOS.framework - This is provided as part of our GitHub project. You will find it in the external folder
 
-7. Copy and configure a StackMob.plist in your app's main Bundle
+5. Edit 'StackMobConfiguration.h' to include your app's account and app info
 
-    - copy Demo/DemoApp/DemoApp/StackMob.plist into your Xcode project
-    - enter your app and account info
+```objective-c
+#define STACKMOB_PUBLIC_KEY         @""
+#define STACKMOB_PRIVATE_KEY        @""
+#define STACKMOB_APP_NAME           @""
+#define STACKMOB_APP_SUBDOMAIN      @""
+#define STACKMOB_APP_DOMAIN         @"" // most likely 'stackmob.com'
+#define STACKMOB_USER_OBJECT_NAME   @"" // most likely 'user' or 'account'
+#define STACKMOB_API_VERSION        0   // 0 for sandbox, 1 for production
+```
+
+6. ```#import "Stackmob.h"``` in any classes that interact with Stackmob.
+
 
 Coding
 =====
-You can now make requests to your servers on StackMob using the following pattern.
+You can now make requests to your servers on StackMob using the following patterns.
 
 ####GET
 
@@ -32,7 +39,7 @@ You can now make requests to your servers on StackMob using the following patter
    */
 [[StackMob stackmob] get:@"account" withArguments:dictionary andCallback:^(BOOL success, id result){
     if(success){
-      // Cast result to a NSDictionary* and do something with the UI
+      // Cast result to an NSDictionary* and do something with the UI
       // Alert delegates
     }
     else{
@@ -151,20 +158,4 @@ You can register an Apple Push Notification service device by creating and calli
 Troubleshooting
 ===============
 
-####If you see this:
-```ld: framework not found StackMob```
-
-Make sure the sdk you are building for is specified in lines 8 and 9 of ./script/build.sh
-
-####If you see this:
-
-```'Initialization Error', reason: 'Make sure you enter your publicKey and privateKey in StackMob.plist'```
-
-You need to copy the StackMob.plist from the Demo app and fill it out with your app and account info from StackMob.com.
-
-####If you see this:
-
-```-[__NSCFDictionary yajl_JSONString]: unrecognized selector sent to instance]```
-
-Then you need to make sure you've added the YAJLIOS.framework
 
