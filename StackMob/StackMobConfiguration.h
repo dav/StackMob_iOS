@@ -26,4 +26,4 @@
 #define STACKMOB_APP_SUBDOMAIN      @"YOUR_SUBDOMAIN"
 #define STACKMOB_APP_DOMAIN         @"stackmob.com"
 #define STACKMOB_USER_OBJECT_NAME   @"YOUR_USER_OBJECT_NAME"
-#define STACKMOB_API_VERSION        0
+//#define STACKMOB_API_VERSION        0
