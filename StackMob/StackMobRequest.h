@@ -73,7 +73,7 @@ typedef enum {
 + (id)request;
 + (id)requestForMethod:(NSString*)method;
 + (id)requestForMethod:(NSString*)method withHttpVerb:(SMHttpVerb) httpVerb;
-+ (id)requestForMethod:(NSString*)method withArguments:(NSDictionary*)arguments withHttpVerb:(SMHttpVerb) httpVerb;
++ (id)requestForMethod:(NSString*)method withArguments:(NSDictionary*)arguments withHttpVerb:(SMHttpVerb) httpVerb __attribute__((deprecated));
 + (id)requestForMethod:(NSString*)method withQuery:(StackMobQuery *)query withHttpVerb:(SMHttpVerb) httpVerb;
 + (id)requestForMethod:(NSString *)method withData:(NSData *)data;
 
