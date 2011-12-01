@@ -13,7 +13,7 @@
 // limitations under the License.
 
 #if DEBUG
-    #define SMLog(format, ...) {NSLog(format, ##__VA_ARGS__);}
+    #define SMLog(format, ...) {NSLog(@"%@-%p "format, [self class], self, ##__VA_ARGS__);}
     #define StackMobDebug(format, ...) {NSLog([[NSString stringWithFormat:@"[%s, %@, %d] ", __PRETTY_FUNCTION__, [[NSString stringWithUTF8String:__FILE__] lastPathComponent], __LINE__] stringByAppendingFormat:format, ##__VA_ARGS__]);}
 #else
     #define SMLog(format, ...) {NSLog(format, ##__VA_ARGS__);}
