@@ -22,6 +22,7 @@
 #import "StackMobPushRequest.h"
 #import "NSData+JSON.h"
 
+
 @interface StackMobRequest (Private)
 + (NSString*)stringFromHttpVerb:(SMHttpVerb)httpVerb;
 @end
@@ -51,6 +52,7 @@
 	[mResult release];
 	[mHttpMethod release];
 	[mHttpResponse release];
+    [mHeaders release];    
 	[super dealloc];
 }
 
@@ -106,11 +108,15 @@
 }
 
 + (id)userRequestForMethod:(NSString *)method withQuery:(StackMobQuery *)query withHttpVerb:(SMHttpVerb)httpVerb {
-    return [StackMobRequest userRequestForMethod:method withArguments:query.dictionary withHttpVerb:httpVerb];
+    StackMobRequest *request = [StackMobRequest userRequestForMethod:method withArguments:query.params withHttpVerb:httpVerb];
+    [request setHeaders:query.headers];
+    return request;
 }
 
 + (id)requestForMethod:(NSString*)method withQuery:(StackMobQuery *)query withHttpVerb:(SMHttpVerb) httpVerb {
-    return [StackMobRequest requestForMethod:method withArguments:[query dictionary] withHttpVerb:httpVerb];
+    StackMobRequest *request = [StackMobRequest requestForMethod:method withArguments:[query params] withHttpVerb:httpVerb];
+    [request setHeaders:query.headers];
+    return request;
 }
 
 
@@ -145,6 +151,13 @@
 	}
 }
 
+- (NSString *)getBaseURL {
+    if(mIsSecure) {
+        return [session secureURLForMethod:self.method isUserBased:userBased];
+    }
+    return [session urlForMethod:self.method isUserBased:userBased];
+}
+
 - (NSURL*)getURL
 {
   // nil method is an invalid request
@@ -152,14 +165,8 @@
     
     // build URL and add query string if necessary
     NSMutableArray *urlComponents = [NSMutableArray arrayWithCapacity:2];
-    NSMutableString* sessionUrlString;
-    if (mIsSecure) { 
-      sessionUrlString = [session secureURLForMethod:self.method isUserBased:userBased];
-    } else {
-      sessionUrlString = [session urlForMethod:self.method isUserBased:userBased];
-    }
-    [urlComponents addObject:sessionUrlString];
-  
+    [urlComponents addObject:self.baseURL]; 
+      
     if (([[self httpMethod] isEqualToString:@"GET"] || [[self httpMethod] isEqualToString:@"DELETE"]) &&    
 		[mArguments count] > 0) {
 		[urlComponents addObject:[mArguments queryString]];
@@ -185,6 +192,7 @@
         self.method = nil;
         self.result = nil;
         mArguments = [[NSMutableDictionary alloc] init];
+        mHeaders = [[NSMutableDictionary alloc] init];
         mConnectionData = [[NSMutableData alloc] init];
         mResult = nil;
         session = [StackMobSession session];
@@ -214,14 +222,35 @@
 	[mArguments setValue:(value ? @"true" : @"false") forKey:argument];
 }
 
+- (void)setHeaders:(NSDictionary *)headers {
+    [mHeaders setDictionary:headers];
+}
+
++ (NSData *)JsonifyNSDictionary:(NSMutableDictionary *)dict withErrorOutput:(NSError **)error {
+    
+    static id(^unsupportedClassSerializerBlock)(id) = ^id(id object) {
+        if ( [object isKindOfClass:[NSData class]] ) {
+            NSString* base64String = [(NSData*)object JSON];
+            return base64String;
+        }
+        else {
+            return nil;
+        }
+    };
+    
+    NSData * json = [dict JSONDataWithOptions:JKSerializeOptionNone
+        serializeUnsupportedClassesUsingBlock:unsupportedClassSerializerBlock
+                                        error:error];
+    return json;
+}
 
 - (void)sendRequest
 {
 	_requestFinished = NO;
 
     SMLog(@"StackMob method: %@", self.method);
-    SMLog(@"Request Request with url: %@", self.url);
-    SMLog(@"Request Request with HTTP Method: %@", self.httpMethod);
+    SMLog(@"Request with url: %@", self.url);
+    SMLog(@"Request with HTTP Method: %@", self.httpMethod);
 				
 	OAConsumer *consumer = [[OAConsumer alloc] initWithKey:session.apiKey
 														secret:session.apiSecret];
@@ -241,20 +270,28 @@
 	[request addValue:@"gzip" forHTTPHeaderField:@"Accept-Encoding"];
 	[request addValue:@"deflate" forHTTPHeaderField:@"Accept-Encoding"];
     [request addValue:[session userAgentString] forHTTPHeaderField:@"User-Agent"];
+    for(NSString *header in mHeaders) {
+        if (!([header isEqualToString:@"Accept-Encoding"] || [header isEqualToString:@"User-Agent"] || [header isEqualToString:@"Content-Type"])) {
+            [request addValue:(NSString *)[mHeaders objectForKey:header] forHTTPHeaderField:header];
+        }
+    }
     
 	[request prepare];
 
 	if (!([[self httpMethod] isEqualToString: @"GET"] || [[self httpMethod] isEqualToString:@"DELETE"])) {
-        NSData* postData = [[mArguments JSONString] dataUsingEncoding:NSUTF8StringEncoding];
-        SMLog(@"POST Data: %d", [postData length]);
+        
+        NSError* error = nil;
+        NSData * postData = [StackMobRequest JsonifyNSDictionary:mArguments withErrorOutput:&error];
+        NSString * postDataString = [[NSString alloc] initWithData:postData encoding:NSUTF8StringEncoding];
+        SMLog(@"POST Data: %@", postDataString);
         [request setHTTPBody:postData];	
         NSString *contentType = [NSString stringWithFormat:@"application/json"];
         [request addValue:contentType forHTTPHeaderField: @"Content-Type"]; 
 	}
 		
-  SMLog(@"StackMobRequest: sending asynchronous oauth request: %@", request);
+    SMLog(@"StackMobRequest: sending asynchronous oauth request: %@", request);
     
-	[mConnectionData setLength:0];		
+	[mConnectionData setLength:0];
 	self.result = nil;
     self.connectionError = nil;
 	self.connection = [[[NSURLConnection alloc] initWithRequest:request delegate:self] retain]; // Why retaining this when already retained by synthesized method?

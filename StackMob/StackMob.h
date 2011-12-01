@@ -173,6 +173,39 @@ typedef void (^StackMobCallback)(BOOL success, id result);
  */
 - (StackMobRequest *)registerForPushWithUser:(NSString *)userId token:(NSString *)token andCallback:(StackMobCallback)callback;
 
+
+/*
+ * Send a push notification broadcast
+ * @param args push request arguments, the dictionary should contain the message, badge and alert (badge and alert optional)
+ */
+- (StackMobRequest *)sendPushBroadcastWithArguments:(NSDictionary *)args andCallback:(StackMobCallback)callback;
+
+/*
+ * Send a push notification to specific tokens
+ * @param args push request arguments, the dictionary should contain the message, badge and alert (badge and alert optional)
+ * @param tokens a list of tokens to which to send args
+ */
+- (StackMobRequest *)sendPushToTokensWithArguments:(NSDictionary *)args withTokens:(NSArray *)tokens andCallback:(StackMobCallback)callback;
+
+/*
+ * Send a push notification to a set of users
+ * @param args push request arguments, the dictionary should contain the message, badge and alert (badge and alert optional)
+ * @param userIds  
+ */
+- (StackMobRequest *)sendPushToUsersWithArguments:(NSDictionary *)args withUserIds:(NSArray *)userIds andCallback:(StackMobCallback)callback;
+
+/*
+ * Get all tokens for each of the given user IDs
+ * @param userIds the users whose tokens to get
+ */
+- (StackMobRequest *)getPushTokensForUsers:(NSArray *)userIds andCallback:(StackMobCallback)callback;
+
+/*
+ * Delete a push token
+ * @param token the token to delete
+ */
+- (StackMobRequest *)deletePushToken:(NSString *)token andCallback:(StackMobCallback)callback;
+
 /********************** CRUD Methods **********************/
 /* 
  * Get the object with name "path" and arguments dictionary

@@ -97,6 +97,11 @@
 		82CE443E1288F17700A73E9C /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 82CE433A1288F02E00A73E9C /* SystemConfiguration.framework */; };
 		82CE45151289025B00A73E9C /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 82CE432C1288EFB900A73E9C /* UIKit.framework */; };
 		82CE45F412892FFA00A73E9C /* APIRequestTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 82CE45F212892FFA00A73E9C /* APIRequestTests.m */; };
+		93694862147228B400575176 /* StackMobPushTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 9369485F147228B400575176 /* StackMobPushTests.m */; };
+		93694863147228B400575176 /* StackMobTestUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 93694861147228B400575176 /* StackMobTestUtils.m */; };
+		9369486514722C5C00575176 /* StackMobTestCommon.m in Sources */ = {isa = PBXBuildFile; fileRef = 9369485A1472286900575176 /* StackMobTestCommon.m */; };
+		9369486614722C6500575176 /* StackMobTestCommon.h in Headers */ = {isa = PBXBuildFile; fileRef = 936948591472286900575176 /* StackMobTestCommon.h */; settings = {ATTRIBUTES = (); }; };
+		9369486714722C8000575176 /* StackMobTestUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 93694860147228B400575176 /* StackMobTestUtils.h */; };
 		AA747D9F0F9514B9006C5449 /* StackMobiOS_Prefix.pch in Headers */ = {isa = PBXBuildFile; fileRef = AA747D9E0F9514B9006C5449 /* StackMobiOS_Prefix.pch */; };
 		AACBBE4A0F95108600F1A2B1 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AACBBE490F95108600F1A2B1 /* Foundation.framework */; };
 		E33D87DB144616CF00FBEB96 /* StackMobVersion.h in Headers */ = {isa = PBXBuildFile; fileRef = E33D87DA144616CF00FBEB96 /* StackMobVersion.h */; };
@@ -166,6 +171,12 @@
 		82CE43501288F0DA00A73E9C /* Tests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Tests-Info.plist"; sourceTree = "<group>"; };
 		82CE45F212892FFA00A73E9C /* APIRequestTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = APIRequestTests.m; path = tests/APIRequestTests.m; sourceTree = "<group>"; };
 		82CE45F312892FFA00A73E9C /* APIRequestTests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = APIRequestTests.h; path = tests/APIRequestTests.h; sourceTree = "<group>"; };
+		936948591472286900575176 /* StackMobTestCommon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StackMobTestCommon.h; path = tests/StackMobTestCommon.h; sourceTree = "<group>"; };
+		9369485A1472286900575176 /* StackMobTestCommon.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = StackMobTestCommon.m; path = tests/StackMobTestCommon.m; sourceTree = "<group>"; };
+		9369485E147228B400575176 /* StackMobPushTests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StackMobPushTests.h; path = tests/StackMobPushTests.h; sourceTree = "<group>"; };
+		9369485F147228B400575176 /* StackMobPushTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = StackMobPushTests.m; path = tests/StackMobPushTests.m; sourceTree = "<group>"; };
+		93694860147228B400575176 /* StackMobTestUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StackMobTestUtils.h; path = tests/StackMobTestUtils.h; sourceTree = "<group>"; };
+		93694861147228B400575176 /* StackMobTestUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = StackMobTestUtils.m; path = tests/StackMobTestUtils.m; sourceTree = "<group>"; };
 		AA747D9E0F9514B9006C5449 /* StackMobiOS_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StackMobiOS_Prefix.pch; sourceTree = SOURCE_ROOT; };
 		AACBBE490F95108600F1A2B1 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		D2AAC07E0554694100DB518D /* libStackMobiOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libStackMobiOS.a; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -363,8 +374,14 @@
 		82CE42D41288E4D200A73E9C /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				9369485E147228B400575176 /* StackMobPushTests.h */,
+				9369485F147228B400575176 /* StackMobPushTests.m */,
+				93694860147228B400575176 /* StackMobTestUtils.h */,
+				93694861147228B400575176 /* StackMobTestUtils.m */,
 				82CE45F312892FFA00A73E9C /* APIRequestTests.h */,
 				82CE45F212892FFA00A73E9C /* APIRequestTests.m */,
+				936948591472286900575176 /* StackMobTestCommon.h */,
+				9369485A1472286900575176 /* StackMobTestCommon.m */,
 			);
 			name = Tests;
 			sourceTree = "<group>";
@@ -406,6 +423,8 @@
 				038CB28F14284C3F001DEAC9 /* JSONKit.h in Headers */,
 				E33D87DB144616CF00FBEB96 /* StackMobVersion.h in Headers */,
 				E3D728D71448BE5700804149 /* StackMobQuery.h in Headers */,
+				9369486614722C6500575176 /* StackMobTestCommon.h in Headers */,
+				9369486714722C8000575176 /* StackMobTestUtils.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -542,6 +561,9 @@
 				038CB29414284C97001DEAC9 /* StackMobRequest.m in Sources */,
 				82CE45F412892FFA00A73E9C /* APIRequestTests.m in Sources */,
 				E3D728D91448BE5700804149 /* StackMobQuery.m in Sources */,
+				93694862147228B400575176 /* StackMobPushTests.m in Sources */,
+				93694863147228B400575176 /* StackMobTestUtils.m in Sources */,
+				9369486514722C5C00575176 /* StackMobTestCommon.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

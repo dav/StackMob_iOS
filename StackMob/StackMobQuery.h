@@ -8,9 +8,15 @@
 
 #import <Foundation/Foundation.h>
 
+typedef enum {
+    SMOrderAscending = 0,
+    SMOrderDescending = 1
+} SMOrderDirection;
+
 @interface StackMobQuery : NSObject
     
-@property(nonatomic, copy) NSMutableDictionary *dictionary;
+@property(nonatomic, copy) NSMutableDictionary *params;
+@property(nonatomic, copy) NSMutableDictionary *headers;
 
 + (StackMobQuery *)query;
 
@@ -21,6 +27,8 @@
 - (void)field:(NSString *)f mustBeGreaterThanOrEqualToValue:(id)v;
 - (void)field:(NSString *)f mustBeOneOf:(NSArray *)arr;
 - (void)setExpandDepth:(NSUInteger)depth;
+- (void)setRangeStart:(NSUInteger)start andEnd:(NSUInteger)end;
+- (void)orderByField:(NSString *)f withDirection:(SMOrderDirection)dir;
 
 
 @end

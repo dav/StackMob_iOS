@@ -13,7 +13,6 @@
 // limitations under the License.
 
 #import "StackMobClientData.h"
-#import <CoreLocation/CoreLocation.h>
 #import <UIKit/UIKit.h>
 #import "Reachability.h"
 #include <sys/sysctl.h>
@@ -33,7 +32,6 @@ static StackMobClientData * _sharedInstance=nil;
 
 @interface StackMobClientData ()
 
-- (void)startLocationUpdates;
 - (void)startReachabilityUpdates;
 - (void)generateClientDataString;
 - (void)reachabilityChanged:(NSNotification *)note;
@@ -47,22 +45,21 @@ static StackMobClientData * _sharedInstance=nil;
 	if((self = [super init])) {
 		// Device info.
 		UIDevice *device = [UIDevice currentDevice];
-		identifier = [device uniqueIdentifier];
-		model = [device model];
-		systemVersion = [device systemVersion];
+		identifier = [[device uniqueIdentifier] retain];
+		model = [[device model] retain];
+		systemVersion = [[device systemVersion] retain];
 		
 						
 		// Locale info.
 		NSLocale *locale = [NSLocale currentLocale];
-		countryCode = [locale objectForKey:NSLocaleCountryCode];
-		language = [[NSLocale currentLocale] objectForKey: NSLocaleLanguageCode];	
+		countryCode = [[locale objectForKey:NSLocaleCountryCode] retain];
+		language = [[[NSLocale currentLocale] objectForKey: NSLocaleLanguageCode] retain];	
 		
 		// App info.
-		bundleVersion = [[NSBundle mainBundle] objectForInfoDictionaryKey:(NSString *)kCFBundleVersionKey];
+		bundleVersion = [[[NSBundle mainBundle] objectForInfoDictionaryKey:(NSString *)kCFBundleVersionKey] retain];
 		
-		jailBroken = [self isJailBrokenStr];
+		jailBroken = [[self isJailBrokenStr] retain];
 		
-		[self startLocationUpdates];
 		[self startReachabilityUpdates];
 		[self generateClientDataString];
 	}
@@ -124,7 +121,6 @@ static StackMobClientData * _sharedInstance=nil;
 }
 
 - (void)dealloc {
-	[_locationManager release];
 	[_sharedInstance release];
 	[super dealloc];
 
@@ -134,13 +130,6 @@ static StackMobClientData * _sharedInstance=nil;
 
 @synthesize clientDataString = _clientDataString;
 
-- (CLLocationDegrees)longitude {
-	return _location.longitude;
-}
-
-- (CLLocationDegrees)latitude {
-	return _location.latitude;
-}
 
 #pragma mark -
 
@@ -157,10 +146,7 @@ static StackMobClientData * _sharedInstance=nil;
 											 language, DEVICE_LANGUAGE,
 											 jailBroken, DEVICE_IS_JAILBORKEN,
 											 nil];
-	if(_locationUpdatesStarted) {
-		[clientDataObject setValue:[NSNumber numberWithDouble:_location.latitude] forKey:LATITUDE];
-		[clientDataObject setValue:[NSNumber numberWithDouble:_location.longitude] forKey:LONGITUDE];  
-	}
+
 	SMLog(@"data %@", clientDataObject);
 	NetworkStatus newStatus = [[Reachability reachabilityForInternetConnection] currentReachabilityStatus];
 	switch (newStatus) {
@@ -174,27 +160,6 @@ static StackMobClientData * _sharedInstance=nil;
 	
 	self.clientDataString = [clientDataObject JSONString];
     [clientDataObject release];
-}
-
-#pragma mark - Location
-
-- (void)startLocationUpdates {
-	_locationUpdatesStarted = NO;
-	_location.longitude = 0.0;
-	_location.latitude = 0.0;
-	
-	_locationManager = [[CLLocationManager alloc] init];
-	
-	_locationManager.delegate = self;
-	_locationManager.desiredAccuracy = kCLLocationAccuracyKilometer;
-	_locationManager.distanceFilter = 500;
-	[_locationManager startUpdatingLocation];
-}
-
-- (void)locationManager:(CLLocationManager *)manager didUpdateToLocation:(CLLocation *)newLocation fromLocation:(CLLocation *)oldLocation {
-	_locationUpdatesStarted = YES;
-	_location = newLocation.coordinate;
-	[self generateClientDataString];
 }
 
 #pragma mark - Reachability

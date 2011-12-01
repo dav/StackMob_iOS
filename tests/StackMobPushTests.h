@@ -23,12 +23,23 @@
 //#import "application_headers" as required
 
 
-@interface APIRequestTests : StackMobTestCommon {
+@interface StackMobPushTests : StackMobTestCommon {
+    NSDictionary * pushPayload;
+    NSArray * pushUserTargets;
+    NSArray * pushTokenTargets;
+    NSString * pushUser;
+    NSString * pushToken;
 
 }
 
-- (void) testURLGeneration;
-- (void) testGet;           
-- (void) testPost; 
-- (void) testAPIList; 
+- (void)assertResultIsQueued:(NSDictionary *)result;
+- (void)registerToken;
+
+- (void)setUp;
+- (void)tearDown;
+
+- (void)testRegisterDeviceToken;
+- (void)testGetDeviceTokens;
+- (void)testSendPushBroadcastWithArguments;
 @end
+

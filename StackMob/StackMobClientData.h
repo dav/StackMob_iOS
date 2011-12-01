@@ -11,7 +11,7 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-#import <CoreLocation/CoreLocation.h>
+
 #import "StackMobConfiguration.h"
 #import "JSONKit.h"
 
@@ -25,8 +25,6 @@
 #define APP_VERSION_NAME					@"av"	
 #define LIBRARY_VERSION_NAME				@"lv"
 #define NETWORK_AVAILABILITY				@"n"
-#define LONGITUDE							@"lo"
-#define LATITUDE							@"la"
 #define LIBRARY_VERSION_NUMBER				@"0.5"	
 
 #define IFPGA_NAMESTRING					@"iFPGA"
@@ -56,18 +54,11 @@
 #define IPHONE_SIMULATOR_IPHONE_NAMESTRING	@"iPhone Simulator"
 #define IPHONE_SIMULATOR_IPAD_NAMESTRING	@"iPad Simulator"
 
-@interface StackMobClientData : NSObject <CLLocationManagerDelegate> {
+@interface StackMobClientData : NSObject {
 	NSString *_clientDataString;
-	
-	BOOL _locationUpdatesStarted;
-	CLLocationManager *_locationManager;
-	CLLocationCoordinate2D _location;
-
 }
 
 @property(readwrite, retain) NSString *clientDataString;
-@property(readonly) CLLocationDegrees longitude;
-@property(readonly) CLLocationDegrees latitude;
 
 
 + (StackMobClientData*) sharedClientData;

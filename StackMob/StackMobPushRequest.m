@@ -16,15 +16,25 @@
 
 @implementation StackMobPushRequest
 
-+ (StackMobRequest*)request	{
-	StackMobRequest *r = [[[StackMobPushRequest alloc] init] autorelease];
++ (id)requestForMethod:(NSString*)method {
+    StackMobRequest *r = [[[StackMobPushRequest alloc] init] autorelease];
     r.httpMethod = [self stringFromHttpVerb:POST];
+    r.method = method;
     return r;
 }
 
-- (NSURL*)getURL {
-	NSString* stringURL = [session pushURL];
-	return [NSURL URLWithString: stringURL];
++ (id)requestForMethod:(NSString*)method withArguments:(NSDictionary*)arguments {
+    StackMobRequest *r = [[[StackMobPushRequest alloc] init] autorelease];
+    r.httpMethod = [self stringFromHttpVerb:POST];
+    r.method = method;
+    if(arguments != nil) {
+        [r setArguments: arguments];
+    }
+    return r;
+}
+
+- (NSString *)getBaseURL {
+    return [[session pushURL] stringByAppendingFormat:@"/%@", self.method];
 }
 
 @end
