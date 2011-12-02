@@ -13,6 +13,7 @@
 // limitations under the License.
 
 #import "StackMobAdditions.h"
+#import "NSString+URLEncoding.h"
 
 @implementation NSDictionary (StackMobAdditions)
 
@@ -35,7 +36,7 @@
         }
                    
 		argumentValue = [(NSString*)CFURLCreateStringByAddingPercentEscapes(NULL, (CFStringRef)preparedArgVal, NULL, CFSTR("?=&+"), CFStringConvertNSStringEncodingToEncoding(NSUTF8StringEncoding)) autorelease];
-		[encodedPieces addObject:[NSString stringWithFormat:@"%@=%@", argumentKey, argumentValue]];
+		[encodedPieces addObject:[NSString stringWithFormat:@"%@=%@", [argumentKey URLEncodedString], [argumentValue URLEncodedString]]];
 	}
 	
 	return [encodedPieces componentsJoinedByString:@"&"];
