@@ -43,13 +43,13 @@ static SMEnvironment environment;
     if (_sharedManager == nil) {
         _sharedManager = [[super allocWithZone:NULL] init];
         environment = SMEnvironmentProduction;
-        _sharedManager.session = [[StackMobSession sessionForApplication:apiKey
+        _sharedManager.session = [StackMobSession sessionForApplication:apiKey
                                                                   secret:apiSecret
                                                                  appName:appName
                                                                subDomain:subDomain
                                                                   domain:SMDefaultDomain
                                                           userObjectName:userObjectName
-                                                        apiVersionNumber:apiVersion] retain];
+                                                        apiVersionNumber:apiVersion];
         _sharedManager.requests = [NSMutableArray array];
         _sharedManager.callbacks = [NSMutableArray array];
     }

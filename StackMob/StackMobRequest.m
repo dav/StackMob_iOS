@@ -261,6 +261,7 @@
 																	  realm:nil
 
 														  signatureProvider:nil]; // use the default method, HMAC-SHA1
+  [consumer release];
     SMLog(@"httpMethod %@", [self httpMethod]);
     if([self.method isEqualToString:@"startsession"]){
         [mArguments setValue:[StackMobClientData sharedClientData].clientDataString forKey:@"cd"];
@@ -282,8 +283,7 @@
         
         NSError* error = nil;
         NSData * postData = [StackMobRequest JsonifyNSDictionary:mArguments withErrorOutput:&error];
-        NSString * postDataString = [[NSString alloc] initWithData:postData encoding:NSUTF8StringEncoding];
-        SMLog(@"POST Data: %@", postDataString);
+        SMLog(@"POST Data: %@", [[[NSString alloc] initWithData:postData encoding:NSUTF8StringEncoding] autorelease]);
         [request setHTTPBody:postData];	
         NSString *contentType = [NSString stringWithFormat:@"application/json"];
         [request addValue:contentType forHTTPHeaderField: @"Content-Type"]; 
@@ -292,10 +292,12 @@
     SMLog(@"StackMobRequest: sending asynchronous oauth request: %@", request);
     
 	[mConnectionData setLength:0];
-	self.result = nil;
-    self.connectionError = nil;
-	self.connection = [[[NSURLConnection alloc] initWithRequest:request delegate:self] retain]; // Why retaining this when already retained by synthesized method?
-    [request release];
+  self.result = nil;
+  self.connectionError = nil;
+  NSURLConnection* connection = [[NSURLConnection alloc] initWithRequest:request delegate:self];
+  self.connection = connection;
+  [connection release];
+  [request release];
 }
 
 - (void)cancel
@@ -399,6 +401,9 @@
 }
 
 - (id) sendSynchronousRequestProvidingError:(NSError**)error {
+    if (*error!=nil) {
+      return nil;
+    }
     SMLog(@"Sending Request: %@", self.method);
     SMLog(@"Request URL: %@", self.url);
     SMLog(@"Request HTTP Method: %@", self.httpMethod);
@@ -437,12 +442,15 @@
     _requestFinished = NO;
     self.connectionError = nil;
     self.delegate = nil;
-    self.connection = [[[NSURLConnection alloc] initWithRequest:request delegate:self] retain];
+    NSURLConnection* connection = [[NSURLConnection alloc] initWithRequest:request delegate:self];
+    self.connection = connection;
+    [connection release];
   
     NSDate *loopUntil = [NSDate dateWithTimeIntervalSinceNow:0.1];
     while (!_requestFinished && [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:loopUntil]) {
         loopUntil = [NSDate dateWithTimeIntervalSinceNow:0.1];
     }
+  [request release];
 
     return self.result;
 }

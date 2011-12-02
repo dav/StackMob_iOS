@@ -30,35 +30,29 @@
 
 - (NSArray *)parameters 
 {
-    NSString *encodedParameters;
-	BOOL shouldfree = NO;
+  NSString *encodedParameters;
     
-    if ([[self HTTPMethod] isEqualToString:@"GET"] || [[self HTTPMethod] isEqualToString:@"DELETE"])
-        encodedParameters = [[self URL] query];
-	else{
-        // POST, PUT
-		shouldfree = YES;
-        encodedParameters = [[NSString alloc] initWithData:[self HTTPBody] encoding:NSASCIIStringEncoding];
-    }
+  if ([[self HTTPMethod] isEqualToString:@"GET"] || [[self HTTPMethod] isEqualToString:@"DELETE"])
+    encodedParameters = [[self URL] query];
+	else {
+    // POST, PUT
+    encodedParameters = [[[NSString alloc] initWithData:[self HTTPBody] encoding:NSASCIIStringEncoding] autorelease];
+  }
     
-    if ((encodedParameters == nil) || ([encodedParameters isEqualToString:@""]))
-        return nil;
+  if ((encodedParameters == nil) || ([encodedParameters isEqualToString:@""]))
+    return nil;
     
-    NSArray *encodedParameterPairs = [encodedParameters componentsSeparatedByString:@"&"];
-    NSMutableArray *requestParameters = [[NSMutableArray alloc] initWithCapacity:16];
+  NSArray *encodedParameterPairs = [encodedParameters componentsSeparatedByString:@"&"];
+  NSMutableArray *requestParameters = [[NSMutableArray alloc] initWithCapacity:16];
     
-    for (NSString *encodedPair in encodedParameterPairs){
-        NSArray *encodedPairElements = [encodedPair componentsSeparatedByString:@"="];
-        OARequestParameter *parameter = [OARequestParameter requestParameterWithName:[[encodedPairElements objectAtIndex:0] stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding]
-																			   value:[[encodedPairElements objectAtIndex:1] stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
-        [requestParameters addObject:parameter];
-    }
-    
-	// Cleanup
-	if (shouldfree)
-		[encodedParameters release];
+  for (NSString *encodedPair in encodedParameterPairs){
+    NSArray *encodedPairElements = [encodedPair componentsSeparatedByString:@"="];
+    OARequestParameter *parameter = [OARequestParameter requestParameterWithName:[[encodedPairElements objectAtIndex:0] stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding]
+                                     																		   value:[[encodedPairElements objectAtIndex:1] stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
+    [requestParameters addObject:parameter];
+  }
 	
-    return [requestParameters autorelease];
+  return [requestParameters autorelease];
 }
 
 - (void)setParameters:(NSArray *)parameters 
