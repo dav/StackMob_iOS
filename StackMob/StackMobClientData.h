@@ -62,7 +62,9 @@
 
 
 + (StackMobClientData*) sharedClientData;
+#if TARGET_OS_IPHONE
 - (BOOL) isJailBroken;
 - (NSString*) isJailBrokenStr;
+#endif
 
 @end

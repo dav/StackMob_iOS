@@ -477,7 +477,7 @@ static SMEnvironment environment;
     if([self.requests containsObject:request]){
         NSInteger idx = [self.requests indexOfObject:request];
         id callback = [self.callbacks objectAtIndex:idx];
-        SMLog(@"status %d", request.httpResponse.statusCode);
+        SMLog(@"status %d", (int)request.httpResponse.statusCode);
         if(callback != [NSNull null]){
             StackMobCallback mCallback = (StackMobCallback)callback;
             BOOL wasSuccessful = request.httpResponse.statusCode < 300 && request.httpResponse.statusCode > 199;
