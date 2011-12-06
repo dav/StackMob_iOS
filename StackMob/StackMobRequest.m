@@ -13,7 +13,9 @@
 // limitations under the License.
 
 #import "StackMobRequest.h"
-#import "Reachability.h"
+#if TARGET_OS_IPHONE
+  #import "Reachability.h"
+#endif
 #import "OAConsumer.h"
 #import "OAMutableURLRequest.h"
 #import "StackMobAdditions.h"
@@ -319,7 +321,7 @@
 
 	[mConnectionData appendData:data];
 	
-    SMLog(@"StackMobRequest: Got data of length %u", [mConnectionData length]);
+    SMLog(@"StackMobRequest: Got data of length %u", (unsigned int)[mConnectionData length]);
 }
 
 - (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error
@@ -348,7 +350,7 @@
 	NSDictionary *result = nil;
     NSInteger statusCode = [self getStatusCode];
 
-    SMLog(@"RESPONSE CODE %d", statusCode);
+    SMLog(@"RESPONSE CODE %d", (int)statusCode);
     if ([mConnectionData length] > 0) {
         textResult = [[[NSString alloc] initWithData:mConnectionData encoding:NSUTF8StringEncoding] autorelease];
         SMLog(@"RESPONSE BODY %@", textResult);
@@ -393,7 +395,7 @@
     if (!self.delegate) SMLog(@"No delegate");
     
 	if (self.delegate && [self.delegate respondsToSelector:@selector(requestCompleted:)]){
-        SMLog(@"Calling delegate %d, self %d", [mDelegate retainCount], [self retainCount]);
+        SMLog(@"Calling delegate %d, self %d", (int)[mDelegate retainCount], (int)[self retainCount]);
         [self.delegate requestCompleted:self];
     } else {
         SMLog(@"Delegate does not respond to selector\ndelegate: %@", mDelegate);

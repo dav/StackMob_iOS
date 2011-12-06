@@ -13,9 +13,14 @@
 // limitations under the License.
 
 #import "StackMobClientData.h"
-#import <UIKit/UIKit.h>
-#import "Reachability.h"
+#if TARGET_OS_IPHONE
+  #import <UIKit/UIKit.h>
+  #import "Reachability.h"
+#endif
 #include <sys/sysctl.h>
+#if TARGET_OS_IPHONE == 0
+  #include <sys/socket.h>
+#endif
 #include <net/if.h>
 #include <net/if_dl.h>
 
@@ -31,11 +36,11 @@ NSString *jailBroken = @"NO";
 static StackMobClientData * _sharedInstance=nil;
 
 @interface StackMobClientData ()
-
+#if TARGET_OS_IPHONE
 - (void)startReachabilityUpdates;
-- (void)generateClientDataString;
 - (void)reachabilityChanged:(NSNotification *)note;
-
+#endif
+- (void)generateClientDataString;
 @end
 
 @implementation StackMobClientData
@@ -43,12 +48,13 @@ static StackMobClientData * _sharedInstance=nil;
 - (id)init
 {
 	if((self = [super init])) {
+#if TARGET_OS_IPHONE
 		// Device info.
 		UIDevice *device = [UIDevice currentDevice];
 		identifier = [[device uniqueIdentifier] retain];
 		model = [[device model] retain];
 		systemVersion = [[device systemVersion] retain];
-		
+#endif		
 						
 		// Locale info.
 		NSLocale *locale = [NSLocale currentLocale];
@@ -58,9 +64,10 @@ static StackMobClientData * _sharedInstance=nil;
 		// App info.
 		bundleVersion = [[[NSBundle mainBundle] objectForInfoDictionaryKey:(NSString *)kCFBundleVersionKey] retain];
 		
+#if TARGET_OS_IPHONE		
 		jailBroken = [[self isJailBrokenStr] retain];
-		
 		[self startReachabilityUpdates];
+#endif
 		[self generateClientDataString];
 	}
 	
@@ -86,6 +93,7 @@ static StackMobClientData * _sharedInstance=nil;
     return platform;
 }
 
+#if TARGET_OS_IPHONE
 - (NSString *) platformString{
 	NSString *platform = [self platform];
 	
@@ -119,6 +127,11 @@ static StackMobClientData * _sharedInstance=nil;
 	if ([platform isEqualToString:@"iFPGA"])		return IFPGA_NAMESTRING;
 	return IPOD_FAMILY_UNKNOWN_DEVICE;
 }
+#else
+- (NSString *) platformString {
+  return @"Mac OS X";
+}
+#endif
 
 - (void)dealloc {
 	[_sharedInstance release];
@@ -148,6 +161,7 @@ static StackMobClientData * _sharedInstance=nil;
 											 nil];
 
 	SMLog(@"data %@", clientDataObject);
+#if TARGET_OS_IPHONE  
 	NetworkStatus newStatus = [[Reachability reachabilityForInternetConnection] currentReachabilityStatus];
 	switch (newStatus) {
 		case ReachableViaWWAN:
@@ -157,11 +171,13 @@ static StackMobClientData * _sharedInstance=nil;
 			[clientDataObject setValue:@"w" forKey:NETWORK_AVAILABILITY]; // reachable via wifi
 			break;
 	}
-	
+#endif	
+  
 	self.clientDataString = [clientDataObject JSONString];
     [clientDataObject release];
 }
 
+#if TARGET_OS_IPHONE  
 #pragma mark - Reachability
 
 - (void)startReachabilityUpdates {
@@ -220,6 +236,6 @@ static const char* jailbreak_apps[] =
 	
 	return @"0";
 }
-
+#endif
 
 @end
