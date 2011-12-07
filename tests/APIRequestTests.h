@@ -30,5 +30,9 @@
 - (void) testURLGeneration;
 - (void) testGet;           
 - (void) testPost; 
+- (void) testBulkPost;
+- (void) testRelatedPost;
+- (void) testRelatedPut;
+- (void) testRelatedDelete;
 - (void) testAPIList; 
 @end

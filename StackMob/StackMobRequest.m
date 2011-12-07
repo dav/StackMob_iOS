@@ -27,6 +27,7 @@
 
 @interface StackMobRequest (Private)
 + (NSString*)stringFromHttpVerb:(SMHttpVerb)httpVerb;
+- (void)setBodyForRequest:(OAMutableURLRequest *)request;
 @end
 
 @implementation StackMobRequest;
@@ -280,6 +281,7 @@
     }
     
 	[request prepare];
+    [self setBodyForRequest:request];
 
 		
     SMLog(@"StackMobRequest: sending asynchronous oauth request: %@", request);
@@ -291,6 +293,22 @@
   self.connection = connection;
   [connection release];
   [request release];
+}
+
+- (void)setBodyForRequest:(OAMutableURLRequest *)request {
+    if (!([[self httpMethod] isEqualToString: @"GET"] || [[self httpMethod] isEqualToString:@"DELETE"])) {    
+        NSData * postData = [self postBody];
+        NSString * postDataString = [[NSString alloc] initWithData:postData encoding:NSUTF8StringEncoding];
+        SMLog(@"POST Data: %@", postDataString);
+        [request setHTTPBody:postData];	
+        NSString *contentType = [NSString stringWithFormat:@"application/json"];
+        [request addValue:contentType forHTTPHeaderField: @"Content-Type"]; 
+	}
+}
+
+- (NSData *)postBody {
+    NSError* error = nil;
+    return [StackMobRequest JsonifyNSDictionary:mArguments withErrorOutput:&error];
 }
 
 - (void)cancel

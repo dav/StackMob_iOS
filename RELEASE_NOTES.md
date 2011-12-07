@@ -1,5 +1,13 @@
 # Release Notes
 
+## 0.4.0
+* Support for Geo-Queries
+* Relations API Extensions Support
+* Deprecated put:withArguments:andCallback: in favor of new put:withId:andArguments:andCallback:
+* Support for bulk insertion
+* fixed encoding of double values in JSONKit
+* improved URL encoding
+
 ## 0.3.2
 * Improved Push Support including several Bug Fixes
 

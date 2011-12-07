@@ -14,10 +14,10 @@
 
 #import "StackMobTestUtils.h"
 
-NSString * const kAPIKey = @"TEST_APP_PUB_KEY";
-NSString * const kAPISecret = @"TEST_APP_PUB_KEY";
-NSString * const kSubDomain = @"TEST_APP_SUBDOMAIN";
-NSString * const kAppName = @"TEST_APP_NAME";
+NSString * const kAPIKey = @"API_KEY";
+NSString * const kAPISecret = @"API_SECRET";
+NSString * const kSubDomain = @"SUB_DOMAIN";
+NSString * const kAppName = @"APP_NAME";
 NSInteger  const kVersion = 0;
 
 @implementation StackMobTestUtils
@@ -31,7 +31,7 @@ NSInteger  const kVersion = 0;
 	} while(![request finished]);
 }
 
-+ (NSDictionary *)runDefaultRunLoopAndGetDictionaryResultFromRequest:(StackMobRequest *)request
++ (id)runDefaultRunLoopAndGetDictionaryResultFromRequest:(StackMobRequest *)request
 {
     [self runRunLoop:[NSRunLoop currentRunLoop] untilRequestFinished:request];
     return request.result;

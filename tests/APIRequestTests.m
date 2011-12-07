@@ -83,6 +83,48 @@ StackMobSession *mySession = nil;
 	[userArgs release];
 }
 
+
+- (void)testBulkPost {
+    NSMutableDictionary* userArgs1 = [[NSMutableDictionary alloc] initWithObjectsAndKeys:
+                                     @"Ty", @"firstname",
+                                     @"Amell", @"lastname",
+                                     @"ty@stackmob.com", @"email",
+                                     nil];
+    NSMutableDictionary* userArgs2 = [[NSMutableDictionary alloc] initWithObjectsAndKeys:
+                                      @"Jordan", @"firstname",
+                                      @"West", @"lastname",
+                                      @"jordan@stackmob.com", @"email",
+                                      nil];
+
+    StackMobRequest *r = [[StackMob stackmob] post:@"user" withBulkArguments:[NSArray arrayWithObjects:userArgs1, userArgs2, nil] andCallback:^(BOOL success, id result) {}];
+    
+    [self assertNotNSError:[StackMobTestUtils runDefaultRunLoopAndGetDictionaryResultFromRequest:r]];                          
+}
+
+- (void)testRelatedPost {
+    NSDictionary *argsDict = [NSDictionary dictionaryWithObjectsAndKeys:@"abc", @"name", nil];
+    NSArray *argsArray = [NSArray arrayWithObject:argsDict];
+    StackMobRequest *r1 = [[StackMob stackmob] post:@"primary_schema" withId:@"primary_key1" andField:@"related_many" andArguments:argsDict andCallback:^(BOOL success, id result) {}];
+    StackMobRequest *r2 = [[StackMob stackmob] post:@"primary_schema" withId:@"primary_key2" andField:@"related_many" andBulkArguments:argsArray andCallback:^(BOOL success, id result) {}];
+    
+    
+    [self assertNotNSError:[StackMobTestUtils runDefaultRunLoopAndGetDictionaryResultFromRequest:r1]];
+    [self assertNotNSError:[StackMobTestUtils runDefaultRunLoopAndGetDictionaryResultFromRequest:r2]];
+}
+
+- (void)testRelatedPut {
+    NSArray *putArry = [NSArray arrayWithObjects:@"one", @"two", nil];
+    StackMobRequest *r = [[StackMob stackmob] put:@"primary_schema" withId:@"primary_key1" andField:@"array" andArguments:putArry andCallback:^(BOOL success, id result) {}];
+    
+    [self assertNotNSError:[StackMobTestUtils runDefaultRunLoopAndGetDictionaryResultFromRequest:r]];
+}
+
+- (void)testRelatedDelete {
+    StackMobRequest *r = [[StackMob stackmob] removeIds:[NSArray arrayWithObjects:@"one", @"two", nil] forSchema:@"primary_schema" andId:@"primary_key2" andField:@"related_many" withCallback:^(BOOL success, id result) {}];
+    
+    [self assertNotNSError:[StackMobTestUtils runDefaultRunLoopAndGetDictionaryResultFromRequest:r]];
+}
+
 - (void) testDoubleFieldSet {
     NSMutableDictionary * dict = [NSMutableDictionary dictionary];
     NSString * key = @"abc";

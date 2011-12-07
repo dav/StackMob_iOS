@@ -8,6 +8,8 @@
 
 #import <Foundation/Foundation.h>
 
+#import "SMGeoPoint.h"
+
 typedef enum {
     SMOrderAscending = 0,
     SMOrderDescending = 1
@@ -26,6 +28,12 @@ typedef enum {
 - (void)field:(NSString *)f mustBeGreaterThanValue:(id)v;
 - (void)field:(NSString *)f mustBeGreaterThanOrEqualToValue:(id)v;
 - (void)field:(NSString *)f mustBeOneOf:(NSArray *)arr;
+- (void)field:(NSString *)f centeredAt:(SMGeoPoint *)point mustBeWithinMi:(double)radiusInMi;
+- (void)field:(NSString *)f centeredAt:(SMGeoPoint *)point mustBeWithinKm:(double)radiusInKm;
+- (void)field:(NSString *)f mustBeWithinBoxWithLowerLeft:(SMGeoPoint *)lowerLeft andUpperRight:(SMGeoPoint *)upperRight;
+- (void)field:(NSString *)f mustBeNear:(SMGeoPoint *)point;
+- (void)field:(NSString *)f mustBeNear:(SMGeoPoint *)point withinMi:(double)radiusInMi;
+- (void)field:(NSString *)f mustBeNear:(SMGeoPoint *)point withinKm:(double)radiusInKm;
 - (void)setExpandDepth:(NSUInteger)depth;
 - (void)setRangeStart:(NSUInteger)start andEnd:(NSUInteger)end;
 - (void)orderByField:(NSString *)f withDirection:(SMOrderDirection)dir;

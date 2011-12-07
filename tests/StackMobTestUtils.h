@@ -25,6 +25,6 @@ extern NSInteger  const kVersion;
 
 @interface StackMobTestUtils : NSObject
 + (void)runRunLoop:(NSRunLoop *)runLoop untilRequestFinished:(StackMobRequest *)request;
-+ (NSDictionary *)runDefaultRunLoopAndGetDictionaryResultFromRequest:(StackMobRequest *)request;
++ (id)runDefaultRunLoopAndGetDictionaryResultFromRequest:(StackMobRequest *)request;
 
 @end

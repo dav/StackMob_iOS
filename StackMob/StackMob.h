@@ -240,11 +240,57 @@ typedef void (^StackMobCallback)(BOOL success, id result);
 - (StackMobRequest *)post:(NSString *)path forUser:(NSString *)user withArguments:(NSDictionary *)arguments andCallback:(StackMobCallback)callback;
 
 /*
+ * Bulk Insertion
+ * @param bulkArguments - an array of NSDictionary instances to insert
+ */
+- (StackMobRequest *)post:(NSString *)path
+        withBulkArguments:(NSArray *)arguments
+              andCallback:(StackMobCallback)callback;
+
+/*
+ * POST one related object with Relations API Extensions 
+ */
+- (StackMobRequest *)post:(NSString *)path 
+                   withId:(NSString *)primaryId 
+                 andField:(NSString *)relField 
+             andArguments:(NSDictionary *)args
+              andCallback:(StackMobCallback)callback;
+
+/*
+ * POST many related objects with Relations API Extensions
+ */
+- (StackMobRequest *)post:(NSString *)path
+                   withId:(NSString *)primaryId
+                 andField:(NSString *)relField
+             andBulkArguments:(NSArray *)arguments
+              andCallback:(StackMobCallback)callback;
+
+
+/*
+ * PUT the arguments to the given object path
+ * @param path the name of the object in your Stackmob app
+ * @param objId the id of the object to update
+ * @param arguments a Dictionary of attributes whose  keys correspond to field names of the object in your Stackmob app
+ */
+- (StackMobRequest *)put:(NSString *)path withId:(NSString *)objectId andArguments:(NSDictionary *)arguments andCallback:(StackMobCallback)callback;
+
+
+/*
  * PUT the arguments to the given object path
  * @path the name of the object in your Stackmob app
  * @param arguments a Dictionary of attributes whose  keys correspond to field names of the object in your Stackmob app
  */
-- (StackMobRequest *)put:(NSString *)path withArguments:(NSDictionary *)arguments andCallback:(StackMobCallback)callback;
+- (StackMobRequest *)put:(NSString *)path withArguments:(NSDictionary *)arguments andCallback:(StackMobCallback)callback __attribute__((deprecated));
+
+/*
+ * Atomically update an array or has many relationship
+ * with relations API extensions
+ */
+- (StackMobRequest *)put:(NSString *)path 
+                  withId:(NSString *)primaryId 
+                andField:(NSString *)relField 
+            andArguments:(NSArray *)args 
+             andCallback:(StackMobCallback)callback;
 
 /* 
  * DELETE the object at the given path
@@ -253,6 +299,23 @@ typedef void (^StackMobCallback)(BOOL success, id result);
  *   the value of which is the item to delete
  */
 - (StackMobRequest *)destroy:(NSString *)path withArguments:(NSDictionary *)arguments andCallback:(StackMobCallback)callback;
+
+/*
+ * automically remove elements from an array or has many relationship
+ */
+- (StackMobRequest *)removeIds:(NSArray *)removeIds 
+                     forSchema:(NSString *)schema 
+                         andId:(NSString *)primaryId 
+                      andField:(NSString *)relField 
+                  withCallback:(StackMobCallback)callback;
+/*
+ * automically remove an element from an array or has many relationship or unset the value of a has one relationship
+ */
+- (StackMobRequest *)removeId:(NSString *)removeId 
+                     forSchema:(NSString *)schema 
+                         andId:(NSString *)primaryId 
+                      andField:(NSString *)relField 
+                  withCallback:(StackMobCallback)callback;
 
 
 /**************** Heroku Methods *****************/
