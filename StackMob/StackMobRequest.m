@@ -281,15 +281,6 @@
     
 	[request prepare];
 
-	if (!([[self httpMethod] isEqualToString: @"GET"] || [[self httpMethod] isEqualToString:@"DELETE"])) {
-        
-        NSError* error = nil;
-        NSData * postData = [StackMobRequest JsonifyNSDictionary:mArguments withErrorOutput:&error];
-        SMLog(@"POST Data: %@", [[[NSString alloc] initWithData:postData encoding:NSUTF8StringEncoding] autorelease]);
-        [request setHTTPBody:postData];	
-        NSString *contentType = [NSString stringWithFormat:@"application/json"];
-        [request addValue:contentType forHTTPHeaderField: @"Content-Type"]; 
-	}
 		
     SMLog(@"StackMobRequest: sending asynchronous oauth request: %@", request);
     
