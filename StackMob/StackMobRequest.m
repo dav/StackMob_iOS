@@ -300,6 +300,7 @@
         NSData * postData = [self postBody];
         NSString * postDataString = [[NSString alloc] initWithData:postData encoding:NSUTF8StringEncoding];
         SMLog(@"POST Data: %@", postDataString);
+        [postDataString release];
         [request setHTTPBody:postData];	
         NSString *contentType = [NSString stringWithFormat:@"application/json"];
         [request addValue:contentType forHTTPHeaderField: @"Content-Type"]; 
