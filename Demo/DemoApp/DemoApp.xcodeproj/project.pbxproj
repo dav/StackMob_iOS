@@ -46,6 +46,8 @@
 		03DD8489142AE55E000F2318 /* StackMobSession.m in Sources */ = {isa = PBXBuildFile; fileRef = 03DD846D142AE55E000F2318 /* StackMobSession.m */; };
 		03DD848A142AE55E000F2318 /* NSData+Base64.m in Sources */ = {isa = PBXBuildFile; fileRef = 03DD8470142AE55E000F2318 /* NSData+Base64.m */; };
 		03DD848B142AE55E000F2318 /* NSData+JSON.m in Sources */ = {isa = PBXBuildFile; fileRef = 03DD8472142AE55E000F2318 /* NSData+JSON.m */; };
+		C63FB3751497FC8A007961C1 /* SMFile.m in Sources */ = {isa = PBXBuildFile; fileRef = C63FB3741497FC8A007961C1 /* SMFile.m */; };
+		C63FB3791497FCAA007961C1 /* StackMobBulkRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = C63FB3781497FCAA007961C1 /* StackMobBulkRequest.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -121,6 +123,10 @@
 		03DD8470142AE55E000F2318 /* NSData+Base64.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSData+Base64.m"; sourceTree = "<group>"; };
 		03DD8471142AE55E000F2318 /* NSData+JSON.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSData+JSON.h"; sourceTree = "<group>"; };
 		03DD8472142AE55E000F2318 /* NSData+JSON.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSData+JSON.m"; sourceTree = "<group>"; };
+		C63FB3731497FC8A007961C1 /* SMFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SMFile.h; path = ../SMFile.h; sourceTree = "<group>"; };
+		C63FB3741497FC8A007961C1 /* SMFile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SMFile.m; path = ../SMFile.m; sourceTree = "<group>"; };
+		C63FB3771497FCAA007961C1 /* StackMobBulkRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StackMobBulkRequest.h; sourceTree = "<group>"; };
+		C63FB3781497FCAA007961C1 /* StackMobBulkRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = StackMobBulkRequest.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -215,6 +221,8 @@
 				03DD8467142AE55E000F2318 /* StackMobHerokuRequest.m */,
 				03DD8468142AE55E000F2318 /* StackMobPushRequest.h */,
 				03DD8469142AE55E000F2318 /* StackMobPushRequest.m */,
+				C63FB3771497FCAA007961C1 /* StackMobBulkRequest.h */,
+				C63FB3781497FCAA007961C1 /* StackMobBulkRequest.m */,
 				03DD846A142AE55E000F2318 /* StackMobRequest.h */,
 				03DD846B142AE55E000F2318 /* StackMobRequest.m */,
 				03DD846C142AE55E000F2318 /* StackMobSession.h */,
@@ -308,6 +316,8 @@
 		03DD846E142AE55E000F2318 /* Utils */ = {
 			isa = PBXGroup;
 			children = (
+				C63FB3731497FC8A007961C1 /* SMFile.h */,
+				C63FB3741497FC8A007961C1 /* SMFile.m */,
 				03DD846F142AE55E000F2318 /* NSData+Base64.h */,
 				03DD8470142AE55E000F2318 /* NSData+Base64.m */,
 				03DD8471142AE55E000F2318 /* NSData+JSON.h */,
@@ -409,6 +419,8 @@
 				03DD8489142AE55E000F2318 /* StackMobSession.m in Sources */,
 				03DD848A142AE55E000F2318 /* NSData+Base64.m in Sources */,
 				03DD848B142AE55E000F2318 /* NSData+JSON.m in Sources */,
+				C63FB3751497FC8A007961C1 /* SMFile.m in Sources */,
+				C63FB3791497FCAA007961C1 /* StackMobBulkRequest.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

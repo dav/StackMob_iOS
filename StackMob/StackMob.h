@@ -37,6 +37,7 @@ typedef void (^StackMobCallback)(BOOL success, id result);
 @property (nonatomic, retain) StackMobSession *session;
 @property (nonatomic, retain) NSMutableArray *callbacks;
 @property (nonatomic, retain) NSMutableArray *requests;
+@property (nonatomic, retain) NSString *authCookie;
 
 
 /*

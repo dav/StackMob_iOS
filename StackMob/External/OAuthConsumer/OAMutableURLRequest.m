@@ -193,7 +193,7 @@ signatureProvider:(id<OASignatureProviding, NSObject>)aProvider
     NSMakeCollectable(theUUID);
     nonce = (NSString *)string;
     [nonce retain];
-    CFRelease(theUUID);
+    CFRelease(theUUID); // Ignore warning for now
 }
 
 - (NSString *)_signatureBaseString 

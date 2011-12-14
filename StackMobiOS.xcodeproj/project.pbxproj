@@ -104,6 +104,12 @@
 		9369486714722C8000575176 /* StackMobTestUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 93694860147228B400575176 /* StackMobTestUtils.h */; };
 		AA747D9F0F9514B9006C5449 /* StackMobiOS_Prefix.pch in Headers */ = {isa = PBXBuildFile; fileRef = AA747D9E0F9514B9006C5449 /* StackMobiOS_Prefix.pch */; };
 		AACBBE4A0F95108600F1A2B1 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AACBBE490F95108600F1A2B1 /* Foundation.framework */; };
+		C63FB3511497EA4E007961C1 /* SMFile.h in Headers */ = {isa = PBXBuildFile; fileRef = C63FB34F1497EA4E007961C1 /* SMFile.h */; };
+		C63FB3521497EA4E007961C1 /* SMFile.m in Sources */ = {isa = PBXBuildFile; fileRef = C63FB3501497EA4E007961C1 /* SMFile.m */; };
+		C63FB3561497EDF4007961C1 /* SMFileTest.h in Headers */ = {isa = PBXBuildFile; fileRef = C63FB3541497EDF4007961C1 /* SMFileTest.h */; };
+		C63FB3581497EF38007961C1 /* SMFileTest.m in Sources */ = {isa = PBXBuildFile; fileRef = C63FB3551497EDF4007961C1 /* SMFileTest.m */; };
+		C63FB3591497F22A007961C1 /* SMFile.m in Sources */ = {isa = PBXBuildFile; fileRef = C63FB3501497EA4E007961C1 /* SMFile.m */; };
+		C6A831E314981267001FB62F /* StackMobLoginTest.m in Sources */ = {isa = PBXBuildFile; fileRef = C6A831E214981267001FB62F /* StackMobLoginTest.m */; };
 		E33D87DB144616CF00FBEB96 /* StackMobVersion.h in Headers */ = {isa = PBXBuildFile; fileRef = E33D87DA144616CF00FBEB96 /* StackMobVersion.h */; };
 		E3897ECA14885AC000E45FB7 /* StackMobBulkRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = E3897EC814885AC000E45FB7 /* StackMobBulkRequest.h */; };
 		E3897ECB14885AC000E45FB7 /* StackMobBulkRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = E3897EC914885AC000E45FB7 /* StackMobBulkRequest.m */; };
@@ -186,6 +192,12 @@
 		93694861147228B400575176 /* StackMobTestUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = StackMobTestUtils.m; path = tests/StackMobTestUtils.m; sourceTree = "<group>"; };
 		AA747D9E0F9514B9006C5449 /* StackMobiOS_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StackMobiOS_Prefix.pch; sourceTree = SOURCE_ROOT; };
 		AACBBE490F95108600F1A2B1 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		C63FB34F1497EA4E007961C1 /* SMFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SMFile.h; sourceTree = "<group>"; };
+		C63FB3501497EA4E007961C1 /* SMFile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SMFile.m; sourceTree = "<group>"; };
+		C63FB3541497EDF4007961C1 /* SMFileTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SMFileTest.h; path = tests/SMFileTest.h; sourceTree = "<group>"; };
+		C63FB3551497EDF4007961C1 /* SMFileTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SMFileTest.m; path = tests/SMFileTest.m; sourceTree = "<group>"; };
+		C6A831E114981267001FB62F /* StackMobLoginTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StackMobLoginTest.h; path = tests/StackMobLoginTest.h; sourceTree = "<group>"; };
+		C6A831E214981267001FB62F /* StackMobLoginTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = StackMobLoginTest.m; path = tests/StackMobLoginTest.m; sourceTree = "<group>"; };
 		D2AAC07E0554694100DB518D /* libStackMobiOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libStackMobiOS.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		E33D87DA144616CF00FBEB96 /* StackMobVersion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StackMobVersion.h; sourceTree = "<group>"; };
 		E3897EC814885AC000E45FB7 /* StackMobBulkRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StackMobBulkRequest.h; sourceTree = "<group>"; };
@@ -259,6 +271,8 @@
 				E3897EC914885AC000E45FB7 /* StackMobBulkRequest.m */,
 				E3C752371486FBA3007CFEF1 /* SMGeoPoint.h */,
 				E3C752381486FBA3007CFEF1 /* SMGeoPoint.m */,
+				C63FB34F1497EA4E007961C1 /* SMFile.h */,
+				C63FB3501497EA4E007961C1 /* SMFile.m */,
 			);
 			path = StackMob;
 			sourceTree = "<group>";
@@ -391,6 +405,10 @@
 		82CE42D41288E4D200A73E9C /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				C6A831E114981267001FB62F /* StackMobLoginTest.h */,
+				C6A831E214981267001FB62F /* StackMobLoginTest.m */,
+				C63FB3541497EDF4007961C1 /* SMFileTest.h */,
+				C63FB3551497EDF4007961C1 /* SMFileTest.m */,
 				9369485E147228B400575176 /* StackMobPushTests.h */,
 				9369485F147228B400575176 /* StackMobPushTests.m */,
 				93694860147228B400575176 /* StackMobTestUtils.h */,
@@ -446,6 +464,8 @@
 				9369486714722C8000575176 /* StackMobTestUtils.h in Headers */,
 				E3897ECA14885AC000E45FB7 /* StackMobBulkRequest.h in Headers */,
 				E3C752391486FBA3007CFEF1 /* SMGeoPoint.h in Headers */,
+				C63FB3511497EA4E007961C1 /* SMFile.h in Headers */,
+				C63FB3561497EDF4007961C1 /* SMFileTest.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -588,6 +608,9 @@
 				9369486514722C5C00575176 /* StackMobTestCommon.m in Sources */,
 				E3897ECC14885AC000E45FB7 /* StackMobBulkRequest.m in Sources */,
 				E3C7523E14871A19007CFEF1 /* StackMobQueryTests.m in Sources */,
+				C63FB3581497EF38007961C1 /* SMFileTest.m in Sources */,
+				C63FB3591497F22A007961C1 /* SMFile.m in Sources */,
+				C6A831E314981267001FB62F /* StackMobLoginTest.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -622,6 +645,7 @@
 				E3D728D81448BE5700804149 /* StackMobQuery.m in Sources */,
 				E3897ECB14885AC000E45FB7 /* StackMobBulkRequest.m in Sources */,
 				E3C7523A1486FBA3007CFEF1 /* SMGeoPoint.m in Sources */,
+				C63FB3521497EA4E007961C1 /* SMFile.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

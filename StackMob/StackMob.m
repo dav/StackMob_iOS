@@ -36,6 +36,7 @@
 @synthesize requests;
 @synthesize callbacks;
 @synthesize session;
+@synthesize authCookie;
 
 static StackMob *_sharedManager = nil;
 static SMEnvironment environment;
@@ -45,13 +46,13 @@ static SMEnvironment environment;
     if (_sharedManager == nil) {
         _sharedManager = [[super allocWithZone:NULL] init];
         environment = SMEnvironmentProduction;
-        _sharedManager.session = [[StackMobSession sessionForApplication:apiKey
+        _sharedManager.session = [StackMobSession sessionForApplication:apiKey
                                                                   secret:apiSecret
                                                                  appName:appName
                                                                subDomain:subDomain
                                                                   domain:SMDefaultDomain
                                                           userObjectName:userObjectName
-                                                        apiVersionNumber:apiVersion] retain];
+                                                        apiVersionNumber:apiVersion];
         _sharedManager.requests = [NSMutableArray array];
         _sharedManager.callbacks = [NSMutableArray array];
     }
@@ -129,6 +130,7 @@ static SMEnvironment environment;
                                                    withArguments:arguments
                                                     withHttpVerb:GET]; 
     request.isSecure = YES;
+    
     [self queueRequest:request andCallback:callback];
     
     return request;
@@ -140,6 +142,7 @@ static SMEnvironment environment;
                                                    withArguments:[NSDictionary dictionary]
                                                     withHttpVerb:GET]; 
     request.isSecure = YES;
+    self.authCookie = nil;
     [self queueRequest:request andCallback:callback];
     
     return request;
@@ -556,6 +559,15 @@ static SMEnvironment environment;
 
 #pragma mark - StackMobRequestDelegate
 
+- (void) setAuthCookieIfFound:(StackMobRequest *)request
+{
+    NSHTTPURLResponse *response = request.httpResponse;
+    NSDictionary *fields = [response allHeaderFields];
+    NSString *cookie = [fields valueForKey:@"Set-Cookie"];
+    if(cookie)
+        self.authCookie = cookie;
+}
+
 - (void)requestCompleted:(StackMobRequest*)request {
     if([self.requests containsObject:request]){
         NSInteger idx = [self.requests indexOfObject:request];
@@ -564,6 +576,9 @@ static SMEnvironment environment;
         if(callback != [NSNull null]){
             StackMobCallback mCallback = (StackMobCallback)callback;
             BOOL wasSuccessful = request.httpResponse.statusCode < 300 && request.httpResponse.statusCode > 199;
+            
+            // hack for release
+            [self setAuthCookieIfFound:request];
             mCallback(wasSuccessful, [request result]);
             Block_release(mCallback);
         }else{
