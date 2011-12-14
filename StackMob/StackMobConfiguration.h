@@ -21,18 +21,10 @@
 #endif
 
 
-#define STACKMOB_PUBLIC_KEY         @"201543b9-7b81-4934-a353-c22d979c891a"
-#define STACKMOB_PRIVATE_KEY        @"7a099db4-e09a-4e71-8348-3fea8ef5164f"
-#define STACKMOB_APP_NAME           @"DemoApp"
-#define STACKMOB_APP_SUBDOMAIN      @"stackmob"
+#define STACKMOB_PUBLIC_KEY         @"YOUR_PUBLIC_KEY"
+#define STACKMOB_PRIVATE_KEY        @"YOUR_PRIVATE_KEY"
+#define STACKMOB_APP_NAME           @"YOUR_APP_NAME"
+#define STACKMOB_APP_SUBDOMAIN      @"YOUR_SUBDOMAIN"
 #define STACKMOB_APP_DOMAIN         @"stackmob.com"
 #define STACKMOB_USER_OBJECT_NAME   @"user"
 #define STACKMOB_API_VERSION        0
-
-/*
-NSString * const kAPIKey = @"201543b9-7b81-4934-a353-c22d979c891a";
-NSString * const kAPISecret = @"7a099db4-e09a-4e71-8348-3fea8ef5164f";
-NSString * const kSubDomain = @"stackmob";
-NSString * const kAppName = @"DemoApp";
-#define STACKMOB_USER_OBJECT_NAME   @"user"
-NSInteger  const kVersion = 0;*/
