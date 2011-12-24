@@ -19,6 +19,7 @@
 #import "StackMobAdditions.h"
 #import "StackMobClientData.h"
 #import "StackMobHerokuRequest.h"
+#import "StackMobBulkRequest.h"
 
 @interface StackMob (Private)
 - (void)queueRequest:(StackMobRequest *)request andCallback:(StackMobCallback)callback;
@@ -394,11 +395,46 @@ static SMEnvironment environment;
     return request;
 }
 
+- (StackMobRequest *)post:(NSString *)path withBulkArguments:(NSArray *)arguments andCallback:(StackMobCallback)callback {
+    StackMobBulkRequest *request = [StackMobBulkRequest requestForMethod:path withArguments:arguments];
+    [self queueRequest:request andCallback:callback];
+    
+    return request;
+}
+
+- (StackMobRequest *)post:(NSString *)path withId:(NSString *)primaryId andField:(NSString *)relField andArguments:(NSDictionary *)args andCallback:(StackMobCallback)callback {
+    NSString *fullPath = [NSString stringWithFormat:@"%@/%@/%@", path, primaryId, relField];
+    return [self post:fullPath withArguments:args andCallback:callback];
+}
+
+- (StackMobRequest *)post:(NSString *)path withId:(NSString *)primaryId andField:(NSString *)relField andBulkArguments:(NSArray *)arguments andCallback:(StackMobCallback)callback {
+    NSString *fullPath = [NSString stringWithFormat:@"%@/%@/%@", path, primaryId, relField];
+    return [self post:fullPath withBulkArguments:arguments andCallback:callback];
+}
+
+- (StackMobRequest *)put:(NSString *)path withId:(NSString *)objectId andArguments:(NSDictionary *)arguments andCallback:(StackMobCallback)callback {
+    NSString *fullPath = [NSString stringWithFormat:@"%@/%@", path, objectId];
+
+    StackMobRequest *request = [StackMobRequest requestForMethod:fullPath withArguments:arguments withHttpVerb:PUT];
+    [self queueRequest:request andCallback:callback];
+    return request;
+}
+
 - (StackMobRequest *)put:(NSString *)path withArguments:(NSDictionary *)arguments andCallback:(StackMobCallback)callback{
     StackMobRequest *request = [StackMobRequest requestForMethod:path
                                                    withArguments:arguments
                                                     withHttpVerb:PUT];
     [self queueRequest:request andCallback:callback];
+    return request;
+}
+
+- (StackMobRequest *)put:(NSString *)path withId:(id)primaryId andField:(NSString *)relField andArguments:(NSArray *)args andCallback:(StackMobCallback)callback {
+    NSString *fullPath = [NSString stringWithFormat:@"%@/%@/%@", path, primaryId, relField];
+    StackMobBulkRequest *request = [StackMobBulkRequest requestForMethod:fullPath withArguments:args];
+    request.httpMethod = [StackMobRequest stringFromHttpVerb:PUT];
+
+    [self queueRequest:request andCallback:callback];
+    
     return request;
 }
 
@@ -408,6 +444,15 @@ static SMEnvironment environment;
                                                     withHttpVerb:DELETE];
     [self queueRequest:request andCallback:callback];
     return request;
+}
+
+- (StackMobRequest *)removeIds:(NSArray *)removeIds forSchema:(NSString *)schema andId:(NSString *)primaryId andField:(NSString *)relField withCallback:(StackMobCallback)callback {
+    NSString *fullPath = [NSString stringWithFormat:@"%@/%@/%@/%@", schema, primaryId, relField, [removeIds componentsJoinedByString:@","]];
+    return [self destroy:fullPath withArguments:[NSDictionary dictionary] andCallback:callback];
+}
+
+- (StackMobRequest *)removeId:(NSString *)removeId forSchema:(NSString *)schema andId:(NSString *)primaryId andField:(NSString *)relField withCallback:(StackMobCallback)callback {
+    return [self removeId:[NSArray arrayWithObject:removeId] forSchema:schema andId:primaryId andField:relField withCallback:callback];
 }
 
 # pragma mark - Private methods

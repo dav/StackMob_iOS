@@ -8,6 +8,14 @@
 
 #import "StackMobQuery.h"
 
+const double earthRadianInMi = 3956.6;
+const double earthRadiamInKm = 6367.5;
+
+@interface StackMobQuery (Private)
+- (NSString *)keyForField:(NSString *)f andOperator:(NSString *)op;
+- (void)setGeoParam:(SMGeoPoint *)pt withRadius:(double)r andDiv:(double)d forField:(NSString *)f andOperator:(NSString *)o;
+@end
+
 @implementation StackMobQuery
 
 @synthesize params = _params;
@@ -32,23 +40,50 @@
 }
 
 - (void)field:(NSString *)f mustBeLessThanValue:(id)v {
-    [self.params setValue:v forKey:[NSString stringWithFormat:@"%@[lt]", f]];
+    [self.params setValue:v forKey:[self keyForField:f andOperator:@"lt"]];  
 }
 
 - (void)field:(NSString *)f mustBeLessThanOrEqualToValue:(id)v {
-    [self.params setValue:v forKey:[NSString stringWithFormat:@"%@[lte]", f]];
+    [self.params setValue:v forKey:[self keyForField:f andOperator:@"lte"]]; 
 }
 
 - (void)field:(NSString *)f mustBeGreaterThanValue:(id)v {
-    [self.params setValue:v forKey:[NSString stringWithFormat:@"%@[gt]", f]];
+    [self.params setValue:v forKey:[self keyForField:f andOperator:@"gt"]];
 }
 
 - (void)field:(NSString *)f mustBeGreaterThanOrEqualToValue:(id)v {
-    [self.params setValue:v forKey:[NSString stringWithFormat:@"%@[gte]", f]];        
+    [self.params setValue:v forKey:[self keyForField:f andOperator:@"gte"]];
 }
 
 - (void)field:(NSString *)f mustBeOneOf:(NSArray *)arr {
-    [self.params setValue:arr forKey:[NSString stringWithFormat:@"%@[in]", f]];
+    [self.params setValue:arr forKey:[self keyForField:f andOperator:@"in"]];
+}
+
+
+- (void)field:(NSString *)f centeredAt:(SMGeoPoint *)point mustBeWithinMi:(double)mi {
+    [self setGeoParam:point withRadius:mi andDiv:earthRadianInMi forField:f andOperator:@"within"];    
+}
+
+- (void)field:(NSString *)f centeredAt:(SMGeoPoint *)point mustBeWithinKm:(double)km {
+    [self setGeoParam:point withRadius:km andDiv:earthRadiamInKm forField:f andOperator:@"within"];
+}
+
+
+- (void)field:(NSString *)f mustBeNear:(SMGeoPoint *)point {
+    [self.params setValue:[point stringValue] forKey:[self keyForField:f andOperator:@"near"]];
+}
+
+- (void)field:(NSString *)f mustBeNear:(SMGeoPoint *)point withinMi:(double)mi {
+    [self setGeoParam:point withRadius:mi andDiv:earthRadianInMi forField:f andOperator:@"near"];
+}
+
+- (void)field:(NSString *)f mustBeNear:(SMGeoPoint *)point withinKm:(double)km {
+    [self setGeoParam:point withRadius:km andDiv:earthRadiamInKm forField:f andOperator:@"near"];
+}
+
+- (void)field:(NSString *)f mustBeWithinBoxWithLowerLeft:(SMGeoPoint *)lowerLeft andUpperRight:(SMGeoPoint *)upperRight {
+    NSString *boxString = [NSString stringWithFormat:@"%@,%@", [lowerLeft stringValue], [upperRight stringValue]];
+    [self.params setValue:boxString forKey:[self keyForField:f andOperator:@"within"]];
 }
 
 - (void)setExpandDepth:(NSUInteger)depth {
@@ -75,6 +110,17 @@
         newHeaderValue = [NSString stringWithFormat:@"%@:%@", f, orderStr];
     }
     [self.headers setValue:newHeaderValue forKey:@"X-StackMob-OrderBy"];
+}
+
+- (NSString *)keyForField:(NSString *)f andOperator:(NSString *)op {
+    return [NSString stringWithFormat:@"%@[%@]", f, op];
+}
+
+- (void)setGeoParam:(SMGeoPoint *)pt withRadius:(double)r andDiv:(double)d forField:(NSString *)f andOperator:(NSString *)o {
+    NSNumber *radius = [NSNumber numberWithDouble:r / d];
+    NSString *arg = [NSString stringWithFormat:@"%@,%@", [pt stringValue], radius];
+    [self.params setValue:arg forKey:[self keyForField:f andOperator:o]];
+
 }
 
 - (void)dealloc {
