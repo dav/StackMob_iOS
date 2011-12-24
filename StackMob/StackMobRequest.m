@@ -353,7 +353,7 @@
 {
 	_requestFinished = YES;
 
-    SMLog(@"StackMobRequest %p: Received Request: %@", self, self.method);
+  SMLog(@"StackMobRequest %p: Received Request: %@", self, self.method);
     
 	NSString *textResult = nil;
 	NSDictionary *result = nil;
