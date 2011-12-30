@@ -1,161 +1,33 @@
-Getting Started
-=========
-1. Clone the repository from GitHub
-`git clone git://github.com/stackmob/StackMob_iOS.git`
-2. Open the Demo project.
-3. Drag the 'StackMob' folder from the Demo project into your app's project
-4. Add the following Frameworks to your project:
+# StackMob iOS SDK
 
-    - CFNetwork.framework
-    - CoreLocation.framework
-    - SystemConfiguration.framework
+The StackMob iOS SDK provides access to you StackMob API from iOS Devices. 
 
-5. Edit 'StackMobConfiguration.h' to include your app's account and app info
+For information on setting up the SDK visit the [Getting Started Page](https://stackmob.com/platform/help/tutorials/gs_start). Documentation for the SDK can be found [here](http://stackmob.com/devcenter/docs/Using-your-API)
 
-```objective-c
-#define STACKMOB_PUBLIC_KEY         @""
-#define STACKMOB_PRIVATE_KEY        @""
-#define STACKMOB_APP_NAME           @""
-#define STACKMOB_APP_SUBDOMAIN      @""
-#define STACKMOB_APP_DOMAIN         @"" // most likely 'stackmob.com'
-#define STACKMOB_USER_OBJECT_NAME   @"" // most likely 'user' or 'account'
-#define STACKMOB_API_VERSION        0   // 0 for sandbox, 1 for production
-```
+# Getting Help
+We have 2 ways for you to get help with the iOS SDK:
 
-6. ```#import "Stackmob.h"``` in any classes that interact with Stackmob.
+1. [Filing a support ticket](http://support.stackmob.com) - if you would rather get help directly from StackMob, please file a support ticket and we will answer your question as soon as possible.
+2. If you find an issue with the SDK, please report it [on this repository's issues page](https://github.com/stackmob/StackMob_iOS/issues), and include as many details as possible about the issue you encountered.
 
+# Contributing To The SDK
+There are 2 ways to contribute to the SDK:
 
-Coding
-=====
-You can now make requests to your servers on StackMob using the following patterns.
+1. [The StackMob Google Group](https://groups.google.com/forum/#!forum/stackmob) - we encourage you to visit the group to see if your question has been answered already by someone in the community. We also encourage you to contribute a post to the group if you've found a solution to a problem you've had, so that everyone else can benefit!
+2. Contributing Code - If you'd like to contribute code, fork this repository, make your changes and submit a pull request.
 
-####GET
+# Copyright
 
-```objective-c
- /*
-   * dictionary: 
-   * NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
-   * [dictionary setValue:userName forKey:kAttributeUserUserName];
-   */
-[[StackMob stackmob] get:@"account" withArguments:dictionary andCallback:^(BOOL success, id result){
-    if(success){
-      // Cast result to an NSDictionary* and do something with the UI
-      // Alert delegates
-    }
-    else{
-      // Cast result to an NSError* and alert your delegates
-    }
-}];
-```
-####POST
-```objective-c
- /*
-   * dictionary: 
-   * NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
-   * [dictionary setValue:userName forKey:kAttributeUserUserName];
-   * [dictionary setValue:password forKey:kAttributeUserPassword];
-   * [dictionary setValue:firstName forKey:kAttributeUserFirstName];
-   * [dictionary setValue:lastName forKey:kAttributeUserLastName];
-   * [dictionary setValue:email forKey:kAttributeUserEmail];
-   */
-[[StackMob stackmob] post:@"account" withArguments:dictionary andCallback:^(BOOL success, id result){
-    if(success){
-      // Cast result to a NSDictionary* and do something with the UI
-      // Alert delegates
-    }
-    else{
-      // Cast result to an NSError* and alert your delegates
-    }
-}];
-```
-####File Uploads
-If you need to upload a binary file just add an NSData* object to your argument dictionary
+Copyright 2011 StackMob
 
-```objective-c
-// kAttributePostPhoto here is the name of the binary field in your object model
-[dictionary setValue:[NSData dataWithContentsOfFile:pathToDataFile] forKey:kAttributePostPhoto];
-```
-####Facebook Registration
-You can register a new user with a facebook token and username
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
 
-```objective-c
-[[StackMob stackmob] registerWithFacebookToken:token username:myLoginObject.userName andCallback:^(BOOL success, id result){
-    if(success){
-      // Cast result to a NSDictionary* and do something with the UI
-      // Alert delegates
-    }
-    else{
-      // Cast result to an NSError* and alert your delegates
-    }
-}];
-```
-You can also link an existing user account to his/her Facebook account:
+http://www.apache.org/licenses/LICENSE-2.0
 
-```objective-c
-[[StackMob stackmob] linkUserWithFacebookToken:facebookToken withCallback:^(BOOL success, id result){
-    if(success){
-        // User accounts linked.  Alert your delegates
-    }
-    else{
-        // Error.  Display alert to user and/or alert your delegates
-    }
-}];
-```
-####Twitter Registration
-You can register a new user with a twitter token, secret and username
-
-```objective-c
-[[StackMob stackmob] registerWithTwitterToken:token secret:secret username:username andCallback:^(BOOL success, id result){
-    if(success){
-        // User registered.  Persist the user and alert your delegates
-    }
-    else{
-        // Error.  Display alert to user and/or alert your delegates
-    }
-}];
-```
-You can also link an existing user account to his/her Twitter account:
-
-```objective-c
-[[StackMob stackmob] linkUserWithTwitterToken:@"" secret:@"" andCallback:^(BOOL success, id result){
-    if(success){
-        // User accounts linked.  Alert your delegates
-    }
-    else{
-        // Error.  Display alert to user and/or alert your delegates
-    }
-}];
-```
-####iOS PUSH Notifications
-You can register an Apple Push Notification service device by creating and calling a method like registerForPush.  Keep in mind you may want to do this only after registering a user.
-
-```objective-c
-- (void)registerForPush
-{
-    [[UIApplication sharedApplication] registerForRemoteNotificationTypes: 
-     (UIRemoteNotificationTypeAlert | UIRemoteNotificationTypeBadge | UIRemoteNotificationTypeSound)];
-}
-```
-
-```objective-c
-- (void)application:(UIApplication *)app didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken 
-{
-    NSString *token = [[deviceToken description] stringByTrimmingCharactersInSet:[NSCharacterSet characterSetWithCharactersInString:@"<>"]];
-    token = [[token componentsSeparatedByString:@" "] componentsJoinedByString:@""];
-    // Persist your user's accessToken here if you need
-    [[StackMob stackmob] registerForPushWithUser:currentUser.userName andToken:token andCallback:^(BOOL success, id result){
-        if(success){
-            // User created.  Alert your delegates
-        }
-        else{
-            // Unable to register device for PUSH notifications 
-            // Failed.  Alert your delgates
-        }
-    }];
-}
-```
-
-Troubleshooting
-===============
-
-
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.

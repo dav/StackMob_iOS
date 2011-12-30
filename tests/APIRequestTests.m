@@ -120,7 +120,7 @@ StackMobSession *mySession = nil;
 }
 
 - (void)testRelatedDelete {
-    StackMobRequest *r = [[StackMob stackmob] removeIds:[NSArray arrayWithObjects:@"one", @"two", nil] forSchema:@"primary_schema" andId:@"primary_key2" andField:@"related_many" withCallback:^(BOOL success, id result) {}];
+    StackMobRequest *r = [[StackMob stackmob] removeIds:[NSArray arrayWithObjects:@"one", @"two", nil] forSchema:@"primary_schema" andId:@"primary_key2" andField:@"related_many" shouldCascade:YES withCallback:^(BOOL success, id result) {}];
     
     [self assertNotNSError:[StackMobTestUtils runDefaultRunLoopAndGetDictionaryResultFromRequest:r]];
 }

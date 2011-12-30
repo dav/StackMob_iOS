@@ -26,6 +26,7 @@
 - (void)run;
 - (void)next;
 - (NSDictionary *)loadInfo;
+- (StackMobRequest *)destroy:(NSString *)path withArguments:(NSDictionary *)arguments andHeaders:(NSDictionary *)headers andCallback:(StackMobCallback)callback;
 @end
 
 #define ENVIRONMENTS [NSArray arrayWithObjects:@"production", @"development", nil]
@@ -35,6 +36,7 @@
 @synthesize requests;
 @synthesize callbacks;
 @synthesize session;
+@synthesize authCookie;
 
 static StackMob *_sharedManager = nil;
 static SMEnvironment environment;
@@ -128,6 +130,7 @@ static SMEnvironment environment;
                                                    withArguments:arguments
                                                     withHttpVerb:GET]; 
     request.isSecure = YES;
+    
     [self queueRequest:request andCallback:callback];
     
     return request;
@@ -139,6 +142,7 @@ static SMEnvironment environment;
                                                    withArguments:[NSDictionary dictionary]
                                                     withHttpVerb:GET]; 
     request.isSecure = YES;
+    self.authCookie = nil;
     [self queueRequest:request andCallback:callback];
     
     return request;
@@ -439,21 +443,58 @@ static SMEnvironment environment;
 }
 
 - (StackMobRequest *)destroy:(NSString *)path withArguments:(NSDictionary *)arguments andCallback:(StackMobCallback)callback{
+    return [self destroy:path withArguments:arguments andHeaders:[NSDictionary dictionary] andCallback:callback];
+}
+
+- (StackMobRequest *)destroy:(NSString *)path withArguments:(NSDictionary *)arguments andHeaders:(NSDictionary *)headers andCallback:(StackMobCallback)callback {
     StackMobRequest *request = [StackMobRequest requestForMethod:path
                                                    withArguments:arguments
                                                     withHttpVerb:DELETE];
+    [request setHeaders:headers];
     [self queueRequest:request andCallback:callback];
     return request;
+
 }
 
 - (StackMobRequest *)removeIds:(NSArray *)removeIds forSchema:(NSString *)schema andId:(NSString *)primaryId andField:(NSString *)relField withCallback:(StackMobCallback)callback {
-    NSString *fullPath = [NSString stringWithFormat:@"%@/%@/%@/%@", schema, primaryId, relField, [removeIds componentsJoinedByString:@","]];
-    return [self destroy:fullPath withArguments:[NSDictionary dictionary] andCallback:callback];
+    return [self removeIds:removeIds forSchema:schema andId:primaryId andField:relField shouldCascade:NO withCallback:callback];
 }
 
-- (StackMobRequest *)removeId:(NSString *)removeId forSchema:(NSString *)schema andId:(NSString *)primaryId andField:(NSString *)relField withCallback:(StackMobCallback)callback {
-    return [self removeId:[NSArray arrayWithObject:removeId] forSchema:schema andId:primaryId andField:relField withCallback:callback];
+- (StackMobRequest *)removeIds:(NSArray *)removeIds forSchema:(NSString *)schema andId:(NSString *)primaryId andField:(NSString *)relField shouldCascade:(BOOL)isCascade withCallback:(StackMobCallback)callback {
+    NSString *fullPath = [NSString stringWithFormat:@"%@/%@/%@/%@", schema, primaryId, relField, [removeIds componentsJoinedByString:@","]];
+    NSDictionary *headers;
+    if (isCascade == YES) {
+        headers = [NSDictionary dictionaryWithObjectsAndKeys:@"true", @"X-StackMob-CascadeDelete", nil];
+    } else {
+        headers = [NSDictionary dictionary];
+    }
+    return [self destroy:fullPath 
+           withArguments:[NSDictionary dictionary] 
+              andHeaders:headers 
+             andCallback:callback];
+
 }
+
+
+- (StackMobRequest *)removeId:(NSString *)removeId forSchema:(NSString *)schema andId:(NSString *)primaryId andField:(NSString *)relField withCallback:(StackMobCallback)callback {
+    return [self removeId:removeId 
+                forSchema:schema 
+                    andId:primaryId 
+                 andField:relField 
+            shouldCascade:NO 
+             withCallback:callback];
+}
+
+- (StackMobRequest *)removeId:(NSString *)removeId forSchema:(NSString *)schema andId:(NSString *)primaryId andField:(NSString *)relField shouldCascade:(BOOL)isCascade withCallback:(StackMobCallback)callback {
+    return [self removeIds:[NSArray arrayWithObject:removeId] 
+                 forSchema:schema 
+                     andId:primaryId 
+                  andField:relField 
+             shouldCascade:isCascade 
+              withCallback:callback];
+
+}
+
 
 # pragma mark - Private methods
 - (void)queueRequest:(StackMobRequest *)request andCallback:(StackMobCallback)callback
@@ -518,6 +559,15 @@ static SMEnvironment environment;
 
 #pragma mark - StackMobRequestDelegate
 
+- (void) setAuthCookieIfFound:(StackMobRequest *)request
+{
+    NSHTTPURLResponse *response = request.httpResponse;
+    NSDictionary *fields = [response allHeaderFields];
+    NSString *cookie = [fields valueForKey:@"Set-Cookie"];
+    if(cookie)
+        self.authCookie = cookie;
+}
+
 - (void)requestCompleted:(StackMobRequest*)request {
     if([self.requests containsObject:request]){
         NSInteger idx = [self.requests indexOfObject:request];
@@ -526,6 +576,9 @@ static SMEnvironment environment;
         if(callback != [NSNull null]){
             StackMobCallback mCallback = (StackMobCallback)callback;
             BOOL wasSuccessful = request.httpResponse.statusCode < 300 && request.httpResponse.statusCode > 199;
+            
+            // hack for release
+            [self setAuthCookieIfFound:request];
             mCallback(wasSuccessful, [request result]);
             Block_release(mCallback);
         }else{

@@ -37,6 +37,7 @@ typedef void (^StackMobCallback)(BOOL success, id result);
 @property (nonatomic, retain) StackMobSession *session;
 @property (nonatomic, retain) NSMutableArray *callbacks;
 @property (nonatomic, retain) NSMutableArray *requests;
+@property (nonatomic, retain) NSString *authCookie;
 
 
 /*
@@ -308,6 +309,17 @@ typedef void (^StackMobCallback)(BOOL success, id result);
                          andId:(NSString *)primaryId 
                       andField:(NSString *)relField 
                   withCallback:(StackMobCallback)callback;
+
+/*
+ * automically remove elements from an array or has many relationship
+ * @param shouldCascade if YES the X-StackMob-CascadeDelete header will be set
+ */
+- (StackMobRequest *)removeIds:(NSArray *)removeIds 
+                     forSchema:(NSString *)schema 
+                         andId:(NSString *)primaryId 
+                      andField:(NSString *)relField 
+                 shouldCascade:(BOOL)isCascade
+                  withCallback:(StackMobCallback)callback;
 /*
  * automically remove an element from an array or has many relationship or unset the value of a has one relationship
  */
@@ -316,6 +328,18 @@ typedef void (^StackMobCallback)(BOOL success, id result);
                          andId:(NSString *)primaryId 
                       andField:(NSString *)relField 
                   withCallback:(StackMobCallback)callback;
+
+/*
+ * automically remove an element from an array or has many relationship or unset the value of a has one relationship
+ * @param shouldCascade if YES the X-StackMob-CascadeDelete header will be set
+ */
+- (StackMobRequest *)removeId:(NSString *)removeId 
+                    forSchema:(NSString *)schema 
+                        andId:(NSString *)primaryId 
+                     andField:(NSString *)relField 
+                shouldCascade:(BOOL)isCascade
+                 withCallback:(StackMobCallback)callback;
+
 
 
 /**************** Heroku Methods *****************/

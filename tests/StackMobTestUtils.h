@@ -13,7 +13,6 @@
 // limitations under the License.
 
 #import <Foundation/Foundation.h>
-#import <SenTestingKit/SenTestingKit.h>
 #import "StackMob.h"
 
 extern NSString * const kAPIKey;
