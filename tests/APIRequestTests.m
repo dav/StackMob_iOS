@@ -237,5 +237,12 @@ StackMobSession *mySession = nil;
         
 }
 
+- (void) testQueryString {
+    NSDictionary *boolArgs = [NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithBool:YES], @"bool", nil];
+    STAssertEqualObjects([boolArgs queryString], @"bool=true", @"queryString generation is not correct");
+    
+    NSDictionary *intArgs = [NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithInt:1], @"int", nil];
+    STAssertEqualObjects([intArgs queryString], @"int=1", @"queryString generation is not correct");
+}
 
 @end
