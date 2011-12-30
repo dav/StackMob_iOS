@@ -349,7 +349,8 @@
           [[error userInfo] objectForKey:NSURLErrorFailingURLStringErrorKey]);
     
 	// inform the user
-	self.result = [NSDictionary dictionaryWithObjectsAndKeys:[error localizedDescription], @"statusDetails", nil];  
+	//self.result = [NSDictionary dictionaryWithObjectsAndKeys:[error localizedDescription], @"statusDetails", nil];  
+  self.result = (NSDictionary*)error;
 	if (self.delegate && [self.delegate respondsToSelector:@selector(requestCompleted:)])
         [[self delegate] requestCompleted:self];
 }
