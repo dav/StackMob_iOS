@@ -29,6 +29,7 @@
 @interface StackMobRequest (Private)
 + (NSString*)stringFromHttpVerb:(SMHttpVerb)httpVerb;
 - (void)setBodyForRequest:(OAMutableURLRequest *)request;
+- (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error;
 @end
 
 @implementation StackMobRequest;
@@ -252,6 +253,22 @@
     return json;
 }
 
+/* 
+ Some requests, such as facebookLogin, are never timing out in production. This is a backup timeout
+ in case the normal one (set in OAMutableRequest) fails.
+ 
+ Possbily related to known timeout bug, see https://devforums.apple.com/thread/25282
+ */
+- (void) addFailsafeTimeout {
+  SEL sel = @selector(cancel);
+  NSMethodSignature* sig = [self methodSignatureForSelector:sel];
+  NSInvocation* invocation = [NSInvocation invocationWithMethodSignature:sig];
+  [invocation setTarget:self];
+  [invocation setSelector:sel];
+  NSTimer *timer = [NSTimer timerWithTimeInterval:15.0f invocation:invocation repeats:NO];
+  [[NSRunLoop mainRunLoop] addTimer:timer forMode:NSDefaultRunLoopMode];
+}
+
 - (void)sendRequest
 {
 	_requestFinished = NO;
@@ -292,6 +309,8 @@
     
     SMLog(@"StackMobRequest: sending asynchronous oauth request: %@", request);
     
+  [self addFailsafeTimeout];
+  
 	[mConnectionData setLength:0];
   self.result = nil;
   self.connectionError = nil;
@@ -317,10 +336,12 @@
     return [StackMobRequest JsonifyNSDictionary:mArguments withErrorOutput:&error];
 }
 
-- (void)cancel
-{
-	[self.connection cancel];
-	self.connection = nil;
+- (void)cancel {
+  [self.connection cancel];
+  NSMutableDictionary* errorDict = [NSMutableDictionary dictionaryWithObject:@"Request canceled." forKey:NSLocalizedDescriptionKey];
+  NSError* error = [[[NSError alloc] initWithDomain:NSURLErrorDomain code:-1001 userInfo:errorDict] autorelease];
+  [self connection:self.connection didFailWithError:error];
+  self.connection = nil;
 }
 
 - (void)connection:(NSURLConnection*)connection didReceiveResponse:(NSURLResponse*)response {
@@ -366,7 +387,7 @@
 	NSDictionary *result = nil;
     NSInteger statusCode = [self getStatusCode];
     
-    SMLog(@"RESPONSE CODE %d", statusCode);
+    SMLog(@"RESPONSE CODE %d", (int)statusCode);
     if ([mConnectionData length] > 0) {
         textResult = [[[NSString alloc] initWithData:mConnectionData encoding:NSUTF8StringEncoding] autorelease];
         SMLog(@"RESPONSE BODY %@", textResult);
