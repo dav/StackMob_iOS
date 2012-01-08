@@ -57,7 +57,8 @@
 	[mResult release];
 	[mHttpMethod release];
 	[mHttpResponse release];
-    [mHeaders release];    
+  [mHeaders release];    
+
 	[super dealloc];
 }
 
@@ -260,13 +261,13 @@
  Possbily related to known timeout bug, see https://devforums.apple.com/thread/25282
  */
 - (void) addFailsafeTimeout {
-  SEL sel = @selector(cancel);
+  SEL sel = @selector(failsafeTimeoutCancel);
   NSMethodSignature* sig = [self methodSignatureForSelector:sel];
   NSInvocation* invocation = [NSInvocation invocationWithMethodSignature:sig];
   [invocation setTarget:self];
   [invocation setSelector:sel];
-  NSTimer *timer = [NSTimer timerWithTimeInterval:15.0f invocation:invocation repeats:NO];
-  [[NSRunLoop mainRunLoop] addTimer:timer forMode:NSDefaultRunLoopMode];
+  _failsafeCancelTimer = [NSTimer timerWithTimeInterval:15.0f invocation:invocation repeats:NO];
+  [[NSRunLoop mainRunLoop] addTimer:_failsafeCancelTimer forMode:NSDefaultRunLoopMode];
 }
 
 - (void)sendRequest
@@ -338,10 +339,15 @@
 
 - (void)cancel {
   [self.connection cancel];
-  NSMutableDictionary* errorDict = [NSMutableDictionary dictionaryWithObject:@"Request canceled." forKey:NSLocalizedDescriptionKey];
-  NSError* error = [[[NSError alloc] initWithDomain:NSURLErrorDomain code:-1001 userInfo:errorDict] autorelease];
-  [self connection:self.connection didFailWithError:error];
   self.connection = nil;
+}
+
+- (void) failsafeTimeoutCancel {
+  [self cancel];
+  
+  NSMutableDictionary* errorDict = [NSMutableDictionary dictionaryWithObject:@"Request timed out." forKey:NSLocalizedDescriptionKey];
+  NSError* error = [[[NSError alloc] initWithDomain:NSURLErrorDomain code:-1001 userInfo:errorDict] autorelease];
+  [self connection:nil didFailWithError:error];
 }
 
 - (void)connection:(NSURLConnection*)connection didReceiveResponse:(NSURLResponse*)response {
@@ -363,6 +369,7 @@
 - (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error
 {
 	_requestFinished = YES;
+  [_failsafeCancelTimer invalidate];
     
 	SMLog(@"StackMobRequest %p: Connection failed! Error - %@ %@",
           self,
@@ -380,6 +387,7 @@
 - (void)connectionDidFinishLoading:(NSURLConnection*)connection
 {
 	_requestFinished = YES;
+  [_failsafeCancelTimer invalidate];
     
     SMLog(@"StackMobRequest %p: Received Request: %@", self, self.method);
     

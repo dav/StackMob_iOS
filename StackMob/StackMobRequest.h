@@ -44,6 +44,8 @@ typedef enum {
 	BOOL					_requestFinished;
 	NSString*				mHttpMethod;
 	NSHTTPURLResponse*		mHttpResponse;
+  
+  NSTimer* _failsafeCancelTimer;
 	
 	@protected
     BOOL userBased;
