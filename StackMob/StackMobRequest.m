@@ -266,7 +266,7 @@
   NSInvocation* invocation = [NSInvocation invocationWithMethodSignature:sig];
   [invocation setTarget:self];
   [invocation setSelector:sel];
-  _failsafeCancelTimer = [NSTimer timerWithTimeInterval:15.0f invocation:invocation repeats:NO];
+  _failsafeCancelTimer = [NSTimer timerWithTimeInterval:25.0f invocation:invocation repeats:NO];
   [[NSRunLoop mainRunLoop] addTimer:_failsafeCancelTimer forMode:NSDefaultRunLoopMode];
 }
 
