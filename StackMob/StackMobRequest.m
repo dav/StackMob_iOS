@@ -47,6 +47,7 @@
 @synthesize userBased;
 
 # pragma mark - Memory Management
+
 - (void)dealloc
 {
 	[self cancel];
@@ -202,6 +203,7 @@
         mConnectionData = [[NSMutableData alloc] init];
         mResult = nil;
         session = [StackMobSession session];
+        _failsafeCancelTimer = nil;
     }
 	return self;
 }
@@ -266,7 +268,7 @@
   NSInvocation* invocation = [NSInvocation invocationWithMethodSignature:sig];
   [invocation setTarget:self];
   [invocation setSelector:sel];
-  _failsafeCancelTimer = [NSTimer timerWithTimeInterval:25.0f invocation:invocation repeats:NO];
+  _failsafeCancelTimer = [[NSTimer timerWithTimeInterval:15.0f invocation:invocation repeats:NO] retain];
   [[NSRunLoop mainRunLoop] addTimer:_failsafeCancelTimer forMode:NSDefaultRunLoopMode];
 }
 
@@ -369,7 +371,7 @@
 - (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error
 {
 	_requestFinished = YES;
-  [_failsafeCancelTimer invalidate];
+  if (_failsafeCancelTimer) [_failsafeCancelTimer invalidate];
     
 	SMLog(@"StackMobRequest %p: Connection failed! Error - %@ %@",
           self,
@@ -387,7 +389,7 @@
 - (void)connectionDidFinishLoading:(NSURLConnection*)connection
 {
 	_requestFinished = YES;
-  [_failsafeCancelTimer invalidate];
+  if (_failsafeCancelTimer) [_failsafeCancelTimer invalidate];
     
     SMLog(@"StackMobRequest %p: Received Request: %@", self, self.method);
     
