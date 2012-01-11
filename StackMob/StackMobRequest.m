@@ -203,7 +203,6 @@
         mConnectionData = [[NSMutableData alloc] init];
         mResult = nil;
         session = [StackMobSession session];
-        _failsafeCancelTimer = nil;
     }
 	return self;
 }
@@ -256,22 +255,6 @@
     return json;
 }
 
-/* 
- Some requests, such as facebookLogin, are never timing out in production. This is a backup timeout
- in case the normal one (set in OAMutableRequest) fails.
- 
- Possbily related to known timeout bug, see https://devforums.apple.com/thread/25282
- */
-- (void) addFailsafeTimeout {
-  SEL sel = @selector(failsafeTimeoutCancel);
-  NSMethodSignature* sig = [self methodSignatureForSelector:sel];
-  NSInvocation* invocation = [NSInvocation invocationWithMethodSignature:sig];
-  [invocation setTarget:self];
-  [invocation setSelector:sel];
-  _failsafeCancelTimer = [[NSTimer timerWithTimeInterval:15.0f invocation:invocation repeats:NO] retain];
-  [[NSRunLoop mainRunLoop] addTimer:_failsafeCancelTimer forMode:NSDefaultRunLoopMode];
-}
-
 - (void)sendRequest
 {
 	_requestFinished = NO;
@@ -312,8 +295,6 @@
     
     SMLog(@"StackMobRequest: sending asynchronous oauth request: %@", request);
     
-  [self addFailsafeTimeout];
-  
 	[mConnectionData setLength:0];
   self.result = nil;
   self.connectionError = nil;
@@ -344,14 +325,6 @@
   self.connection = nil;
 }
 
-- (void) failsafeTimeoutCancel {
-  [self cancel];
-  
-  NSMutableDictionary* errorDict = [NSMutableDictionary dictionaryWithObject:@"Request timed out." forKey:NSLocalizedDescriptionKey];
-  NSError* error = [[[NSError alloc] initWithDomain:NSURLErrorDomain code:-1001 userInfo:errorDict] autorelease];
-  [self connection:nil didFailWithError:error];
-}
-
 - (void)connection:(NSURLConnection*)connection didReceiveResponse:(NSURLResponse*)response {
 	mHttpResponse = [(NSHTTPURLResponse*)response copy];
 }
@@ -371,7 +344,6 @@
 - (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error
 {
 	_requestFinished = YES;
-  if (_failsafeCancelTimer) [_failsafeCancelTimer invalidate];
     
 	SMLog(@"StackMobRequest %p: Connection failed! Error - %@ %@",
           self,
@@ -389,9 +361,8 @@
 - (void)connectionDidFinishLoading:(NSURLConnection*)connection
 {
 	_requestFinished = YES;
-  if (_failsafeCancelTimer) [_failsafeCancelTimer invalidate];
     
-    SMLog(@"StackMobRequest %p: Received Request: %@", self, self.method);
+  SMLog(@"StackMobRequest %p: Received Request: %@", self, self.method);
     
 	NSString *textResult = nil;
 	NSDictionary *result = nil;

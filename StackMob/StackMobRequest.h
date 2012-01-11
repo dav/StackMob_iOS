@@ -45,8 +45,6 @@ typedef enum {
 	NSString*				mHttpMethod;
 	NSHTTPURLResponse*		mHttpResponse;
   
-  NSTimer* _failsafeCancelTimer;
-	
 	@protected
     BOOL userBased;
 	StackMobSession *session;
