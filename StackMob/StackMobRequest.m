@@ -262,6 +262,7 @@
     SMLog(@"StackMob method: %@", self.method);
     SMLog(@"Request with url: %@", self.url);
     SMLog(@"Request with HTTP Method: %@", self.httpMethod);
+  NSAssert( [[NSThread currentThread] isMainThread], @"Should not be sending network requests in background thread" );
     
 	OAConsumer *consumer = [[[OAConsumer alloc] initWithKey:session.apiKey
                                                     secret:session.apiSecret] autorelease];
