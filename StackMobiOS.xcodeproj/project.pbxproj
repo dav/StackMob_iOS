@@ -102,6 +102,10 @@
 		9369486514722C5C00575176 /* StackMobTestCommon.m in Sources */ = {isa = PBXBuildFile; fileRef = 9369485A1472286900575176 /* StackMobTestCommon.m */; };
 		9369486614722C6500575176 /* StackMobTestCommon.h in Headers */ = {isa = PBXBuildFile; fileRef = 936948591472286900575176 /* StackMobTestCommon.h */; settings = {ATTRIBUTES = (); }; };
 		9369486714722C8000575176 /* StackMobTestUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 93694860147228B400575176 /* StackMobTestUtils.h */; };
+		93DE001114CFAC7B00764514 /* NSData+Base64.h in Sources */ = {isa = PBXBuildFile; fileRef = 038CB1DF14283272001DEAC9 /* NSData+Base64.h */; };
+		93DE001214CFAC7B00764514 /* NSData+Base64.m in Sources */ = {isa = PBXBuildFile; fileRef = 038CB1E014283272001DEAC9 /* NSData+Base64.m */; };
+		93DE001314CFAC7B00764514 /* NSData+JSON.h in Sources */ = {isa = PBXBuildFile; fileRef = 038CB1E114283272001DEAC9 /* NSData+JSON.h */; };
+		93DE001414CFAC7B00764514 /* NSData+JSON.m in Sources */ = {isa = PBXBuildFile; fileRef = 038CB1E214283272001DEAC9 /* NSData+JSON.m */; };
 		AA747D9F0F9514B9006C5449 /* StackMobiOS_Prefix.pch in Headers */ = {isa = PBXBuildFile; fileRef = AA747D9E0F9514B9006C5449 /* StackMobiOS_Prefix.pch */; };
 		AACBBE4A0F95108600F1A2B1 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AACBBE490F95108600F1A2B1 /* Foundation.framework */; };
 		C63FB3511497EA4E007961C1 /* SMFile.h in Headers */ = {isa = PBXBuildFile; fileRef = C63FB34F1497EA4E007961C1 /* SMFile.h */; };
@@ -582,6 +586,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				93DE001114CFAC7B00764514 /* NSData+Base64.h in Sources */,
+				93DE001214CFAC7B00764514 /* NSData+Base64.m in Sources */,
+				93DE001314CFAC7B00764514 /* NSData+JSON.h in Sources */,
+				93DE001414CFAC7B00764514 /* NSData+JSON.m in Sources */,
 				038CB2A514285007001DEAC9 /* StackMobAdditions.m in Sources */,
 				038CB2A414284FED001DEAC9 /* JSONKit.m in Sources */,
 				038CB2A314284FDA001DEAC9 /* NSMutableURLRequest+Parameters.m in Sources */,
@@ -723,7 +731,7 @@
 		1DEB922308733DC00010E9CD /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREFIX_HEADER = StackMobiOS_Prefix.pch;
@@ -740,7 +748,7 @@
 		1DEB922408733DC00010E9CD /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_PREFIX_HEADER = StackMobiOS_Prefix.pch;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
