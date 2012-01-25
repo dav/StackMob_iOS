@@ -19,9 +19,11 @@
 #import "StackMob.h"
 #import "StackMobTestUtils.h"
 #import "StackMobTestCommon.h"
+#import "NSData+Base64.h"
+#import "SMFileTest.h"
+#import "SMFile.h"
 
 //#import "application_headers" as required
-
 
 @interface SMFileTest : StackMobTestCommon
 
