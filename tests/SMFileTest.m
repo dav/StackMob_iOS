@@ -24,7 +24,7 @@
 }
 
 - (void)testJSONSerializastion {
-    NSData *data = [NSData data];
+    NSData *data = [@"w00t!" dataUsingEncoding:NSUTF8StringEncoding];
     NSString *fName = @"test.jpg";
     NSString *contentType = @"image/jpg";
     SMFile *file =  [[SMFile alloc] initWithFileName:fName data:data contentType:contentType];

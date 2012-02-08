@@ -251,7 +251,7 @@ StackMobSession *mySession = nil;
  * That should trigger it to upload the file to s3 rather than just storing the text
  */
 - (void) testBinaryFileUpload {
-    NSData *data = [NSData data];
+    NSData *data = [@"w00t!" dataUsingEncoding:NSUTF8StringEncoding];
     NSString *fName = @"test.jpg";
     NSString *contentType = @"image/jpg";
     SMFile *file =  [[SMFile alloc] initWithFileName:fName data:data contentType:contentType];
