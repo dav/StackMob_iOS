@@ -14,6 +14,7 @@
 
 
 #import "APIRequestTests.h"
+#import "SMFile.h"
 
 StackMobSession *mySession = nil;
 
@@ -243,6 +244,35 @@ StackMobSession *mySession = nil;
     
     NSDictionary *intArgs = [NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithInt:1], @"int", nil];
     STAssertEqualObjects([intArgs queryString], @"int=1", @"queryString generation is not correct");
+}
+
+/*
+ * This test requires manual setup to pass. Your user schema must have a field "photo" of type binary. 
+ * That should trigger it to upload the file to s3 rather than just storing the text
+ */
+- (void) testBinaryFileUpload {
+    NSData *data = [NSData data];
+    NSString *fName = @"test.jpg";
+    NSString *contentType = @"image/jpg";
+    SMFile *file =  [[SMFile alloc] initWithFileName:fName data:data contentType:contentType];
+    NSString * const schema = @"user";
+    NSString * const binaryField = @"photo";
+    
+    NSDictionary *args = [NSDictionary dictionaryWithObjectsAndKeys:@"john", @"username", file, binaryField, nil];
+    [[StackMob stackmob] post:schema withArguments:args andCallback:^(BOOL success, id result) {
+        if (success) {
+            // handle successful object creation
+            NSDictionary *resultObj = (NSDictionary *)result;
+            NSString *fullPhotoPath = [resultObj objectForKey:@"photo"];
+            NSString *urlPrefix = [NSString stringWithFormat: @"http://s3.amazonaws.com/upload-s3-test/%@.%@", schema, binaryField];
+            STAssertFalse([fullPhotoPath hasPrefix:@"Content-Type:"], @"File uploaded as text, most likely you haven't set the type of the photo field to binary");
+            STAssertTrue([fullPhotoPath hasPrefix:urlPrefix], @"Binary file upload url lacks the correct prefix");
+            STAssertTrue([fullPhotoPath hasSuffix:fName], @"Binary file upload url lacks the correct suffix");
+        }
+        else{
+            STFail(@"Binary File Upload Failed");
+        }
+    }];
 }
 
 @end

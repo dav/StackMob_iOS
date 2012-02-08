@@ -36,4 +36,5 @@
 - (void) testRelatedDelete;
 - (void) testAPIList;
 - (void) testQueryString;
+- (void) testBinaryFileUpload;
 @end
