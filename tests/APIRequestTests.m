@@ -247,7 +247,7 @@ StackMobSession *mySession = nil;
 }
 
 /*
- * This test requires manual setup to pass. Your user schema must have a field "photo" of type binary. 
+ * This test requires manual setup to pass. Your user2 schema must have a field "photo" of type binary. 
  * That should trigger it to upload the file to s3 rather than just storing the text
  */
 - (void) testBinaryFileUpload {
@@ -255,7 +255,7 @@ StackMobSession *mySession = nil;
     NSString *fName = @"test.jpg";
     NSString *contentType = @"image/jpg";
     SMFile *file =  [[SMFile alloc] initWithFileName:fName data:data contentType:contentType];
-    NSString * const schema = @"user";
+    NSString * const schema = @"user2";
     NSString * const binaryField = @"photo";
     
     NSDictionary *args = [NSDictionary dictionaryWithObjectsAndKeys:@"john", @"username", file, binaryField, nil];
