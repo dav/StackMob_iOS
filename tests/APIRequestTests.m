@@ -275,4 +275,58 @@ StackMobSession *mySession = nil;
     }];
 }
 
+-(StackMobRequest *) ensureUser:(NSString *)username withEmail:(NSString *)email withPassword:(NSString *)password andCallback:(StackMobCallback)callback {
+    NSMutableDictionary* userArgs = [[NSMutableDictionary alloc] initWithObjectsAndKeys:
+                                     username,@"username",
+                                     email, @"email",
+                                     password, @"password",
+                                     nil];
+	
+    return [[StackMob stackmob] post:@"user" withArguments:userArgs andCallback:callback];
+}
+
+/*
+- (void) testForgotPassword {
+    StackMobRequest *request = [self ensureUser:@"drapp" withEmail:@"drapp@stackmob.com" withPassword:@"hunter2" andCallback:^(BOOL success, id result){
+        [[StackMob stackmob] forgotPasswordByUser: @"drapp" andCallback:^(BOOL success, id result ) {
+            if (success) {
+                NSMutableDictionary *loginRequest = [[NSMutableDictionary alloc] init];
+                [loginRequest setValue:@"drapp" forKey:@"username"];
+                [loginRequest setValue:@"hunter2" forKey:@"password"];
+                [[StackMob stackmob] loginWithArguments:loginRequest andCallback:^(BOOL success, id result ) {
+                    if (!success) {
+                        STFail(@"Reset Password Failed");
+                    }
+                }];
+            } else {
+                STFail(@"Reset Password Failed");
+            }
+        }];
+    }];
+    [StackMobTestUtils runRunLoop:[NSRunLoop currentRunLoop] untilRequestFinished:request];
+}
+
+- (void) testResetPassword {
+    StackMobRequest *request = [self ensureUser:@"drapp" withEmail:@"drapp@stackmob.com" withPassword:@"hunter2" andCallback:^(BOOL success, id result){
+        NSMutableDictionary *loginRequest = [[NSMutableDictionary alloc] init];
+        [loginRequest setValue:@"drapp" forKey:@"username"];
+        [loginRequest setValue:@"hunter2" forKey:@"password"];
+        
+        [[StackMob stackmob] loginWithArguments:loginRequest andCallback:^(BOOL success, id result ) {
+            if (success) {
+                [[StackMob stackmob] resetPasswordWithOldPassword:@"hunter2" newPassword:@"hunter3" andCallback:^(BOOL success, id result) {
+                    if (success) {
+                        STFail(@"Reset Password Failed");
+                    }
+                }]; 
+            }
+            else{
+                STFail(@"Reset Password Failed");
+            }
+        }];
+    }];
+    [StackMobTestUtils runRunLoop:[NSRunLoop currentRunLoop] untilRequestFinished:request];
+}
+ */
+
 @end

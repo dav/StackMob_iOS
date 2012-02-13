@@ -37,4 +37,6 @@
 - (void) testAPIList;
 - (void) testQueryString;
 - (void) testBinaryFileUpload;
+- (void) testForgotPassword;
+- (void) testResetPassword;
 @end

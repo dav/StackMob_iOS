@@ -510,6 +510,28 @@ static SMEnvironment environment;
     
 }
 
+# pragma mark - Forgot/Reset password
+
+- (StackMobRequest *)forgotPasswordByUser:(NSString *)username andCallback:(StackMobCallback)callback
+{
+    NSDictionary *args = [NSDictionary dictionaryWithObjectsAndKeys:username, @"username", nil];
+    StackMobRequest *request = [StackMobRequest userRequestForMethod:@"forgotPassword" withArguments:args withHttpVerb:POST];
+    request.isSecure = YES;
+    [self queueRequest:request andCallback:callback];
+    return request;
+}
+
+- (StackMobRequest *)resetPasswordWithOldPassword:(NSString*)oldPassword newPassword:(NSString*)newPassword andCallback:(StackMobCallback)callback
+{
+    NSDictionary *oldPWDict = [NSDictionary dictionaryWithObjectsAndKeys:oldPassword, @"password", nil];
+    NSDictionary *newPWDict = [NSDictionary dictionaryWithObjectsAndKeys:newPassword, @"password", nil];
+    NSDictionary *body = [NSDictionary dictionaryWithObjectsAndKeys:oldPWDict, @"old", newPWDict, @"new", nil];
+    StackMobRequest *request = [StackMobRequest userRequestForMethod:@"resetPassword" withArguments:body withHttpVerb:POST];
+    request.isSecure = YES;
+    [self queueRequest:request andCallback:callback];
+    return request;
+}
+
 
 # pragma mark - Private methods
 - (void)queueRequest:(StackMobRequest *)request andCallback:(StackMobCallback)callback

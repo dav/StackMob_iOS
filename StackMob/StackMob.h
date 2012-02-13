@@ -377,4 +377,16 @@ typedef void (^StackMobCallback)(BOOL success, id result);
  */
 - (StackMobRequest *)herokuDelete:(NSString *)path andCallback:(StackMobCallback)callback;
 
+/**************** Forgot/Reset Methods *****************/
+
+/*
+ * Sends off an email with a temporary password for a user.
+ */
+- (StackMobRequest *)forgotPasswordByUser:(NSString *)username andCallback:(StackMobCallback)callback;
+
+/*
+ * Resets the password of a logged in user
+ */
+- (StackMobRequest *)resetPasswordWithOldPassword:(NSString*)oldPassword newPassword:(NSString*)newPassword andCallback:(StackMobCallback)callback;
+
 @end
