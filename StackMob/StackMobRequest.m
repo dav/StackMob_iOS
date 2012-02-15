@@ -372,7 +372,11 @@
     SMLog(@"RESPONSE CODE %d", (int)statusCode);
     if ([mConnectionData length] > 0) {
         textResult = [[[NSString alloc] initWithData:mConnectionData encoding:NSUTF8StringEncoding] autorelease];
+      if ([textResult length]<=2048) {
         SMLog(@"RESPONSE BODY %@", textResult);
+      } else {
+        SMLog(@"RESPONSE BODY (truncated to %ld of %ld) %@", 2048L, [textResult length], [textResult substringToIndex:2048]);
+      }
     }
     
     
