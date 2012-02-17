@@ -1,5 +1,10 @@
 # Release Notes
 
+## 0.4.2
+* fix for booleans in GET requests (Peter Stöckli)
+* property and IVar cleanup (Daniel Brajkovic)
+* fix for binary file upload
+
 ## 0.4.1
 * Support for cascading delete in the Relations API
 * SMFile for file uploads with different content types and file names
