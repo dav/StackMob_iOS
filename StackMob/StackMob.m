@@ -150,7 +150,8 @@ static SMEnvironment environment;
                                                    withArguments:[NSDictionary dictionary]
                                                     withHttpVerb:GET]; 
     request.isSecure = YES;
-    self.authCookie = nil;
+    // This will be used to null out authCookie once this is sent
+    request.isLogout = YES;
     [self queueRequest:request andCallback:callback];
     
     return request;
@@ -532,6 +533,7 @@ static SMEnvironment environment;
         if([self.requests isEmpty]) return;
         self.currentRequest = [self.requests objectAtIndex:0];
         [self.currentRequest sendRequest];
+        if(self.currentRequest.isLogout) self.authCookie = nil;
         self.running = YES;
     }
 }

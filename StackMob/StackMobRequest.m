@@ -35,6 +35,7 @@
 @synthesize delegate = mDelegate;
 @synthesize method = mMethod;
 @synthesize isSecure = mIsSecure;
+@synthesize isLogout = mIsLogout;
 @synthesize result = mResult;
 @synthesize connectionError = _connectionError;
 @synthesize body;

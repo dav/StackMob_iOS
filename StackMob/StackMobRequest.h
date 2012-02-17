@@ -34,6 +34,7 @@ typedef enum {
 	id<SMRequestDelegate>	mDelegate;
 	SEL						mSelector;
     BOOL          mIsSecure;
+    BOOL                    mIsLogout;
 	NSString*				mMethod;
 	NSMutableDictionary*	mArguments;
     NSMutableDictionary*    mHeaders;
@@ -54,6 +55,7 @@ typedef enum {
 @property(readwrite, copy) NSString* method;
 @property(readwrite, copy) NSString* httpMethod;
 @property(readwrite) BOOL isSecure;
+@property(readwrite) BOOL isLogout;
 @property(readwrite, retain) NSURLConnection* connection;
 @property(readwrite, retain) NSDictionary* result;
 @property(readwrite, retain) NSError* connectionError;
