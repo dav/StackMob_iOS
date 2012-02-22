@@ -38,6 +38,11 @@
 
 @implementation StackMob
 
+struct {
+    unsigned int stackMobDidStartSession:1;
+    unsigned int stackMobDidEndSession:1;
+} delegateRespondsTo;
+
 @synthesize requests = _requests;
 @synthesize callbacks = _callbacks;
 @synthesize session = _session;
@@ -45,6 +50,8 @@
 
 @synthesize currentRequest = _currentRequest;
 @synthesize running = _running;
+
+@synthesize sessionDelegate = _sessionDelegate;
 
 static StackMob *_sharedManager = nil;
 static SMEnvironment environment;
@@ -109,14 +116,39 @@ static SMEnvironment environment;
 
 - (StackMobRequest *)startSession{
     StackMobRequest *request = [StackMobRequest requestForMethod:@"startsession" withHttpVerb:POST];
-    [self queueRequest:request andCallback:nil];
+    StackMob *this = self;
+    [self queueRequest:request andCallback:^(BOOL success, id result) {
+        if (delegateRespondsTo.stackMobDidStartSession) {
+            [this.sessionDelegate stackMobDidStartSession];
+        }  
+    }];
     return request;
 }
 
 - (StackMobRequest *)endSession{
     StackMobRequest *request = [StackMobRequest requestForMethod:@"endsession" withHttpVerb:POST];
-    [self queueRequest:request andCallback:nil];
+    StackMob *this = self;
+    [self queueRequest:request andCallback:^(BOOL success, id result) {
+        if (delegateRespondsTo.stackMobDidEndSession) {
+            [this.sessionDelegate stackMobDidEndSession];
+        }                
+    }];    
     return request;
+}
+
+- (void)setSessionDelegate:(id)aSessionDelegate {
+    if (self.sessionDelegate != aSessionDelegate) {
+        [_sessionDelegate release];
+        _sessionDelegate = aSessionDelegate;
+        [_sessionDelegate retain];
+        
+        delegateRespondsTo.stackMobDidStartSession = [_sessionDelegate 
+                                                      respondsToSelector:@selector(stackMobDidStartSession)];
+        delegateRespondsTo.stackMobDidEndSession = [_sessionDelegate 
+                                                    respondsToSelector:@selector(stackMobDidEndSession)];
+        
+        NSLog(@"delegate: %d %d", delegateRespondsTo.stackMobDidStartSession, delegateRespondsTo.stackMobDidEndSession);
+    }
 }
 
 # pragma mark - User object Methods
