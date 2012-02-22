@@ -12,6 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#if DEBUG
+#define SMLog(format, ...) {NSLog(format, ##__VA_ARGS__);}
+#define StackMobDebug(format, ...) {NSLog([[NSString stringWithFormat:@"[%s, %@, %d] ", __PRETTY_FUNCTION__, [[NSString stringWithUTF8String:__FILE__] lastPathComponent], __LINE__] stringByAppendingFormat:format, ##__VA_ARGS__]);}
+#else
+#define SMLog(format, ...)
+#define StackMobDebug(format, ...)
+#endif
 
 #define STACKMOB_PUBLIC_KEY         @"YOUR_PUBLIC_KEY"
 #define STACKMOB_PRIVATE_KEY        @"YOUR_PRIVATE_KEY"
