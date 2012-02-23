@@ -46,7 +46,7 @@ struct {
 @synthesize requests = _requests;
 @synthesize callbacks = _callbacks;
 @synthesize session = _session;
-@synthesize authCookie = _authCookie;
+@synthesize cookieStore = _cookieStore;
 
 @synthesize currentRequest = _currentRequest;
 @synthesize running = _running;
@@ -70,6 +70,7 @@ static SMEnvironment environment;
                                                        apiVersionNumber:apiVersion];
         _sharedManager.requests = [NSMutableArray array];
         _sharedManager.callbacks = [NSMutableArray array];
+        _sharedManager.cookieStore = [[[StackMobCookieStore alloc] init] autorelease];
     }
     return _sharedManager;
 }
@@ -182,8 +183,6 @@ static SMEnvironment environment;
                                                    withArguments:[NSDictionary dictionary]
                                                     withHttpVerb:GET]; 
     request.isSecure = YES;
-    // This will be used to null out authCookie once this is sent
-    request.isLogout = YES;
     [self queueRequest:request andCallback:callback];
     
     return request;
@@ -587,7 +586,6 @@ static SMEnvironment environment;
         if([self.requests isEmpty]) return;
         self.currentRequest = [self.requests objectAtIndex:0];
         [self.currentRequest sendRequest];
-        if(self.currentRequest.isLogout) self.authCookie = nil;
         self.running = YES;
     }
 }
@@ -629,15 +627,6 @@ static SMEnvironment environment;
 
 #pragma mark - StackMobRequestDelegate
 
-- (void) setAuthCookieIfFound:(StackMobRequest *)request
-{
-    NSHTTPURLResponse *response = request.httpResponse;
-    NSDictionary *fields = [response allHeaderFields];
-    NSString *cookie = [fields valueForKey:@"Set-Cookie"];
-    if(cookie)
-        self.authCookie = cookie;
-}
-
 - (void)requestCompleted:(StackMobRequest*)request {
     if([self.requests containsObject:request]){
         NSInteger idx = [self.requests indexOfObject:request];
@@ -646,9 +635,7 @@ static SMEnvironment environment;
         if(callback != [NSNull null]){
             StackMobCallback mCallback = (StackMobCallback)callback;
             BOOL wasSuccessful = request.httpResponse.statusCode < 300 && request.httpResponse.statusCode > 199;
-            
-            // hack for release
-            [self setAuthCookieIfFound:request];
+            [self.cookieStore addCookies:request];
             mCallback(wasSuccessful, [request result]);
             Block_release(mCallback);
         }else{
