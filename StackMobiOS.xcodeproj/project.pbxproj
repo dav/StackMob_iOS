@@ -258,10 +258,13 @@
 			isa = PBXGroup;
 			children = (
 				038CB1AB14283272001DEAC9 /* External */,
+				038CB1DE14283272001DEAC9 /* Utils */,
 				038CB1CF14283272001DEAC9 /* StackMob.h */,
 				038CB1D014283272001DEAC9 /* StackMob.m */,
 				038CB1D114283272001DEAC9 /* StackMobAdditions.h */,
 				038CB1D214283272001DEAC9 /* StackMobAdditions.m */,
+				E3897EC814885AC000E45FB7 /* StackMobBulkRequest.h */,
+				E3897EC914885AC000E45FB7 /* StackMobBulkRequest.m */,
 				038CB1D314283272001DEAC9 /* StackMobClientData.h */,
 				038CB1D414283272001DEAC9 /* StackMobClientData.m */,
 				038CB1D514283272001DEAC9 /* StackMobConfiguration.h */,
@@ -275,12 +278,9 @@
 				038CB1DB14283272001DEAC9 /* StackMobRequest.m */,
 				038CB1DC14283272001DEAC9 /* StackMobSession.h */,
 				038CB1DD14283272001DEAC9 /* StackMobSession.m */,
-				038CB1DE14283272001DEAC9 /* Utils */,
 				E33D87DA144616CF00FBEB96 /* StackMobVersion.h */,
 				E3D728D51448BE5700804149 /* StackMobQuery.h */,
 				E3D728D61448BE5700804149 /* StackMobQuery.m */,
-				E3897EC814885AC000E45FB7 /* StackMobBulkRequest.h */,
-				E3897EC914885AC000E45FB7 /* StackMobBulkRequest.m */,
 				E3C752371486FBA3007CFEF1 /* SMGeoPoint.h */,
 				E3C752381486FBA3007CFEF1 /* SMGeoPoint.m */,
 				C63FB34F1497EA4E007961C1 /* SMFile.h */,
@@ -417,20 +417,20 @@
 		82CE42D41288E4D200A73E9C /* Tests */ = {
 			isa = PBXGroup;
 			children = (
-				C6A831E114981267001FB62F /* StackMobLoginTest.h */,
-				C6A831E214981267001FB62F /* StackMobLoginTest.m */,
-				C63FB3541497EDF4007961C1 /* SMFileTest.h */,
-				C63FB3551497EDF4007961C1 /* SMFileTest.m */,
-				9369485E147228B400575176 /* StackMobPushTests.h */,
-				9369485F147228B400575176 /* StackMobPushTests.m */,
-				93694860147228B400575176 /* StackMobTestUtils.h */,
-				93694861147228B400575176 /* StackMobTestUtils.m */,
 				82CE45F312892FFA00A73E9C /* APIRequestTests.h */,
 				82CE45F212892FFA00A73E9C /* APIRequestTests.m */,
-				936948591472286900575176 /* StackMobTestCommon.h */,
-				9369485A1472286900575176 /* StackMobTestCommon.m */,
+				C6A831E114981267001FB62F /* StackMobLoginTest.h */,
+				C6A831E214981267001FB62F /* StackMobLoginTest.m */,
+				9369485E147228B400575176 /* StackMobPushTests.h */,
+				9369485F147228B400575176 /* StackMobPushTests.m */,
 				E3C7523C14871A18007CFEF1 /* StackMobQueryTests.h */,
 				E3C7523D14871A18007CFEF1 /* StackMobQueryTests.m */,
+				93694860147228B400575176 /* StackMobTestUtils.h */,
+				93694861147228B400575176 /* StackMobTestUtils.m */,
+				936948591472286900575176 /* StackMobTestCommon.h */,
+				9369485A1472286900575176 /* StackMobTestCommon.m */,
+				C63FB3541497EDF4007961C1 /* SMFileTest.h */,
+				C63FB3551497EDF4007961C1 /* SMFileTest.m */,
 			);
 			name = Tests;
 			sourceTree = "<group>";
