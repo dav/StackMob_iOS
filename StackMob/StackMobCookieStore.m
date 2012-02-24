@@ -15,18 +15,25 @@
 #import "StackMobCookieStore.h"
 
 @interface StackMobCookieStore()
-@property (nonatomic, retain) NSMutableDictionary *cookies;
 - (void) addCookie:(NSHTTPCookie *)cookie;
 @end
 
 @implementation StackMobCookieStore
 
-@synthesize cookies = _cookies;
+static NSMutableDictionary *cookies;
+static NSString *cookieStoreKey;
 
-- (StackMobCookieStore*) init
+- (StackMobCookieStore*)initWithAppName:(NSString *)appName;
 {
 	if ((self = [super init])) {
-		_cookies = [[NSMutableDictionary alloc] init];
+
+        cookieStoreKey = [@"stackmob." stringByAppendingString:appName];
+        NSData *storedCookes = [[NSUserDefaults standardUserDefaults] objectForKey:cookieStoreKey];
+        if ([storedCookes length]) {
+            cookies = [NSKeyedUnarchiver unarchiveObjectWithData:storedCookes];
+        } else {
+            cookies = [[NSMutableDictionary alloc] init];
+        }
 	}
 	return self;
 }
@@ -43,14 +50,15 @@
 
 - (void) addCookie:(NSHTTPCookie *)cookie
 {
-    [_cookies setObject:cookie forKey:[cookie name]];
+    [cookies setObject:cookie forKey:[cookie name]];
+    [[NSUserDefaults standardUserDefaults] setObject:[NSKeyedArchiver archivedDataWithRootObject:cookies] forKey:cookieStoreKey];
 }
 
 - (NSString *) cookieHeader
 {
     BOOL first = YES;
     NSString * cookieString = @"";
-    for(NSHTTPCookie *cookie in [_cookies allValues]) {
+    for(NSHTTPCookie *cookie in [cookies allValues]) {
         if ([[cookie expiresDate] compare:[NSDate date]] != NSOrderedAscending)
         {
             cookieString = [cookieString stringByAppendingFormat:@"%@%@=%@", (first ? @"" : @";"), [cookie name], [cookie value]];

@@ -17,7 +17,7 @@
 
 @interface StackMobCookieStore : NSObject
 
-- (StackMobCookieStore*)init;
+- (StackMobCookieStore*)initWithAppName:(NSString *)appName;
 
 - (void) addCookies:(StackMobRequest *)request;
 - (NSString *) cookieHeader;

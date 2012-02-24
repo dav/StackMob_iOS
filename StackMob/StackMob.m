@@ -70,7 +70,7 @@ static SMEnvironment environment;
                                                        apiVersionNumber:apiVersion];
         _sharedManager.requests = [NSMutableArray array];
         _sharedManager.callbacks = [NSMutableArray array];
-        _sharedManager.cookieStore = [[[StackMobCookieStore alloc] init] autorelease];
+        _sharedManager.cookieStore = [[[StackMobCookieStore alloc] initWithAppName:appName] autorelease];
     }
     return _sharedManager;
 }
