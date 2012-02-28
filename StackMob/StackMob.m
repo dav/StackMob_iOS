@@ -70,7 +70,6 @@ static SMEnvironment environment;
                                                        apiVersionNumber:apiVersion];
         _sharedManager.requests = [NSMutableArray array];
         _sharedManager.callbacks = [NSMutableArray array];
-        _sharedManager.cookieStore = [[[StackMobCookieStore alloc] initWithAppName:appName] autorelease];
     }
     return _sharedManager;
 }
@@ -109,6 +108,7 @@ static SMEnvironment environment;
         }
         _sharedManager.requests = [NSMutableArray array];
         _sharedManager.callbacks = [NSMutableArray array];
+        _sharedManager.cookieStore = [[StackMobCookieStore alloc] initWithSession:_sharedManager.session];
     }
     return _sharedManager;
 }

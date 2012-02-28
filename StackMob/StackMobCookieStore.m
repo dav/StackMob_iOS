@@ -15,25 +15,18 @@
 #import "StackMobCookieStore.h"
 
 @interface StackMobCookieStore()
-- (void) addCookie:(NSHTTPCookie *)cookie;
+- (NSMutableDictionary *) loadCookies;
 @end
 
 @implementation StackMobCookieStore
 
-static NSMutableDictionary *cookies;
 static NSString *cookieStoreKey;
 
-- (StackMobCookieStore*)initWithAppName:(NSString *)appName;
+- (StackMobCookieStore*)initWithSession:(StackMobSession *)session;
 {
 	if ((self = [super init])) {
 
-        cookieStoreKey = [@"stackmob." stringByAppendingString:appName];
-        NSData *storedCookes = [[NSUserDefaults standardUserDefaults] objectForKey:cookieStoreKey];
-        if ([storedCookes length]) {
-            cookies = [NSKeyedUnarchiver unarchiveObjectWithData:storedCookes];
-        } else {
-            cookies = [[NSMutableDictionary alloc] init];
-        }
+        cookieStoreKey = [[@"stackmob." stringByAppendingString:[session apiKey]] retain];
 	}
 	return self;
 }
@@ -42,20 +35,27 @@ static NSString *cookieStoreKey;
 - (void) addCookies:(StackMobRequest *)request
 {
     NSHTTPURLResponse *response = request.httpResponse;
+    NSMutableDictionary *cookies = [self loadCookies];
     for(NSHTTPCookie *cookie in [NSHTTPCookie cookiesWithResponseHeaderFields:[response allHeaderFields] forURL:[NSURL URLWithString:@""]]) {
-        [self addCookie:cookie];
+        [cookies setObject:cookie forKey:[cookie name]];
     }
-
+    [[NSUserDefaults standardUserDefaults] setObject:[NSKeyedArchiver archivedDataWithRootObject:cookies] forKey:cookieStoreKey];
+    [cookies release];
 }
 
-- (void) addCookie:(NSHTTPCookie *)cookie
+- (NSMutableDictionary *) loadCookies
 {
-    [cookies setObject:cookie forKey:[cookie name]];
-    [[NSUserDefaults standardUserDefaults] setObject:[NSKeyedArchiver archivedDataWithRootObject:cookies] forKey:cookieStoreKey];
+    NSData *storedCookes = [[NSUserDefaults standardUserDefaults] objectForKey:cookieStoreKey];
+    if ([storedCookes length]) {
+        return [[NSKeyedUnarchiver unarchiveObjectWithData:storedCookes] retain];
+    } else {
+        return [[NSMutableDictionary alloc] init];
+    }
 }
 
 - (NSString *) cookieHeader
 {
+    NSMutableDictionary *cookies = [self loadCookies];
     BOOL first = YES;
     NSString * cookieString = @"";
     for(NSHTTPCookie *cookie in [cookies allValues]) {
@@ -65,6 +65,7 @@ static NSString *cookieStoreKey;
             first = NO;
         }
     }
+    [cookies release];
     return cookieString;
 }
 @end
