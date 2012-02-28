@@ -25,6 +25,7 @@
 
 @property (nonatomic, retain) StackMobRequest *currentRequest;
 @property (nonatomic, assign) BOOL running;
+@property (nonatomic, retain) NSLock *queueLock;
 
 - (void)queueRequest:(StackMobRequest *)request andCallback:(StackMobCallback)callback;
 - (void)run;
@@ -50,6 +51,7 @@ struct {
 
 @synthesize currentRequest = _currentRequest;
 @synthesize running = _running;
+@synthesize queueLock = _queueLock;
 
 @synthesize sessionDelegate = _sessionDelegate;
 
@@ -70,6 +72,7 @@ static SMEnvironment environment;
                                                        apiVersionNumber:apiVersion];
         _sharedManager.requests = [NSMutableArray array];
         _sharedManager.callbacks = [NSMutableArray array];
+        _sharedManager.queueLock = [[NSLock alloc] init];
     }
     return _sharedManager;
 }
@@ -569,11 +572,13 @@ static SMEnvironment environment;
 {
     request.delegate = self;
     
+    [_queueLock lock];
     [self.requests addObject:request];
     if(callback)
         [self.callbacks addObject:Block_copy(callback)];
     else
         [self.callbacks addObject:[NSNull null]];
+    [_queueLock unlock];
     
     [callback release];
     
