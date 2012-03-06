@@ -1,5 +1,12 @@
 # Release Notes
 
+## 0.4.3
+* Debug logs restricted to debug mode
+* StackMobSessionDelegate
+* Truncate base64 blobs in logs
+* Persistent cookies
+* Select query support
+
 ## 0.4.2
 * fix for booleans in GET requests (Peter Stöckli)
 * property and IVar cleanup (Daniel Brajkovic)
