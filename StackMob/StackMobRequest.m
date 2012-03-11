@@ -389,6 +389,9 @@
             [mConnectionData setLength:0];
             if (statusCode < 400) {
                 result = [textResult objectFromJSONString];
+              if (result==nil) {
+                SMLog(@"Failed to parse json!");
+              }
             } else {
                 NSDictionary *errResult = (NSDictionary *)[textResult objectFromJSONString]; 
                 NSString *failMsg;
