@@ -15,25 +15,4 @@
 #ifdef __OBJC__
     #import <Foundation/Foundation.h>
 	#import "StackMobAdditions.h"
-	
-	#define kLogVersbose YES
-	#define kLogRequestSteps YES
-	#define kLogApiContent   YES
-    #define STACKMOBVERBOSE 1
-
-    #if STACKMOBVERBOSE
-    #define SMLogVerbose(format, ...) {NSLog(format, ##__VA_ARGS__);}
-    #else
-    #define SMLogVerbose(...)
-    #endif
-
-	#if DEBUG
-        
-		#define SMLog(format, ...) {NSLog(format, ##__VA_ARGS__);}
-		#define StackMobDebug(format, ...) {NSLog([[NSString stringWithFormat:@"[%s, %@, %d] ", __PRETTY_FUNCTION__, [[NSString stringWithUTF8String:__FILE__] lastPathComponent], __LINE__] stringByAppendingFormat:format, ##__VA_ARGS__]);}
-	#else
-		#define SMLog(format, ...) {NSLog(format, ##__VA_ARGS__);}
-		#define StackMobDebug(format, ...) {NSLog([[NSString stringWithFormat:@"[%s, %@, %d] ", __PRETTY_FUNCTION__, [[NSString stringWithUTF8String:__FILE__] lastPathComponent], __LINE__] stringByAppendingFormat:format, ##__VA_ARGS__]);}
-	#endif
-
 #endif

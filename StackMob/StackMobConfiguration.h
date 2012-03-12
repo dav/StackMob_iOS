@@ -16,8 +16,8 @@
     #define SMLog(format, ...) {NSLog(@"%@-%p [thr=%@] "format, [self class], self, ([[NSThread currentThread] isMainThread] ? @"Main" : [NSString stringWithFormat:@"Bg-%p", [NSThread currentThread]]), ##__VA_ARGS__);}
     #define StackMobDebug(format, ...) {NSLog([[NSString stringWithFormat:@"[%s, %@, %d] ", __PRETTY_FUNCTION__, [[NSString stringWithUTF8String:__FILE__] lastPathComponent], __LINE__] stringByAppendingFormat:format, ##__VA_ARGS__]);}
 #else
-    #define SMLog(format, ...) {NSLog(format, ##__VA_ARGS__);}
-    #define StackMobDebug(format, ...) {NSLog([[NSString stringWithFormat:@"[%s, %@, %d] ", __PRETTY_FUNCTION__, [[NSString stringWithUTF8String:__FILE__] lastPathComponent], __LINE__] stringByAppendingFormat:format, ##__VA_ARGS__]);}
+#define SMLog(format, ...)
+#define StackMobDebug(format, ...)
 #endif
 
 // Defining these in my own prefix file

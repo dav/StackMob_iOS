@@ -34,5 +34,9 @@
 - (void) testRelatedPost;
 - (void) testRelatedPut;
 - (void) testRelatedDelete;
-- (void) testAPIList; 
+- (void) testAPIList;
+- (void) testQueryString;
+- (void) testBinaryFileUpload;
+- (void) testForgotPassword;
+- (void) testResetPassword;
 @end

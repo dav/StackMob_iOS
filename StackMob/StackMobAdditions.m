@@ -30,12 +30,20 @@
         if ([argumentValue isKindOfClass:[NSArray class]]) {
             preparedArgVal = [(NSArray *)argumentValue componentsJoinedByString:@","];
         } else if([argumentValue isKindOfClass:[NSNumber class]]) {
-            preparedArgVal = [argumentValue stringValue];
+            if(argumentValue == (id)kCFBooleanTrue) {
+                preparedArgVal = @"true";
+            } else if (argumentValue == (id)kCFBooleanFalse) {
+                preparedArgVal = @"false";
+            } else {
+                preparedArgVal = [argumentValue stringValue];
+            }
         } else {
             preparedArgVal = argumentValue;
         }
                    
-		[encodedPieces addObject:[NSString stringWithFormat:@"%@=%@", [argumentKey URLEncodedString], [preparedArgVal URLEncodedString]]];
+        NSString *escapedKey   = [(NSString*)CFURLCreateStringByAddingPercentEscapes(NULL, (CFStringRef)argumentKey, NULL, CFSTR("?=&+"), CFStringConvertNSStringEncodingToEncoding(NSUTF8StringEncoding)) autorelease];
+		NSString *escapedValue = [(NSString*)CFURLCreateStringByAddingPercentEscapes(NULL, (CFStringRef)preparedArgVal, NULL, CFSTR("?=&+"), CFStringConvertNSStringEncodingToEncoding(NSUTF8StringEncoding)) autorelease];
+		[encodedPieces addObject:[NSString stringWithFormat:@"%@=%@", escapedKey, escapedValue]];
 	}
 	
 	return [encodedPieces componentsJoinedByString:@"&"];

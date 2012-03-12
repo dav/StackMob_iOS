@@ -14,6 +14,7 @@
 
 
 #import "APIRequestTests.h"
+#import "SMFile.h"
 
 StackMobSession *mySession = nil;
 
@@ -237,5 +238,95 @@ StackMobSession *mySession = nil;
         
 }
 
+- (void) testQueryString {
+    NSDictionary *boolArgs = [NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithBool:YES], @"bool", nil];
+    STAssertEqualObjects([boolArgs queryString], @"bool=true", @"queryString generation is not correct");
+    
+    NSDictionary *intArgs = [NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithInt:1], @"int", nil];
+    STAssertEqualObjects([intArgs queryString], @"int=1", @"queryString generation is not correct");
+}
+
+/*
+ * This test requires manual setup to pass. Your user2 schema must have a field "photo" of type binary. 
+ * That should trigger it to upload the file to s3 rather than just storing the text
+ */
+- (void) testBinaryFileUpload {
+    NSData *data = [@"w00t!" dataUsingEncoding:NSUTF8StringEncoding];
+    NSString *fName = @"test.jpg";
+    NSString *contentType = @"image/jpg";
+    SMFile *file =  [[SMFile alloc] initWithFileName:fName data:data contentType:contentType];
+    NSString * const schema = @"user2";
+    NSString * const binaryField = @"photo";
+    
+    NSDictionary *args = [NSDictionary dictionaryWithObjectsAndKeys:@"john", @"username", file, binaryField, nil];
+    [[StackMob stackmob] post:schema withArguments:args andCallback:^(BOOL success, id result) {
+        if (success) {
+            // handle successful object creation
+            NSDictionary *resultObj = (NSDictionary *)result;
+            NSString *fullPhotoPath = [resultObj objectForKey:@"photo"];
+            NSString *urlPrefix = [NSString stringWithFormat: @"http://s3.amazonaws.com/upload-s3-test/%@.%@", schema, binaryField];
+            STAssertFalse([fullPhotoPath hasPrefix:@"Content-Type:"], @"File uploaded as text, most likely you haven't set the type of the photo field to binary");
+            STAssertTrue([fullPhotoPath hasPrefix:urlPrefix], @"Binary file upload url lacks the correct prefix");
+            STAssertTrue([fullPhotoPath hasSuffix:fName], @"Binary file upload url lacks the correct suffix");
+        }
+        else{
+            STFail(@"Binary File Upload Failed");
+        }
+    }];
+}
+
+-(StackMobRequest *) ensureUser:(NSString *)username withEmail:(NSString *)email withPassword:(NSString *)password andCallback:(StackMobCallback)callback {
+    NSMutableDictionary* userArgs = [[NSMutableDictionary alloc] initWithObjectsAndKeys:
+                                     username,@"username",
+                                     email, @"email",
+                                     password, @"password",
+                                     nil];
+	
+    return [[StackMob stackmob] post:@"user" withArguments:userArgs andCallback:callback];
+}
+
+/*
+- (void) testForgotPassword {
+    StackMobRequest *request = [self ensureUser:@"drapp" withEmail:@"drapp@stackmob.com" withPassword:@"hunter2" andCallback:^(BOOL success, id result){
+        [[StackMob stackmob] forgotPasswordByUser: @"drapp" andCallback:^(BOOL success, id result ) {
+            if (success) {
+                NSMutableDictionary *loginRequest = [[NSMutableDictionary alloc] init];
+                [loginRequest setValue:@"drapp" forKey:@"username"];
+                [loginRequest setValue:@"hunter2" forKey:@"password"];
+                [[StackMob stackmob] loginWithArguments:loginRequest andCallback:^(BOOL success, id result ) {
+                    if (!success) {
+                        STFail(@"Reset Password Failed");
+                    }
+                }];
+            } else {
+                STFail(@"Reset Password Failed");
+            }
+        }];
+    }];
+    [StackMobTestUtils runRunLoop:[NSRunLoop currentRunLoop] untilRequestFinished:request];
+}
+
+- (void) testResetPassword {
+    StackMobRequest *request = [self ensureUser:@"drapp" withEmail:@"drapp@stackmob.com" withPassword:@"hunter2" andCallback:^(BOOL success, id result){
+        NSMutableDictionary *loginRequest = [[NSMutableDictionary alloc] init];
+        [loginRequest setValue:@"drapp" forKey:@"username"];
+        [loginRequest setValue:@"hunter2" forKey:@"password"];
+        
+        [[StackMob stackmob] loginWithArguments:loginRequest andCallback:^(BOOL success, id result ) {
+            if (success) {
+                [[StackMob stackmob] resetPasswordWithOldPassword:@"hunter2" newPassword:@"hunter3" andCallback:^(BOOL success, id result) {
+                    if (success) {
+                        STFail(@"Reset Password Failed");
+                    }
+                }]; 
+            }
+            else{
+                STFail(@"Reset Password Failed");
+            }
+        }];
+    }];
+    [StackMobTestUtils runRunLoop:[NSRunLoop currentRunLoop] untilRequestFinished:request];
+}
+ */
 
 @end

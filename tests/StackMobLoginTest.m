@@ -26,21 +26,17 @@
     [super setUp];
 }
 
-- (void)tearDown {
-    [StackMob stackmob].authCookie = nil;
-    [super tearDown];
-}
-
 - (void)testSetCookieLoginLogout {
     NSMutableDictionary *loginRequest = [[NSMutableDictionary alloc] init];
     [loginRequest setValue:USER_NAME forKey:@"username"];
     [loginRequest setValue:USER_PASSWORD forKey:@"password"];
     [[StackMob stackmob] loginWithArguments:loginRequest andCallback:^(BOOL success, id result) {
-        STAssertNotNil([StackMob stackmob].authCookie, @"Auth cookie was not set");
+        STAssertTrue(success == YES, @"login failed");
+        STAssertTrue([[[[StackMob stackmob] cookieStore] cookieHeader] length] != 0, @"Auth cookie was not set");
     }];
     
     [[StackMob stackmob] logoutWithCallback:^(BOOL success, id result) {
-        STAssertNil([StackMob stackmob].authCookie, @"Auth cookie should not be set");
+        STAssertTrue(success == YES, @"logout failed");
     }];
 }
 

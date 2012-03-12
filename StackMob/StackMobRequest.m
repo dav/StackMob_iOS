@@ -288,7 +288,7 @@
         }
     }
     
-    [request addValue:[StackMob stackmob].authCookie forHTTPHeaderField:@"Cookie"];
+    [request addValue:[[[StackMob stackmob] cookieStore] cookieHeader] forHTTPHeaderField:@"Cookie"];
     
 	[request prepare];
     [self setBodyForRequest:request];
@@ -308,8 +308,17 @@
 - (void)setBodyForRequest:(OAMutableURLRequest *)request {
     if (!([[self httpMethod] isEqualToString: @"GET"] || [[self httpMethod] isEqualToString:@"DELETE"])) {    
         NSData * postData = [self postBody];
+#if DEBUG
         NSString * postDataString = [[[NSString alloc] initWithData:postData encoding:NSUTF8StringEncoding] autorelease];
+        //Chop out big binary blobs that would make the logs unreadable
+//        NSString *binaryMatcher = @"(Content-Transfer-Encoding: base64)([^\"]{10})([^\"]*)(\")";
+//        NSRegularExpression* regex = [NSRegularExpression regularExpressionWithPattern:binaryMatcher options:0 error:NULL];
+//        postDataString = [regex stringByReplacingMatchesInString:postDataString
+//                                                         options:0
+//                                                           range:NSMakeRange(0, [postDataString length])
+//                                                    withTemplate:@"$1$2(truncated)$4"];
         SMLog(@"POST Data: %@", postDataString);
+#endif
         [request setHTTPBody:postData];	
         NSString *contentType = [NSString stringWithFormat:@"application/json"];
         [request addValue:contentType forHTTPHeaderField: @"Content-Type"]; 
@@ -382,6 +391,7 @@
     
     
     if (textResult == nil) {
+      NSLog(@"WARNING it seems we failed to parse the json");
         result = [NSDictionary dictionary];
     }   
     else {

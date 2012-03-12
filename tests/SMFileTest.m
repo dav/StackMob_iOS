@@ -12,12 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#import <UIKit/UIKit.h>
-#import "NSData+Base64.h"
 #import "SMFileTest.h"
-#import "SMFile.h"
-
-//#import "application_headers" as required
 
 @implementation SMFileTest
 - (void)setUp {
@@ -29,18 +24,18 @@
 }
 
 - (void)testJSONSerializastion {
-    NSData *data = [NSData data];
+    NSData *data = [@"w00t!" dataUsingEncoding:NSUTF8StringEncoding];
     NSString *fName = @"test.jpg";
     NSString *contentType = @"image/jpg";
     SMFile *file =  [[SMFile alloc] initWithFileName:fName data:data contentType:contentType];
     NSString *encodedString = [data base64EncodedString];
     
-    NSString *expectedResult = [NSString stringWithFormat:@"Content-Type: %@\n\
-                                Content-Disposition: attachment; filename=%@\n\
-                                Content-Transfer-Encoding: %@\n\n\
-                                %@", data, fName, contentType, encodedString];
-    
-    bool result = [expectedResult isEqualToString:[file JSON]];
+    NSString *expectedResult = [NSString stringWithFormat:@"Content-Type: %@\n"
+                                "Content-Disposition: attachment; filename=%@\n"
+                                "Content-Transfer-Encoding: base64\n\n"
+                                "%@", contentType, fName, encodedString];
+    NSString * actualResult = [file JSON];
+    bool result = [expectedResult isEqualToString:actualResult];
     STAssertTrue(result, @"JSON serialization failed");
     [file release];
 }
