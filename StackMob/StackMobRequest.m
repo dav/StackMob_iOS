@@ -180,7 +180,6 @@
 	}
     
     NSString *urlString = [urlComponents componentsJoinedByString:@"?"];
-    SMLog(@"%@", urlString);
     
 	return [NSURL URLWithString:urlString];
 }
@@ -376,25 +375,25 @@
     
 	NSString *textResult = nil;
 	NSDictionary *result = nil;
-    NSInteger statusCode = [self getStatusCode];
+  NSInteger statusCode = [self getStatusCode];
     
-    SMLog(@"RESPONSE CODE %d", (int)statusCode);
-    if ([mConnectionData length] > 0) {
-      textResult = [[[NSString alloc] initWithData:mConnectionData encoding:NSUTF8StringEncoding] autorelease];
-      NSUInteger maxDumpSize = 4096;
-      if ([textResult length]<=maxDumpSize) {
+  SMLog(@"RESPONSE CODE %d", (int)statusCode);
+  if ([mConnectionData length] > 0) {
+    textResult = [[[NSString alloc] initWithData:mConnectionData encoding:NSUTF8StringEncoding] autorelease];
+    NSUInteger maxDumpSize = 4096;
+    if ([textResult length]<=maxDumpSize) {
         SMLog(@"RESPONSE BODY %@", textResult);
-      } else {
-        SMLog(@"RESPONSE BODY (truncated to %lu of %lu) %@", maxDumpSize, [textResult length], [textResult substringToIndex:maxDumpSize]);
-      }
+    } else {
+        SMLog(@"RESPONSE BODY (truncated to %d of %d) %@", (int)maxDumpSize, (int)[textResult length], [textResult substringToIndex:maxDumpSize]);
     }
+  }
     
     
-    if (textResult == nil) {
-      NSLog(@"WARNING it seems we failed to parse the json");
-        result = [NSDictionary dictionary];
-    }   
-    else {
+  if (textResult == nil) {
+    NSLog(@"WARNING result was empty");
+    result = [NSDictionary dictionary];
+  }   
+  else {
         @try{
             [mConnectionData setLength:0];
             if (statusCode < 400) {
