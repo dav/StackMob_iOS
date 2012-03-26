@@ -58,6 +58,12 @@ struct {
 static StackMob *_sharedManager = nil;
 static SMEnvironment environment;
 
+
++ (StackMob *)setApplication:(NSString *)apiKey secret:(NSString *)apiSecret appName:appName userObjectName:(NSString *)userObjectName apiVersionNumber:(NSNumber *)apiVersion
+{
+    return [self setApplication:apiKey secret:apiSecret appName:appName subDomain:nil userObjectName:userObjectName apiVersionNumber:apiVersion];
+}
+
 + (StackMob *)setApplication:(NSString *)apiKey secret:(NSString *)apiSecret appName:(NSString *)appName subDomain:(NSString *)subDomain userObjectName:(NSString *)userObjectName apiVersionNumber:(NSNumber *)apiVersion
 {
     if (_sharedManager == nil) {
