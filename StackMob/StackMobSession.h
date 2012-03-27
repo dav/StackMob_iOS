@@ -16,7 +16,8 @@
 #import "StackMobConfiguration.h"
 #import "StackMobVersion.h"
 
-static NSString *const SMDefaultDomain = @"mob1.stackmob.com";
+static NSString *const SMDefaultDomain = @"stackmob.com";
+static NSString *const SMSubdomainDefault = @"mob1";
 
 @interface StackMobSession : NSObject {
     NSString *url;
@@ -28,6 +29,7 @@ static NSString *const SMDefaultDomain = @"mob1.stackmob.com";
 	NSString* _apiKey;
 	NSString* _apiSecret;
 	NSString* _appName;
+    NSString* _subDomain;
 	NSString* _domain;
     NSString* _userObjectName;
 	NSString* _sessionKey;
@@ -75,6 +77,11 @@ static NSString *const SMDefaultDomain = @"mob1.stackmob.com";
 @property(nonatomic,readonly) NSString* domain;
 
 /**
+ * Your application's subdomain, as passed to the constructor.
+ */
+@property(nonatomic,readonly) NSString* subDomain;
+
+/**
  * Your application's user object name (ie - 'user' or 'account')
  */
 @property(nonatomic,readonly) NSString* userObjectName;
@@ -99,51 +106,6 @@ static NSString *const SMDefaultDomain = @"mob1.stackmob.com";
  * The globally shared session instance.
  */
 + (StackMobSession*)session;
-
-/**
- * Constructs a session and stores it as the globally shared session instance.
- * Assumes using the default domain of stackmob.com
- *
- * @param key the application api key
- * @param secret the application secret api key
- * @param apiVersionNumber the application version number
- *
- */
-+ (StackMobSession*)sessionForApplication:(NSString*)key secret:(NSString*)secret appName:(NSString*) appName apiVersionNumber:(NSNumber*)apiVersionNumber;
-
-/**
- * Constructs a session and stores it as the globally shared session instance.
- * Assumes using the default domain of stackmob.com
- *
- * @param key the application api key
- * @param secret the application secret api key
- * @param domain overwrites the stackmob.com domain
- * @param apiVersionNumber the application version number
- *
- */
-+ (StackMobSession*)sessionForApplication:(NSString*)key 
-                                   secret:(NSString*)secret
-                                  appName:(NSString*)appName
-                                   domain:(NSString*)domain
-                         apiVersionNumber:(NSNumber*)apiVersionNumber;
-
-
-/**
- * Constructs a session for an application.
- *
- * @param key the application api key
- * @param secret the application secret api key
- * @param domain overwrites the stackmob.com domain
- * @param userObjectName the name of the user object in your StackMob App
-* @param apiVersionNumber the application version number
- */
-+ (StackMobSession*)sessionForApplication:(NSString*)key 
-                                   secret:(NSString*)secret
-                                  appName:(NSString*)appName
-                                   domain:(NSString*)domain 
-                           userObjectName:(NSString*)userObjectName
-                         apiVersionNumber:(NSNumber*)apiVersionNumber;
-
 
 /**
  * Constructs a session and stores it as the globally shared session instance.

@@ -29,6 +29,7 @@ static StackMobSession* sharedSession = nil;
 @synthesize apiSecret = _apiSecret;
 @synthesize appName = _appName;
 @synthesize domain = _domain;
+@synthesize subDomain = _subDomain;
 @synthesize userObjectName = _userObjectName;
 @synthesize apiVersionNumber = _apiVersionNumber;
 @synthesize sessionKey = _sessionKey;
@@ -38,48 +39,6 @@ static StackMobSession* sharedSession = nil;
 + (StackMobSession*)session {
 	return sharedSession;
 }
-
-+ (StackMobSession*)sessionForApplication:(NSString*)key 
-                                   secret:(NSString*)secret
-                                  appName:(NSString*)appName
-                         apiVersionNumber:(NSNumber*)apiVersionNumber 
-{
-	return [self sessionForApplication:key secret:secret appName:appName domain:SMDefaultDomain apiVersionNumber:apiVersionNumber];
-}
-
-+ (StackMobSession*)sessionForApplication:(NSString*)key 
-                                   secret:(NSString*)secret
-                                  appName:(NSString*)appName
-                                   domain:(NSString*)domain 
-                         apiVersionNumber:(NSNumber*)apiVersionNumber
-{
-	StackMobSession* session = [[[StackMobSession alloc] initWithKey:key 
-                                                              secret:secret 
-                                                             appName:appName
-                                                           subDomain:nil 
-                                                              domain:domain
-                                                    apiVersionNumber:apiVersionNumber] autorelease];
-	return session;
-}
-
-+ (StackMobSession*)sessionForApplication:(NSString*)key 
-                                   secret:(NSString*)secret
-                                  appName:(NSString*)appName
-                                   domain:(NSString*)domain 
-                           userObjectName:(NSString*)userObjectName
-                         apiVersionNumber:(NSNumber*)apiVersionNumber
-{
-	StackMobSession* session = [[[StackMobSession alloc] initWithKey:key 
-                                                              secret:secret
-                                                             appName:appName
-                                                           subDomain:nil 
-                                                              domain:domain
-                                                      userObjectName:userObjectName
-                                                    apiVersionNumber:apiVersionNumber] autorelease];
-    SMLog(@"apiVersionNumber %@", apiVersionNumber);
-	return session;
-}
-
 
 + (StackMobSession*)sessionForApplication:(NSString*)key 
                                    secret:(NSString*)secret
@@ -160,6 +119,7 @@ static StackMobSession* sharedSession = nil;
 		_apiKey = [key copy];
 		_apiSecret = [secret copy];
 		_appName = [appName copy];
+        _subDomain = [subDomain copy];
 		_domain = [domain copy];
         _apiVersionNumber = [apiVersionNumber copy];
         [self setup];
@@ -182,6 +142,7 @@ static StackMobSession* sharedSession = nil;
         _apiKey = [key copy];
         _apiSecret = [secret copy];
         _appName = [appName copy];
+        _subDomain = [subDomain copy];
         _domain = [domain copy];
         _userObjectName = [userObjectName copy];
         _apiVersionNumber = [apiVersionNumber copy];
@@ -197,8 +158,8 @@ static StackMobSession* sharedSession = nil;
     _lastRequestTime = nil;
     _requestBurstCount = 0;
     _requestTimer = nil; 
-    url = [[NSString stringWithFormat:@"api.%@",_domain] retain];
-    pushURL = [[NSString stringWithFormat:@"http://push.%@",_domain] retain];
+    url = [[NSString stringWithFormat:@"api.%@.%@", _subDomain, _domain] retain];
+    pushURL = [[NSString stringWithFormat:@"http://push.%@.%@", _subDomain, _domain] retain];
     secureURL = [[NSString stringWithFormat:@"https://%@", url] retain];
     regularURL = [[NSString stringWithFormat:@"http://%@", url] retain];
 }
@@ -212,6 +173,7 @@ static StackMobSession* sharedSession = nil;
 	[_apiKey release];
 	[_apiSecret release];
 	[_appName release];
+    [_subDomain release];
 	[_domain release];
     [_userObjectName release];
     [_apiVersionNumber release];
