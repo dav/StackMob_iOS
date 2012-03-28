@@ -1,5 +1,10 @@
 # Release Notes
 
+## 0.4.4
+* Remove apple UDID in favor of SecureUDID
+* Switch to new-style urls
+* Inneractive integration
+
 ## 0.4.3
 * Debug logs restricted to debug mode
 * StackMobSessionDelegate
