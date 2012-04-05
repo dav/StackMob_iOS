@@ -36,8 +36,10 @@ static NSString *cookieStoreKey;
 {
     NSHTTPURLResponse *response = request.httpResponse;
     NSMutableDictionary *cookies = [self loadCookies];
-    for(NSHTTPCookie *cookie in [NSHTTPCookie cookiesWithResponseHeaderFields:[response allHeaderFields] forURL:[NSURL URLWithString:@""]]) {
-        [cookies setObject:cookie forKey:[cookie name]];
+    if([response allHeaderFields] != nil) {
+        for(NSHTTPCookie *cookie in [NSHTTPCookie cookiesWithResponseHeaderFields:[response allHeaderFields] forURL:[NSURL URLWithString:@""]]) {
+            [cookies setObject:cookie forKey:[cookie name]];
+        }
     }
     [[NSUserDefaults standardUserDefaults] setObject:[NSKeyedArchiver archivedDataWithRootObject:cookies] forKey:cookieStoreKey];
     [cookies release];
