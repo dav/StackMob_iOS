@@ -25,15 +25,6 @@
 #include <net/if.h>
 #include <net/if_dl.h>
 
-NSString *bundleVersion = @"";
-NSString *identifier = @"";
-NSString *model = @"";
-NSString *systemVersion = @"";
-NSString *device_name = @"";
-NSString *countryCode = @"";
-NSString *language = @"";
-NSString *jailBroken = @"NO";
-
 static StackMobClientData * _sharedInstance=nil;
 
 @interface StackMobClientData ()
@@ -42,9 +33,20 @@ static StackMobClientData * _sharedInstance=nil;
 - (void)reachabilityChanged:(NSNotification *)note;
 #endif
 - (void)generateClientDataString;
+
+@property (nonatomic, assign) NSString *bundleVersion;
+@property (nonatomic, assign) NSString *identifier;
+@property (nonatomic, assign) NSString *model;
+@property (nonatomic, assign) NSString *systemVersion;
+@property (nonatomic, assign) NSString *device_name;
+@property (nonatomic, assign) NSString *countryCode;
+@property (nonatomic, assign) NSString *language;
+@property (nonatomic, assign) NSString *jailBroken;
 @end
 
 @implementation StackMobClientData
+
+@synthesize bundleVersion, identifier, model, systemVersion, device_name, countryCode, language, jailBroken;
 
 - (id)init
 {
