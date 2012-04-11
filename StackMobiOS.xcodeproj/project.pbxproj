@@ -97,8 +97,6 @@
 		564A6DE714F6BF6700DA1AE7 /* StackMobCookieStore.m in Sources */ = {isa = PBXBuildFile; fileRef = 564A6DE514F6BF6700DA1AE7 /* StackMobCookieStore.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		564EE37014F6D67F00D76EC1 /* StackMobCookieStore.h in Sources */ = {isa = PBXBuildFile; fileRef = 564A6DE414F6BF6700DA1AE7 /* StackMobCookieStore.h */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		564EE37214F6D68300D76EC1 /* StackMobCookieStore.m in Sources */ = {isa = PBXBuildFile; fileRef = 564A6DE514F6BF6700DA1AE7 /* StackMobCookieStore.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
-		569A3C4C1517BB9F00DEDABD /* InneractiveAd.h in Headers */ = {isa = PBXBuildFile; fileRef = 569A3C491517BB9F00DEDABD /* InneractiveAd.h */; };
-		569A3C4D1517BB9F00DEDABD /* InneractiveAdSDK.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 569A3C4B1517BB9F00DEDABD /* InneractiveAdSDK.a */; };
 		57121D5E140FDE3F00686005 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 57121D5D140FDE3F00686005 /* libz.dylib */; };
 		82CE43D41288F14000A73E9C /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 82CE43341288EFE000A73E9C /* CoreLocation.framework */; };
 		82CE43DB1288F15500A73E9C /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 82CE43341288EFE000A73E9C /* CoreLocation.framework */; };
@@ -192,8 +190,6 @@
 		560BB27F152243DA004BB615 /* SecureUDID.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SecureUDID.m; sourceTree = "<group>"; };
 		564A6DE414F6BF6700DA1AE7 /* StackMobCookieStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StackMobCookieStore.h; sourceTree = "<group>"; };
 		564A6DE514F6BF6700DA1AE7 /* StackMobCookieStore.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = StackMobCookieStore.m; sourceTree = "<group>"; };
-		569A3C491517BB9F00DEDABD /* InneractiveAd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InneractiveAd.h; sourceTree = "<group>"; };
-		569A3C4B1517BB9F00DEDABD /* InneractiveAdSDK.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = InneractiveAdSDK.a; sourceTree = "<group>"; };
 		57121D5D140FDE3F00686005 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
 		82CE43251288EF9100A73E9C /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
 		82CE432C1288EFB900A73E9C /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
@@ -248,7 +244,6 @@
 				82CE45151289025B00A73E9C /* UIKit.framework in Frameworks */,
 				AACBBE4A0F95108600F1A2B1 /* Foundation.framework in Frameworks */,
 				82CE43D41288F14000A73E9C /* CoreLocation.framework in Frameworks */,
-				569A3C4D1517BB9F00DEDABD /* InneractiveAdSDK.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -303,7 +298,6 @@
 			isa = PBXGroup;
 			children = (
 				560BB27D152243DA004BB615 /* SecureUDID */,
-				569A3C471517BB9F00DEDABD /* inneractive */,
 				038CB1AC14283272001DEAC9 /* libraries */,
 				038CB1AE14283272001DEAC9 /* OAuthConsumer */,
 				038CB1CC14283272001DEAC9 /* reachability */,
@@ -435,31 +429,6 @@
 			path = SecureUDID;
 			sourceTree = "<group>";
 		};
-		569A3C471517BB9F00DEDABD /* inneractive */ = {
-			isa = PBXGroup;
-			children = (
-				569A3C481517BB9F00DEDABD /* include */,
-				569A3C4A1517BB9F00DEDABD /* lib */,
-			);
-			path = inneractive;
-			sourceTree = "<group>";
-		};
-		569A3C481517BB9F00DEDABD /* include */ = {
-			isa = PBXGroup;
-			children = (
-				569A3C491517BB9F00DEDABD /* InneractiveAd.h */,
-			);
-			path = include;
-			sourceTree = "<group>";
-		};
-		569A3C4A1517BB9F00DEDABD /* lib */ = {
-			isa = PBXGroup;
-			children = (
-				569A3C4B1517BB9F00DEDABD /* InneractiveAdSDK.a */,
-			);
-			path = lib;
-			sourceTree = "<group>";
-		};
 		82CE42D41288E4D200A73E9C /* Tests */ = {
 			isa = PBXGroup;
 			children = (
@@ -525,7 +494,6 @@
 				C63FB3511497EA4E007961C1 /* SMFile.h in Headers */,
 				C63FB3561497EDF4007961C1 /* SMFileTest.h in Headers */,
 				564A6DE614F6BF6700DA1AE7 /* StackMobCookieStore.h in Headers */,
-				569A3C4C1517BB9F00DEDABD /* InneractiveAd.h in Headers */,
 				560BB280152243DA004BB615 /* SecureUDID.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
