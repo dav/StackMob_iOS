@@ -15,7 +15,7 @@
 #import "StackMobCookieStore.h"
 
 @interface StackMobCookieStore()
-- (NSMutableDictionary *) initStoredCookies;
+- (NSMutableDictionary *) loadCookies;
 @end
 
 @implementation StackMobCookieStore
@@ -25,7 +25,7 @@ static NSString *cookieStoreKey;
 - (StackMobCookieStore*)initWithSession:(StackMobSession *)session;
 {
 	if ((self = [super init])) {
-
+        
         cookieStoreKey = [[@"stackmob." stringByAppendingString:[session apiKey]] retain];
 	}
 	return self;
@@ -45,7 +45,7 @@ static NSString *cookieStoreKey;
     [cookies release];
 }
 
-- (NSMutableDictionary *) initStoredCookies
+- (NSMutableDictionary *) loadCookies
 {
     NSData *storedCookes = [[NSUserDefaults standardUserDefaults] objectForKey:cookieStoreKey];
     if ([storedCookes length]) {
@@ -57,7 +57,7 @@ static NSString *cookieStoreKey;
 
 - (NSString *) cookieHeader
 {
-    NSMutableDictionary *cookies = [self initStoredCookies];
+    NSMutableDictionary *cookies = [self loadCookies];
     BOOL first = YES;
     NSString * cookieString = @"";
     for(NSHTTPCookie *cookie in [cookies allValues]) {
