@@ -342,6 +342,7 @@
 }
 
 - (void)connection:(NSURLConnection*)connection didReceiveResponse:(NSURLResponse*)response {
+    //SMLog(@"StackMobRequest %p: didReceiveResponse expected length=%d", self, (int)[response expectedContentLength]);
 	mHttpResponse = [(NSHTTPURLResponse*)response copy];
 }
 
