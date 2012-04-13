@@ -1,5 +1,9 @@
 # Release Notes
 
+## 0.4.5
+* Update SecureUDID
+* Minor fixes
+
 ## 0.4.4
 * Remove apple UDID in favor of SecureUDID
 * Switch to new-style urls
