@@ -32,7 +32,7 @@
 - (void)next;
 - (NSDictionary *)loadInfo;
 - (StackMobRequest *)destroy:(NSString *)path withArguments:(NSDictionary *)arguments andHeaders:(NSDictionary *)headers andCallback:(StackMobCallback)callback;
-
+- (NSString *) escapePath:(NSString *)path;
 @end
 
 #define ENVIRONMENTS [NSArray arrayWithObjects:@"production", @"development", nil]
@@ -410,8 +410,13 @@ static SMEnvironment environment;
 
 # pragma mark - CRUD methods
 
+- (NSString *) escapePath:(NSString *)path
+{
+    return [(NSString*)CFURLCreateStringByAddingPercentEscapes(NULL, (CFStringRef)path, NULL, CFSTR("?=&+;|"), CFStringConvertNSStringEncodingToEncoding(NSUTF8StringEncoding)) autorelease];   
+}
+
 - (StackMobRequest *)get:(NSString *)path withArguments:(NSDictionary *)arguments andCallback:(StackMobCallback)callback{
-    StackMobRequest *request = [StackMobRequest requestForMethod:path
+    StackMobRequest *request = [StackMobRequest requestForMethod:[self escapePath:path]
                                                    withArguments:arguments
                                                     withHttpVerb:GET]; 
     [self queueRequest:request andCallback:callback];
@@ -419,14 +424,14 @@ static SMEnvironment environment;
 }
 
 - (StackMobRequest *)get:(NSString *)path withQuery:(StackMobQuery *)query andCallback:(StackMobCallback)callback {
-    StackMobRequest *request = [StackMobRequest requestForMethod:path withQuery:query withHttpVerb:GET];
+    StackMobRequest *request = [StackMobRequest requestForMethod:[self escapePath:path] withQuery:query withHttpVerb:GET];
     [self queueRequest:request andCallback:callback];
     return request;
 }
 
 - (StackMobRequest *)get:(NSString *)path withCallback:(StackMobCallback)callback
 {
-    StackMobRequest *request = [StackMobRequest requestForMethod:path
+    StackMobRequest *request = [StackMobRequest requestForMethod:[self escapePath:path]
                                                    withArguments:NULL
                                                     withHttpVerb:GET];
     [self queueRequest:request andCallback:callback];
@@ -435,7 +440,7 @@ static SMEnvironment environment;
 
 - (StackMobRequest *)post:(NSString *)path withArguments:(NSDictionary *)arguments andCallback:(StackMobCallback)callback
 {
-    StackMobRequest *request = [StackMobRequest requestForMethod:path
+    StackMobRequest *request = [StackMobRequest requestForMethod:[self escapePath:path]
                                                    withArguments:arguments
                                                     withHttpVerb:POST];
     [self queueRequest:request andCallback:callback];
@@ -446,7 +451,7 @@ static SMEnvironment environment;
 {
     NSDictionary *modifiedArguments = [NSMutableDictionary dictionaryWithDictionary:arguments];
     [modifiedArguments setValue:user forKey:self.session.userObjectName];
-    StackMobRequest *request = [StackMobRequest requestForMethod:[NSString stringWithFormat:@"%@/%@", self.session.userObjectName, path]
+    StackMobRequest *request = [StackMobRequest requestForMethod:[NSString stringWithFormat:@"%@/%@", self.session.userObjectName, [self escapePath:path]]
                                                    withArguments:modifiedArguments
                                                     withHttpVerb:POST];
     [self queueRequest:request andCallback:callback];
@@ -454,24 +459,24 @@ static SMEnvironment environment;
 }
 
 - (StackMobRequest *)post:(NSString *)path withBulkArguments:(NSArray *)arguments andCallback:(StackMobCallback)callback {
-    StackMobBulkRequest *request = [StackMobBulkRequest requestForMethod:path withArguments:arguments];
+    StackMobBulkRequest *request = [StackMobBulkRequest requestForMethod:[self escapePath:path] withArguments:arguments];
     [self queueRequest:request andCallback:callback];
     
     return request;
 }
 
 - (StackMobRequest *)post:(NSString *)path withId:(NSString *)primaryId andField:(NSString *)relField andArguments:(NSDictionary *)args andCallback:(StackMobCallback)callback {
-    NSString *fullPath = [NSString stringWithFormat:@"%@/%@/%@", path, primaryId, relField];
+    NSString *fullPath = [NSString stringWithFormat:@"%@/%@/%@", [self escapePath:path], primaryId, relField];
     return [self post:fullPath withArguments:args andCallback:callback];
 }
 
 - (StackMobRequest *)post:(NSString *)path withId:(NSString *)primaryId andField:(NSString *)relField andBulkArguments:(NSArray *)arguments andCallback:(StackMobCallback)callback {
-    NSString *fullPath = [NSString stringWithFormat:@"%@/%@/%@", path, primaryId, relField];
+    NSString *fullPath = [NSString stringWithFormat:@"%@/%@/%@", [self escapePath:path], primaryId, relField];
     return [self post:fullPath withBulkArguments:arguments andCallback:callback];
 }
 
 - (StackMobRequest *)put:(NSString *)path withId:(NSString *)objectId andArguments:(NSDictionary *)arguments andCallback:(StackMobCallback)callback {
-    NSString *fullPath = [NSString stringWithFormat:@"%@/%@", path, objectId];
+    NSString *fullPath = [NSString stringWithFormat:@"%@/%@", [self escapePath:path], objectId];
     
     StackMobRequest *request = [StackMobRequest requestForMethod:fullPath withArguments:arguments withHttpVerb:PUT];
     [self queueRequest:request andCallback:callback];
@@ -479,7 +484,7 @@ static SMEnvironment environment;
 }
 
 - (StackMobRequest *)put:(NSString *)path withArguments:(NSDictionary *)arguments andCallback:(StackMobCallback)callback{
-    StackMobRequest *request = [StackMobRequest requestForMethod:path
+    StackMobRequest *request = [StackMobRequest requestForMethod:[self escapePath:path]
                                                    withArguments:arguments
                                                     withHttpVerb:PUT];
     [self queueRequest:request andCallback:callback];
@@ -487,7 +492,7 @@ static SMEnvironment environment;
 }
 
 - (StackMobRequest *)put:(NSString *)path withId:(id)primaryId andField:(NSString *)relField andArguments:(NSArray *)args andCallback:(StackMobCallback)callback {
-    NSString *fullPath = [NSString stringWithFormat:@"%@/%@/%@", path, primaryId, relField];
+    NSString *fullPath = [NSString stringWithFormat:@"%@/%@/%@", [self escapePath:path], primaryId, relField];
     StackMobBulkRequest *request = [StackMobBulkRequest requestForMethod:fullPath withArguments:args];
     request.httpMethod = [StackMobRequest stringFromHttpVerb:PUT];
     
@@ -497,11 +502,11 @@ static SMEnvironment environment;
 }
 
 - (StackMobRequest *)destroy:(NSString *)path withArguments:(NSDictionary *)arguments andCallback:(StackMobCallback)callback{
-    return [self destroy:path withArguments:arguments andHeaders:[NSDictionary dictionary] andCallback:callback];
+    return [self destroy:[self escapePath:path] withArguments:arguments andHeaders:[NSDictionary dictionary] andCallback:callback];
 }
 
 - (StackMobRequest *)destroy:(NSString *)path withArguments:(NSDictionary *)arguments andHeaders:(NSDictionary *)headers andCallback:(StackMobCallback)callback {
-    StackMobRequest *request = [StackMobRequest requestForMethod:path
+    StackMobRequest *request = [StackMobRequest requestForMethod:[self escapePath:path]
                                                    withArguments:arguments
                                                     withHttpVerb:DELETE];
     [request setHeaders:headers];
@@ -515,7 +520,7 @@ static SMEnvironment environment;
 }
 
 - (StackMobRequest *)removeIds:(NSArray *)removeIds forSchema:(NSString *)schema andId:(NSString *)primaryId andField:(NSString *)relField shouldCascade:(BOOL)isCascade withCallback:(StackMobCallback)callback {
-    NSString *fullPath = [NSString stringWithFormat:@"%@/%@/%@/%@", schema, primaryId, relField, [removeIds componentsJoinedByString:@","]];
+    NSString *fullPath = [NSString stringWithFormat:@"%@/%@/%@/%@", schema, primaryId, relField, [self escapePath:[removeIds componentsJoinedByString:@","]]];
     NSDictionary *headers;
     if (isCascade == YES) {
         headers = [NSDictionary dictionaryWithObjectsAndKeys:@"true", @"X-StackMob-CascadeDelete", nil];
