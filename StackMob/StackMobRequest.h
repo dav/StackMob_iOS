@@ -33,7 +33,7 @@ typedef enum {
 	NSURLConnection*		mConnection;
 	id<SMRequestDelegate>	mDelegate;
 	SEL						mSelector;
-    BOOL          mIsSecure;
+    BOOL                    mIsSecure;
 	NSString*				mMethod;
 	NSMutableDictionary*	mArguments;
     NSMutableDictionary*    mHeaders;
