@@ -42,4 +42,5 @@
 - (void) testBinaryFileUpload;
 - (void) testForgotPassword;
 - (void) testResetPassword;
+- (void) testGetWithPagination;
 @end
