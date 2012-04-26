@@ -71,7 +71,7 @@ StackMobSession *mySession = nil;
     for (NSDictionary *d in [request result]) {
         NSString *s = [d valueForKey:@"email"];
         if (s != NULL) {
-          STAssertFalse([s isEqualToString:@"ty@stackmob.com"], @"email should not be equal");
+            STAssertFalse([s isEqualToString:@"ty@stackmob.com"], @"email should not be equal");
         }
     }
     
