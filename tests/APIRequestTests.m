@@ -55,6 +55,71 @@ StackMobSession *mySession = nil;
 
 }
 
+- (void) testNotEqualGet {
+    StackMobQuery *q = [StackMobQuery query];
+    [q field:@"email" mustNotEqualValue:@"ty@stackmob.com"];
+    
+    StackMobRequest *request = [StackMobRequest requestForMethod:@"user"
+                                                       withQuery:q 
+                                                    withHttpVerb:GET];
+    [request sendRequest];
+    //we need to loop until the request comes back, its just a test its OK
+    [StackMobTestUtils runRunLoop:[NSRunLoop currentRunLoop] untilRequestFinished:request];
+    
+    STAssertTrue([[request result] isKindOfClass:[NSArray class]], @"Did not get a valid GET result");
+
+    for (NSDictionary *d in [request result]) {
+        NSString *s = [d valueForKey:@"email"];
+        if (s != NULL) {
+            STAssertFalse([s isEqualToString:@"ty@stackmob.com"], @"email should not be equal");
+        }
+    }
+    
+    request = nil;
+}
+
+- (void) testIsNullGet {
+    StackMobQuery *q = [StackMobQuery query];
+    [q mustBeNull:@"email"];
+    
+    StackMobRequest *request = [StackMobRequest requestForMethod:@"user"
+                                                       withQuery:q 
+                                                    withHttpVerb:GET];
+    [request sendRequest];
+    //we need to loop until the request comes back, its just a test its OK
+    [StackMobTestUtils runRunLoop:[NSRunLoop currentRunLoop] untilRequestFinished:request];
+    
+    STAssertTrue([[request result] isKindOfClass:[NSArray class]], @"Did not get a valid GET result");
+    
+    for (NSDictionary *d in [request result]) {
+        NSString *s = [d objectForKey:@"email"];
+        STAssertNil(s, @"email should be null");
+    }
+    
+    request = nil;
+}
+
+- (void) testIsNotNullGet {
+    StackMobQuery *q = [StackMobQuery query];
+    [q mustNotBeNull:@"email"];
+    
+    StackMobRequest *request = [StackMobRequest requestForMethod:@"user"
+                                                       withQuery:q 
+                                                    withHttpVerb:GET];
+    [request sendRequest];
+    //we need to loop until the request comes back, its just a test its OK
+    [StackMobTestUtils runRunLoop:[NSRunLoop currentRunLoop] untilRequestFinished:request];
+    
+    STAssertTrue([[request result] isKindOfClass:[NSArray class]], @"Did not get a valid GET result");
+    
+    for (NSDictionary *d in [request result]) {
+        NSString *s = [d objectForKey:@"email"];
+        STAssertNotNil(s, @"email should not be null");
+    }
+    
+    request = nil;    
+}
+
 - (void) testPost {
 	NSLog(@"IN TEST POST");
     NSMutableDictionary* userArgs = [[NSMutableDictionary alloc] initWithObjectsAndKeys:

@@ -28,7 +28,10 @@
 }
 
 - (void) testURLGeneration;
-- (void) testGet;           
+- (void) testGet;
+- (void) testNotEqualGet;
+- (void) testIsNullGet;
+- (void) testIsNotNullGet;
 - (void) testPost; 
 - (void) testBulkPost;
 - (void) testRelatedPost;
