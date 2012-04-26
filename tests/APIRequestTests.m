@@ -63,7 +63,7 @@ StackMobSession *mySession = nil;
                                                        withQuery:q 
                                                     withHttpVerb:GET];
     [request sendRequest];
-	//we need to loop until the request comes back, its just a test its OK
+    //we need to loop until the request comes back, its just a test its OK
     [StackMobTestUtils runRunLoop:[NSRunLoop currentRunLoop] untilRequestFinished:request];
     
     STAssertTrue([[request result] isKindOfClass:[NSArray class]], @"Did not get a valid GET result");
@@ -75,7 +75,7 @@ StackMobSession *mySession = nil;
         }
     }
     
-	request = nil;
+    request = nil;
 }
 
 - (void) testIsNullGet {
@@ -86,7 +86,7 @@ StackMobSession *mySession = nil;
                                                        withQuery:q 
                                                     withHttpVerb:GET];
     [request sendRequest];
-	//we need to loop until the request comes back, its just a test its OK
+    //we need to loop until the request comes back, its just a test its OK
     [StackMobTestUtils runRunLoop:[NSRunLoop currentRunLoop] untilRequestFinished:request];
     
     STAssertTrue([[request result] isKindOfClass:[NSArray class]], @"Did not get a valid GET result");
@@ -96,7 +96,7 @@ StackMobSession *mySession = nil;
         STAssertNil(s, @"email should be null");
     }
     
-	request = nil;
+    request = nil;
 }
 
 - (void) testIsNotNullGet {
@@ -107,7 +107,7 @@ StackMobSession *mySession = nil;
                                                        withQuery:q 
                                                     withHttpVerb:GET];
     [request sendRequest];
-	//we need to loop until the request comes back, its just a test its OK
+    //we need to loop until the request comes back, its just a test its OK
     [StackMobTestUtils runRunLoop:[NSRunLoop currentRunLoop] untilRequestFinished:request];
     
     STAssertTrue([[request result] isKindOfClass:[NSArray class]], @"Did not get a valid GET result");
@@ -117,7 +117,7 @@ StackMobSession *mySession = nil;
         STAssertNotNil(s, @"email should not be null");
     }
     
-	request = nil;    
+    request = nil;    
 }
 
 - (void) testPost {
