@@ -16,6 +16,12 @@
 
 @interface StackMobSession(Private)
 - (void)setup;
+
+@end
+
+@interface StackMobSession()
+@property(nonatomic,readonly) NSDate* nextTimeCheck;
+@property(nonatomic,assign) NSTimeInterval serverTimeDiff;
 @end
 
 @implementation StackMobSession
@@ -24,6 +30,8 @@ static const int kMaxBurstRequests = 3;
 static const NSTimeInterval kBurstDuration = 2;
 
 static StackMobSession* sharedSession = nil;
+static NSDateFormatter* rfcFormatter = nil;
+static NSString *const serverTimeDiffKey = @"stackmob.servertimediff";
 
 @synthesize apiKey = _apiKey;
 @synthesize apiSecret = _apiSecret;
@@ -34,6 +42,8 @@ static StackMobSession* sharedSession = nil;
 @synthesize apiVersionNumber = _apiVersionNumber;
 @synthesize sessionKey = _sessionKey;
 @synthesize expirationDate = _expirationDate;
+@synthesize nextTimeCheck = _nextTimeCheck;
+@synthesize serverTimeDiff = _serverTimeDiff;
 @synthesize pushURL;
 
 + (StackMobSession*)session {
@@ -82,6 +92,12 @@ static StackMobSession* sharedSession = nil;
                                                       userObjectName:userObjectName
                                                     apiVersionNumber:apiVersionNumber] autorelease];
     SMLog(@"apiVersionNumber %@", apiVersionNumber);
+    if(rfcFormatter == nil) 
+    {    
+        rfcFormatter = [[[NSDateFormatter alloc] init] retain];
+        [rfcFormatter setDateFormat:@"EEE, dd MMM yyyy HH:mm:ss z"];
+    }
+    
 	return session;
 }
 
@@ -162,6 +178,8 @@ static StackMobSession* sharedSession = nil;
     pushURL = [[NSString stringWithFormat:@"http://push.%@.%@", _subDomain, _domain] retain];
     secureURL = [[NSString stringWithFormat:@"https://%@", url] retain];
     regularURL = [[NSString stringWithFormat:@"http://%@", url] retain];
+    _serverTimeDiff = [[NSUserDefaults standardUserDefaults] integerForKey:serverTimeDiffKey];
+    _nextTimeCheck = [[NSDate date] retain];
 }
 
 - (void)dealloc {
@@ -200,6 +218,24 @@ static StackMobSession* sharedSession = nil;
 
 - (NSString *)userAgentString {
     return [NSString stringWithFormat:@"StackMob (iOS; %@)/%@", STACKMOB_SDK_VERSION, _appName];
+}
+
+- (NSDate *)getServerTime {
+    return [NSDate dateWithTimeIntervalSinceNow:_serverTimeDiff];
+}
+
+-(void)recordServerTimeDiffFromHeader:(NSString*)header {
+    if (header != nil) {
+        NSDate *serverTime = [rfcFormatter dateFromString:header];
+        _serverTimeDiff = [serverTime timeIntervalSinceDate:[NSDate date]];
+        if([[NSDate date] earlierDate:_nextTimeCheck] == _nextTimeCheck) {
+            // Save the date to persistent storage every ten minutes
+            [[NSUserDefaults standardUserDefaults] setInteger:_serverTimeDiff forKey:serverTimeDiffKey];
+            NSDate *newDate = [[NSDate dateWithTimeIntervalSinceNow:10 * 60] retain];
+            [_nextTimeCheck release];
+            _nextTimeCheck = newDate;
+        }
+    }
 }
 
 @end

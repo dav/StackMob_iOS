@@ -38,7 +38,9 @@ static NSString *const SMSubdomainDefault = @"mob1";
 	NSDate* _lastRequestTime;
 	int _requestBurstCount;
 	NSTimer* _requestTimer;
-  NSNumber* _apiVersionNumber;
+    NSNumber* _apiVersionNumber;
+    NSDate* _nextTimeCheck;
+    NSTimeInterval _serverTimeDiff;
 }
 
 /**
@@ -100,6 +102,11 @@ static NSString *const SMSubdomainDefault = @"mob1";
  * The expiration date of the session key.
  */
 @property(nonatomic,readonly) NSDate* expirationDate;
+
+/**
+ * The approximate time on the server
+ */
+@property(nonatomic,readonly, getter = getServerTime) NSDate* serverTime;
 
 
 /**
@@ -206,5 +213,10 @@ static NSString *const SMSubdomainDefault = @"mob1";
  * Returns the User-Agent String
  */
 - (NSString *)userAgentString;
+
+/*
+ * Update the server time diff
+ */
+-(void)recordServerTimeDiffFromHeader:(NSString*)header;
 
 @end
