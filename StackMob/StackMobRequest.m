@@ -330,6 +330,25 @@
     return [StackMobRequest JsonifyNSDictionary:mArguments withErrorOutput:&error];
 }
 
+- (int)totalObjectCountFromPagination 
+{
+    if(mHttpResponse != nil) 
+    {
+        NSString *contentRange = [[mHttpResponse allHeaderFields] valueForKey:@"Content-Range"];
+        if(contentRange != nil) {
+            NSArray* parts = [contentRange componentsSeparatedByString: @"/"];
+            if([parts count] != 2) return -1;
+            NSString *lastPart = [parts objectAtIndex: 1];
+            if([lastPart isEqualToString:@"*"]) return -2;
+            if([lastPart isEqualToString:@"0"]) return 0;
+            int count = [lastPart intValue];
+            if(count == 0) return -1; //real zero was filtered out above
+            return count;
+        }
+    }
+    return -1;
+}
+
 - (void)cancel
 {
 	[self.connection cancel];

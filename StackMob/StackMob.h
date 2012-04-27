@@ -351,6 +351,13 @@ typedef void (^StackMobCallback)(BOOL success, id result);
                 shouldCascade:(BOOL)isCascade
                  withCallback:(StackMobCallback)callback;
 
+- (StackMobRequest *)count:(NSString *)schema 
+              withCallback:(StackMobCallback)callback;
+
+- (StackMobRequest *)count:(NSString *)schema
+                 withQuery:(StackMobQuery *)query
+              withCallback:(StackMobCallback)callback;
+
 
 
 /**************** Heroku Methods *****************/
