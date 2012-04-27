@@ -30,7 +30,6 @@ static const int kMaxBurstRequests = 3;
 static const NSTimeInterval kBurstDuration = 2;
 
 static StackMobSession* sharedSession = nil;
-static NSDateFormatter* rfcFormatter = nil;
 static NSString *const serverTimeDiffKey = @"stackmob.servertimediff";
 
 @synthesize apiKey = _apiKey;
@@ -92,11 +91,6 @@ static NSString *const serverTimeDiffKey = @"stackmob.servertimediff";
                                                       userObjectName:userObjectName
                                                     apiVersionNumber:apiVersionNumber] autorelease];
     SMLog(@"apiVersionNumber %@", apiVersionNumber);
-    if(rfcFormatter == nil) 
-    {    
-        rfcFormatter = [[[NSDateFormatter alloc] init] retain];
-        [rfcFormatter setDateFormat:@"EEE, dd MMM yyyy HH:mm:ss z"];
-    }
     
 	return session;
 }
@@ -226,6 +220,8 @@ static NSString *const serverTimeDiffKey = @"stackmob.servertimediff";
 
 -(void)recordServerTimeDiffFromHeader:(NSString*)header {
     if (header != nil) {
+        NSDateFormatter *rfcFormatter = [[NSDateFormatter alloc] init];
+        [rfcFormatter setDateFormat:@"EEE, dd MMM yyyy HH:mm:ss zzz"];
         NSDate *serverTime = [rfcFormatter dateFromString:header];
         _serverTimeDiff = [serverTime timeIntervalSinceDate:[NSDate date]];
         if([[NSDate date] earlierDate:_nextTimeCheck] == _nextTimeCheck) {
