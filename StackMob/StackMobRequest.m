@@ -337,7 +337,12 @@
         if(contentRange != nil) {
             NSArray* parts = [contentRange componentsSeparatedByString: @"/"];
             if([parts count] != 2) return -1;
-            return [((NSString *)[parts objectAtIndex: 1]) intValue];
+            NSString *lastPart = [parts objectAtIndex: 1];
+            if([lastPart isEqualToString:@"*"]) return -2;
+            if([lastPart isEqualToString:@"0"]) return 0;
+            int count = [lastPart intValue];
+            if(count == 0) return -1; //real zero was filtered out above
+            return count;
         }
     }
     return -1;

@@ -414,4 +414,58 @@ StackMobSession *mySession = nil;
     
 }
 
+- (void) testCount {
+    StackMobRequest *request = [[StackMob stackmob] count:@"user" withCallback:^(BOOL success, id result ) {
+        if (success) {
+            NSNumber *count = result;
+            STAssertTrue([count intValue] > 800, @"totally wrong object count");
+        }
+        else{
+            STFail(@"CountFailed");
+        }
+    }];
+    [StackMobTestUtils runRunLoop:[NSRunLoop currentRunLoop] untilRequestFinished:request];
+}
+
+- (void) testCountQuery {
+    StackMobQuery *q = [StackMobQuery query];
+    [q field:@"createddate" mustBeGreaterThanOrEqualToValue:[NSNumber numberWithInt:2]];
+    StackMobRequest *request = [[StackMob stackmob] count:@"user" withQuery:q withCallback:^(BOOL success, id result ) {
+        if (success) {
+            NSNumber *count = result;
+            STAssertTrue([count intValue] > 800, @"totally wrong object count");
+        }
+        else{
+            STFail(@"CountFailed");
+        }
+    }];
+    [StackMobTestUtils runRunLoop:[NSRunLoop currentRunLoop] untilRequestFinished:request];
+}
+
+- (void) testCountOne {
+    StackMobRequest *request = [[StackMob stackmob] count:@"justone" withCallback:^(BOOL success, id result ) {
+        if (success) {
+            NSNumber *count = result;
+            STAssertTrue([count intValue] == 1, @"totally wrong object count");
+        }
+        else{
+            STFail(@"CountFailed");
+        }
+    }];
+    [StackMobTestUtils runRunLoop:[NSRunLoop currentRunLoop] untilRequestFinished:request];
+}
+
+- (void) testCountZero {
+    StackMobRequest *request = [[StackMob stackmob] count:@"justzero" withCallback:^(BOOL success, id result ) {
+        if (success) {
+            NSNumber *count = result;
+            STAssertTrue([count intValue] == 0, @"totally wrong object count");
+        }
+        else{
+            STFail(@"CountFailed");
+        }
+    }];
+    [StackMobTestUtils runRunLoop:[NSRunLoop currentRunLoop] untilRequestFinished:request];
+}
+
 @end

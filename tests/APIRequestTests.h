@@ -43,4 +43,7 @@
 - (void) testForgotPassword;
 - (void) testResetPassword;
 - (void) testGetWithPagination;
+- (void) testCount;
+- (void) testCountQuery;
+
 @end

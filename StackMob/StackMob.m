@@ -554,6 +554,40 @@ static SMEnvironment environment;
     
 }
 
+- (StackMobRequest *)count:(NSString *)schema 
+              withCallback:(StackMobCallback)callback
+{
+    return [self count:schema withQuery:[StackMobQuery query] withCallback:callback];
+}
+
+- (StackMobRequest *)count:(NSString *)schema
+                 withQuery:(StackMobQuery *)query
+              withCallback:(StackMobCallback)callback
+{
+    [query setRangeStart:0 andEnd:0];
+
+    StackMobCallback userCallback = Block_copy(callback);
+    __block StackMobRequest *request = [self get:schema withQuery:query andCallback:^(BOOL success, id result ) 
+    {
+        if(success)
+        {
+            int count = [request totalObjectCountFromPagination];
+            if(count < 0)
+            {
+                // no header means we've got the results right here
+                count = [((NSArray *) result) count];
+            }
+            userCallback(success, [NSNumber numberWithInt:count]);
+        }
+        else
+        {
+            userCallback(success, result);
+        }
+    }];
+    
+    return request;
+}
+
 # pragma mark - Forgot/Reset password
 
 - (StackMobRequest *)forgotPasswordByUser:(NSString *)username andCallback:(StackMobCallback)callback
