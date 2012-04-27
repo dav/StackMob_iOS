@@ -132,6 +132,8 @@ typedef enum {
 // return the post body as NSData
 - (NSData *)postBody;
 
+- (int)totalObjectCountFromPagination;
+
 /* translate enum to string */
 + (NSString*)stringFromHttpVerb:(SMHttpVerb)httpVerb;
 

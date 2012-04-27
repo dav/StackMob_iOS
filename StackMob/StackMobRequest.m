@@ -329,6 +329,20 @@
     return [StackMobRequest JsonifyNSDictionary:mArguments withErrorOutput:&error];
 }
 
+- (int)totalObjectCountFromPagination 
+{
+    if(mHttpResponse != nil) 
+    {
+        NSString *contentRange = [[mHttpResponse allHeaderFields] valueForKey:@"Content-Range"];
+        if(contentRange != nil) {
+            NSArray* parts = [contentRange componentsSeparatedByString: @"/"];
+            if([parts count] != 2) return -1;
+            return [((NSString *)[parts objectAtIndex: 1]) intValue];
+        }
+    }
+    return -1;
+}
+
 - (void)cancel
 {
 	[self.connection cancel];

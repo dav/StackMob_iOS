@@ -395,7 +395,6 @@ StackMobSession *mySession = nil;
 
 - (void) testGetWithPagination {
     StackMobQuery *q = [StackMobQuery query];
-    [q field:@"username" mustEqualValue:@"ty"];
     [q field:@"createddate" mustBeGreaterThanOrEqualToValue:[NSNumber numberWithInt:2]];
     [q setRangeStart:0 andEnd:2];
     
@@ -406,6 +405,9 @@ StackMobSession *mySession = nil;
 	[request sendRequest];
 	//we need to loop until the request comes back, its just a test its OK
     [StackMobTestUtils runRunLoop:[NSRunLoop currentRunLoop] untilRequestFinished:request];
+    
+    int totalCount = [request totalObjectCountFromPagination];
+    STAssertTrue(totalCount > 800, @"totally wrong object count");
     
     STAssertTrue([[request result] isKindOfClass:[NSArray class]], @"Did not get a valid GET result");
 	request = nil;
