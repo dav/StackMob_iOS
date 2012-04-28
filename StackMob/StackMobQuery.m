@@ -90,11 +90,11 @@ const double earthRadiamInKm = 6367.5;
     [self.params setValue:boxString forKey:[self keyForField:f andOperator:@"within"]];
 }
 
-- (void)mustBeNull:(NSString *)f  {
+- (void)fieldMustBeNull:(NSString *)f  {
     [self.params setValue:@"true" forKey:[self keyForField:f andOperator:@"null"]];
 }
 
-- (void)mustNotBeNull:(NSString *)f  {
+- (void)fieldMustNotBeNull:(NSString *)f  {
     [self.params setValue:@"false" forKey:[self keyForField:f andOperator:@"null"]];
 }
 

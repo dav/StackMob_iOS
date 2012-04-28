@@ -80,7 +80,7 @@ StackMobSession *mySession = nil;
 
 - (void) testIsNullGet {
     StackMobQuery *q = [StackMobQuery query];
-    [q mustBeNull:@"email"];
+    [q fieldMustBeNull:@"email"];
     
     StackMobRequest *request = [StackMobRequest requestForMethod:@"user"
                                                        withQuery:q 
@@ -101,7 +101,7 @@ StackMobSession *mySession = nil;
 
 - (void) testIsNotNullGet {
     StackMobQuery *q = [StackMobQuery query];
-    [q mustNotBeNull:@"email"];
+    [q fieldMustNotBeNull:@"email"];
     
     StackMobRequest *request = [StackMobRequest requestForMethod:@"user"
                                                        withQuery:q 

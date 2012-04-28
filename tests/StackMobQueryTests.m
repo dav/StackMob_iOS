@@ -22,8 +22,8 @@
     [q field:@"gt" mustBeGreaterThanValue:[NSNumber numberWithInt:3]];
     [q field:@"gte" mustBeGreaterThanOrEqualToValue:[NSNumber numberWithInt:4]];
     [q field:@"in" mustBeOneOf:[NSArray arrayWithObject:@"hi"]];
-    [q mustBeNull:@"null"];
-    [q mustNotBeNull:@"notNull"];
+    [q fieldMustBeNull:@"null"];
+    [q fieldMustNotBeNull:@"notNull"];
     
     NSString *equal = [q.params objectForKey:@"equal"];
     NSString *ne = [q.params objectForKey:@"ne[ne]"];
