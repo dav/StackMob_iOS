@@ -356,7 +356,7 @@ typedef void (^StackMobCallback)(BOOL success, id result);
 
 - (StackMobRequest *)count:(NSString *)schema
                  withQuery:(StackMobQuery *)query
-              withCallback:(StackMobCallback)callback;
+              andCallback:(StackMobCallback)callback;
 
 
 

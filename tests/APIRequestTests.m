@@ -430,7 +430,7 @@ StackMobSession *mySession = nil;
 - (void) testCountQuery {
     StackMobQuery *q = [StackMobQuery query];
     [q field:@"createddate" mustBeGreaterThanOrEqualToValue:[NSNumber numberWithInt:2]];
-    StackMobRequest *request = [[StackMob stackmob] count:@"user" withQuery:q withCallback:^(BOOL success, id result ) {
+    StackMobRequest *request = [[StackMob stackmob] count:@"user" withQuery:q andCallback:^(BOOL success, id result ) {
         if (success) {
             NSNumber *count = result;
             STAssertTrue([count intValue] > 800, @"totally wrong object count");

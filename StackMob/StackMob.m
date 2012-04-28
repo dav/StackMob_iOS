@@ -557,12 +557,12 @@ static SMEnvironment environment;
 - (StackMobRequest *)count:(NSString *)schema 
               withCallback:(StackMobCallback)callback
 {
-    return [self count:schema withQuery:[StackMobQuery query] withCallback:callback];
+    return [self count:schema withQuery:[StackMobQuery query] andCallback:callback];
 }
 
 - (StackMobRequest *)count:(NSString *)schema
                  withQuery:(StackMobQuery *)query
-              withCallback:(StackMobCallback)callback
+              andCallback:(StackMobCallback)callback
 {
     [query setRangeStart:0 andEnd:0];
 
