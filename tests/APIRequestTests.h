@@ -45,5 +45,6 @@
 - (void) testGetWithPagination;
 - (void) testCount;
 - (void) testCountQuery;
+- (void) testLoginLogout;
 
 @end

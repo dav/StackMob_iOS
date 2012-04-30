@@ -351,6 +351,37 @@ StackMobSession *mySession = nil;
 }
 
 
+- (void) testLoginLogout {
+    STAssertFalse([[StackMob stackmob] isLoggedIn], @"Shouldn't be logged in yet");
+    STAssertFalse([[StackMob stackmob] isLoggedOut], @"Shouldn't be logged out yet");
+    STAssertNil([[StackMob stackmob] loggedInUser], @"Shouldn't be logged in yet");
+    STAssertFalse([[StackMob stackmob] isUserLoggedIn:@"Azure"], @"Shouldn't be logged in yet");
+    NSMutableDictionary *loginRequest = [[NSMutableDictionary alloc] init];
+    [loginRequest setValue:@"Azure" forKey:@"username"];
+    [loginRequest setValue:@"hunter2" forKey:@"password"];
+    StackMobRequest *request = [[StackMob stackmob] loginWithArguments:loginRequest andCallback:^(BOOL success, id result ) {
+        if (success) {
+            BOOL loggedIn = [[StackMob stackmob] isLoggedIn];
+            STAssertTrue(loggedIn, @"Should be logged in");
+            STAssertFalse([[StackMob stackmob] isLoggedOut], @"Shouldn't be logged out yet");
+            STAssertNotNil([[StackMob stackmob] loggedInUser], @"Should be logged in");
+            [[StackMob stackmob] logoutWithCallback:^(BOOL success, id result ) {
+                if(!success) {
+                    STFail(@"Logout failed");
+                }
+            }];
+        } else {
+            STFail(@"Login Failed");
+        }
+    }];
+    STAssertFalse([[StackMob stackmob] isLoggedIn], @"Shouldn't be logged in yet");
+    STAssertFalse([[StackMob stackmob] isLoggedOut], @"Shouldn't be logged out yet");
+    STAssertNil([[StackMob stackmob] loggedInUser], @"Shouldn't be logged in yet");
+    STAssertFalse([[StackMob stackmob] isUserLoggedIn:@"Azure"], @"Shouldn't be logged in yet");
+    [StackMobTestUtils runRunLoop:[NSRunLoop currentRunLoop] untilRequestFinished:request];
+}
+
+
 - (void) testForgotPassword {
     StackMobRequest *request = [self ensureUser:@"drapp" withEmail:@"notreal@stackmob.com" withPassword:@"hunter2" andCallback:^(BOOL success, id result){
         [[StackMob stackmob] forgotPasswordByUser: @"drapp" andCallback:^(BOOL success, id result ) {

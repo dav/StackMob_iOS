@@ -43,6 +43,7 @@ static NSString *const serverTimeDiffKey = @"stackmob.servertimediff";
 @synthesize expirationDate = _expirationDate;
 @synthesize nextTimeCheck = _nextTimeCheck;
 @synthesize serverTimeDiff = _serverTimeDiff;
+@synthesize lastUserLoginName = _lastUserLoginName;
 @synthesize pushURL;
 
 + (StackMobSession*)session {
@@ -193,7 +194,8 @@ static NSString *const serverTimeDiffKey = @"stackmob.servertimediff";
 	[_expirationDate release];
 	[_lastRequestTime release];
 	[_requestQueue release];
-	[_requestTimer release]; 
+	[_requestTimer release];
+    [_lastUserLoginName release];
 	[url release];
 	[secureURL release];
 	[regularURL release];

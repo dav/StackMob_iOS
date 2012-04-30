@@ -41,6 +41,7 @@ static NSString *const SMSubdomainDefault = @"mob1";
     NSNumber* _apiVersionNumber;
     NSDate* _nextTimeCheck;
     NSTimeInterval _serverTimeDiff;
+    NSString *_lastUserLoginName;
 }
 
 /**
@@ -107,6 +108,11 @@ static NSString *const SMSubdomainDefault = @"mob1";
  * The approximate time on the server
  */
 @property(nonatomic,readonly, getter = getServerTime) NSDate* serverTime;
+
+/**
+ * The last username that logged in
+ */
+@property(nonatomic,retain) NSString* lastUserLoginName;
 
 
 /**

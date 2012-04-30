@@ -407,5 +407,15 @@ typedef void (^StackMobCallback)(BOOL success, id result);
  */
 - (StackMobRequest *)resetPasswordWithOldPassword:(NSString*)oldPassword newPassword:(NSString*)newPassword andCallback:(StackMobCallback)callback;
 
+// Logged in user checking
+- (NSString *) loggedInUser;
+
+- (BOOL) isLoggedIn;
+
+- (BOOL) isUserLoggedIn:(NSString *)username;
+
+- (BOOL) isLoggedOut;
+
+
 @end
 
