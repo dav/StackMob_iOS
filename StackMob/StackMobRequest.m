@@ -56,6 +56,7 @@
 	[mHttpMethod release];
 	[mHttpResponse release];
     [mHeaders release];    
+    [mArguments release];
 	[super dealloc];
 }
 
