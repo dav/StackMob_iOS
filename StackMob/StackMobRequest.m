@@ -405,7 +405,7 @@
         @try{
             [mConnectionData setLength:0];
             if (statusCode < 400) {
-                result = [textResult objectFromJSONString];
+              result = [textResult objectFromJSONStringWithParseOptions:JKParseOptionLooseUnicode];
               if (result==nil) {
                 SMLog(@"Failed to parse json!");
               }
