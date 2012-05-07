@@ -55,6 +55,71 @@ StackMobSession *mySession = nil;
 
 }
 
+- (void) testNotEqualGet {
+    StackMobQuery *q = [StackMobQuery query];
+    [q field:@"email" mustNotEqualValue:@"ty@stackmob.com"];
+    
+    StackMobRequest *request = [StackMobRequest requestForMethod:@"user"
+                                                       withQuery:q 
+                                                    withHttpVerb:GET];
+    [request sendRequest];
+    //we need to loop until the request comes back, its just a test its OK
+    [StackMobTestUtils runRunLoop:[NSRunLoop currentRunLoop] untilRequestFinished:request];
+    
+    STAssertTrue([[request result] isKindOfClass:[NSArray class]], @"Did not get a valid GET result");
+
+    for (NSDictionary *d in [request result]) {
+        NSString *s = [d valueForKey:@"email"];
+        if (s != NULL) {
+            STAssertFalse([s isEqualToString:@"ty@stackmob.com"], @"email should not be equal");
+        }
+    }
+    
+    request = nil;
+}
+
+- (void) testIsNullGet {
+    StackMobQuery *q = [StackMobQuery query];
+    [q fieldMustBeNull:@"email"];
+    
+    StackMobRequest *request = [StackMobRequest requestForMethod:@"user"
+                                                       withQuery:q 
+                                                    withHttpVerb:GET];
+    [request sendRequest];
+    //we need to loop until the request comes back, its just a test its OK
+    [StackMobTestUtils runRunLoop:[NSRunLoop currentRunLoop] untilRequestFinished:request];
+    
+    STAssertTrue([[request result] isKindOfClass:[NSArray class]], @"Did not get a valid GET result");
+    
+    for (NSDictionary *d in [request result]) {
+        NSString *s = [d objectForKey:@"email"];
+        STAssertNil(s, @"email should be null");
+    }
+    
+    request = nil;
+}
+
+- (void) testIsNotNullGet {
+    StackMobQuery *q = [StackMobQuery query];
+    [q fieldMustNotBeNull:@"email"];
+    
+    StackMobRequest *request = [StackMobRequest requestForMethod:@"user"
+                                                       withQuery:q 
+                                                    withHttpVerb:GET];
+    [request sendRequest];
+    //we need to loop until the request comes back, its just a test its OK
+    [StackMobTestUtils runRunLoop:[NSRunLoop currentRunLoop] untilRequestFinished:request];
+    
+    STAssertTrue([[request result] isKindOfClass:[NSArray class]], @"Did not get a valid GET result");
+    
+    for (NSDictionary *d in [request result]) {
+        NSString *s = [d objectForKey:@"email"];
+        STAssertNotNil(s, @"email should not be null");
+    }
+    
+    request = nil;    
+}
+
 - (void) testPost {
 	NSLog(@"IN TEST POST");
     NSMutableDictionary* userArgs = [[NSMutableDictionary alloc] initWithObjectsAndKeys:
@@ -286,6 +351,37 @@ StackMobSession *mySession = nil;
 }
 
 
+- (void) testLoginLogout {
+    STAssertFalse([[StackMob stackmob] isLoggedIn], @"Shouldn't be logged in yet");
+    STAssertFalse([[StackMob stackmob] isLoggedOut], @"Shouldn't be logged out yet");
+    STAssertNil([[StackMob stackmob] loggedInUser], @"Shouldn't be logged in yet");
+    STAssertFalse([[StackMob stackmob] isUserLoggedIn:@"Azure"], @"Shouldn't be logged in yet");
+    NSMutableDictionary *loginRequest = [[NSMutableDictionary alloc] init];
+    [loginRequest setValue:@"Azure" forKey:@"username"];
+    [loginRequest setValue:@"hunter2" forKey:@"password"];
+    StackMobRequest *request = [[StackMob stackmob] loginWithArguments:loginRequest andCallback:^(BOOL success, id result ) {
+        if (success) {
+            BOOL loggedIn = [[StackMob stackmob] isLoggedIn];
+            STAssertTrue(loggedIn, @"Should be logged in");
+            STAssertFalse([[StackMob stackmob] isLoggedOut], @"Shouldn't be logged out yet");
+            STAssertNotNil([[StackMob stackmob] loggedInUser], @"Should be logged in");
+            [[StackMob stackmob] logoutWithCallback:^(BOOL success, id result ) {
+                if(!success) {
+                    STFail(@"Logout failed");
+                }
+            }];
+        } else {
+            STFail(@"Login Failed");
+        }
+    }];
+    STAssertFalse([[StackMob stackmob] isLoggedIn], @"Shouldn't be logged in yet");
+    STAssertFalse([[StackMob stackmob] isLoggedOut], @"Shouldn't be logged out yet");
+    STAssertNil([[StackMob stackmob] loggedInUser], @"Shouldn't be logged in yet");
+    STAssertFalse([[StackMob stackmob] isUserLoggedIn:@"Azure"], @"Shouldn't be logged in yet");
+    [StackMobTestUtils runRunLoop:[NSRunLoop currentRunLoop] untilRequestFinished:request];
+}
+
+
 - (void) testForgotPassword {
     StackMobRequest *request = [self ensureUser:@"drapp" withEmail:@"notreal@stackmob.com" withPassword:@"hunter2" andCallback:^(BOOL success, id result){
         [[StackMob stackmob] forgotPasswordByUser: @"drapp" andCallback:^(BOOL success, id result ) {
@@ -324,6 +420,81 @@ StackMobSession *mySession = nil;
                 STFail(@"Reset Password Failed");
             }
         }];
+    }];
+    [StackMobTestUtils runRunLoop:[NSRunLoop currentRunLoop] untilRequestFinished:request];
+}
+
+- (void) testGetWithPagination {
+    StackMobQuery *q = [StackMobQuery query];
+    [q field:@"createddate" mustBeGreaterThanOrEqualToValue:[NSNumber numberWithInt:2]];
+    [q setRangeStart:0 andEnd:2];
+    
+	
+	StackMobRequest *request = [StackMobRequest requestForMethod:@"user" 
+                                                       withQuery:q
+                                                    withHttpVerb:GET];
+	[request sendRequest];
+	//we need to loop until the request comes back, its just a test its OK
+    [StackMobTestUtils runRunLoop:[NSRunLoop currentRunLoop] untilRequestFinished:request];
+    
+    int totalCount = [request totalObjectCountFromPagination];
+    STAssertTrue(totalCount > 800, @"totally wrong object count");
+    
+    STAssertTrue([[request result] isKindOfClass:[NSArray class]], @"Did not get a valid GET result");
+	request = nil;
+    
+}
+
+- (void) testCount {
+    StackMobRequest *request = [[StackMob stackmob] count:@"user" withCallback:^(BOOL success, id result ) {
+        if (success) {
+            NSNumber *count = result;
+            STAssertTrue([count intValue] > 800, @"totally wrong object count");
+        }
+        else{
+            STFail(@"CountFailed");
+        }
+    }];
+    [StackMobTestUtils runRunLoop:[NSRunLoop currentRunLoop] untilRequestFinished:request];
+}
+
+- (void) testCountQuery {
+    StackMobQuery *q = [StackMobQuery query];
+    [q field:@"createddate" mustBeGreaterThanOrEqualToValue:[NSNumber numberWithInt:2]];
+    StackMobRequest *request = [[StackMob stackmob] count:@"user" withQuery:q andCallback:^(BOOL success, id result ) {
+        if (success) {
+            NSNumber *count = result;
+            STAssertTrue([count intValue] > 800, @"totally wrong object count");
+        }
+        else{
+            STFail(@"CountFailed");
+        }
+    }];
+    [StackMobTestUtils runRunLoop:[NSRunLoop currentRunLoop] untilRequestFinished:request];
+}
+
+- (void) testCountOne {
+    StackMobRequest *request = [[StackMob stackmob] count:@"justone" withCallback:^(BOOL success, id result ) {
+        if (success) {
+            NSNumber *count = result;
+            STAssertTrue([count intValue] == 1, @"totally wrong object count");
+        }
+        else{
+            STFail(@"CountFailed");
+        }
+    }];
+    [StackMobTestUtils runRunLoop:[NSRunLoop currentRunLoop] untilRequestFinished:request];
+}
+
+- (void) testCountZero {
+    StackMobRequest *request = [[StackMob stackmob] count:@"justzero" withCallback:^(BOOL success, id result ) {
+        if (success) {
+            NSNumber *count = result;
+            STAssertTrue([count intValue] == 0, @"totally wrong object count");
+        }
+        else{
+            STFail(@"CountFailed");
+        }
     }];
     [StackMobTestUtils runRunLoop:[NSRunLoop currentRunLoop] untilRequestFinished:request];
 }

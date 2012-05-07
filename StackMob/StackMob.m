@@ -74,6 +74,7 @@ static SMEnvironment environment;
         _sharedManager.requests = [NSMutableArray array];
         _sharedManager.callbacks = [NSMutableArray array];
         _sharedManager.queueLock = [[NSLock alloc] init];
+        _sharedManager.cookieStore = [[[StackMobCookieStore alloc] initWithSession:_sharedManager.session] retain];
     }
     return _sharedManager;
 }
@@ -116,7 +117,7 @@ static SMEnvironment environment;
         }
         _sharedManager.requests = [NSMutableArray array];
         _sharedManager.callbacks = [NSMutableArray array];
-        _sharedManager.cookieStore = [[StackMobCookieStore alloc] initWithSession:_sharedManager.session];
+        _sharedManager.cookieStore = [[[StackMobCookieStore alloc] initWithSession:_sharedManager.session] retain];
     }
     return _sharedManager;
 }
@@ -179,6 +180,7 @@ static SMEnvironment environment;
                                                    withArguments:arguments
                                                     withHttpVerb:GET]; 
     request.isSecure = YES;
+    _session.lastUserLoginName = [arguments valueForKey:@"username"];
     
     [self queueRequest:request andCallback:callback];
     
@@ -554,6 +556,40 @@ static SMEnvironment environment;
     
 }
 
+- (StackMobRequest *)count:(NSString *)schema 
+              withCallback:(StackMobCallback)callback
+{
+    return [self count:schema withQuery:[StackMobQuery query] andCallback:callback];
+}
+
+- (StackMobRequest *)count:(NSString *)schema
+                 withQuery:(StackMobQuery *)query
+              andCallback:(StackMobCallback)callback
+{
+    [query setRangeStart:0 andEnd:0];
+
+    StackMobCallback userCallback = Block_copy(callback);
+    __block StackMobRequest *request = [self get:schema withQuery:query andCallback:^(BOOL success, id result ) 
+    {
+        if(success)
+        {
+            int count = [request totalObjectCountFromPagination];
+            if(count < 0)
+            {
+                // no header means we've got the results right here
+                count = [((NSArray *) result) count];
+            }
+            userCallback(success, [NSNumber numberWithInt:count]);
+        }
+        else
+        {
+            userCallback(success, result);
+        }
+    }];
+    
+    return request;
+}
+
 # pragma mark - Forgot/Reset password
 
 - (StackMobRequest *)forgotPasswordByUser:(NSString *)username andCallback:(StackMobCallback)callback
@@ -575,6 +611,37 @@ static SMEnvironment environment;
     [self queueRequest:request andCallback:callback];
     return request;
 }
+
+# pragma mark - login checking
+
+// Logged in user checking
+- (NSString *) loggedInUser
+{
+    return [self isLoggedIn] ? _session.lastUserLoginName : nil;
+}
+
+- (BOOL) isLoggedIn
+{
+    NSHTTPCookie *sessionCookie = [[_sharedManager cookieStore] sessionCookie];
+    if(sessionCookie != nil) {
+        BOOL cookieIsStillValid = [[[NSDate date] laterDate:[sessionCookie expiresDate]] isEqualToDate:[sessionCookie expiresDate]];
+        return cookieIsStillValid && ![self isLoggedOut];
+    }
+    return false;
+}
+
+- (BOOL) isUserLoggedIn:(NSString *)username
+{
+    return [username isEqualToString:[self loggedInUser]];
+}
+
+- (BOOL) isLoggedOut
+{
+    NSHTTPCookie *sessionCookie = [_cookieStore sessionCookie];
+    //The logged out cookie is a json string.
+    return sessionCookie != nil && [[sessionCookie value] rangeOfString:@":"].location != NSNotFound;
+}
+
 
 
 # pragma mark - Private methods

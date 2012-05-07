@@ -1,5 +1,13 @@
 # Release Notes
 
+## 0.4.7
+* Inneractive integration
+
+## 0.4.6
+* Count methods
+* Null and Not Equal Queries
+* Logged-in user checks
+
 ## 0.4.5
 * Update SecureUDID
 * Minor fixes
