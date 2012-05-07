@@ -1,5 +1,8 @@
 # Release Notes
 
+## 0.4.7
+* Inneractive integration
+
 ## 0.4.6
 * Count methods
 * Null and Not Equal Queries
