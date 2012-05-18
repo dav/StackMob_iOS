@@ -1,5 +1,8 @@
 # Release Notes
 
+## 0.4.9
+* Fix bugs
+
 ## 0.4.7
 * Inneractive integration
 
