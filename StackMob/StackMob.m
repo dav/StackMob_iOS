@@ -503,6 +503,15 @@ static SMEnvironment environment;
     return request;
 }
 
+- (StackMobRequest *)put:(NSString *)path withId:(NSString *)objectId updateCounterForField:(NSString *)field by:(int)value andCallback:(StackMobCallback)callback {
+    
+    NSString *fullPath = [NSString stringWithFormat:@"%@/%@", [self escapePath:path], objectId];
+    NSDictionary *arguments = [NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithInt:value], [NSString stringWithFormat:@"%@[inc]", field], nil];
+    StackMobRequest *request = [StackMobRequest requestForMethod:fullPath withArguments:arguments withHttpVerb:PUT];
+    [self queueRequest:request andCallback:callback];
+    return request;
+}
+
 - (StackMobRequest *)destroy:(NSString *)path withArguments:(NSDictionary *)arguments andCallback:(StackMobCallback)callback{
     return [self destroy:[self escapePath:path] withArguments:arguments andHeaders:[NSDictionary dictionary] andCallback:callback];
 }

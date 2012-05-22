@@ -304,6 +304,15 @@ typedef void (^StackMobCallback)(BOOL success, id result);
             andArguments:(NSArray *)args 
              andCallback:(StackMobCallback)callback;
 
+/*
+ * Uses the PUT operation to update the atomic counter of the supplied field name
+ * @param path the name of the object in your Stackmob app
+ * @param objId the id of the object to update
+ * @param field the name of the field whose counter will be updated
+ * @param value the value the the field's counter will be inc/dec by
+ */
+- (StackMobRequest *)put:(NSString *)path withId:(NSString *)objectId updateCounterForField:(NSString *)field by:(int)value andCallback:(StackMobCallback)callback;
+
 /* 
  * DELETE the object at the given path
  * @path the name of the object in your stackmob app

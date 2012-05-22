@@ -51,6 +51,15 @@
 
 @end
 
+@implementation NSMutableDictionary (StackMobAdditions)
+
+- (void)updateCounterForField:(NSString *)field by:(int)value
+{
+    [self setObject:[NSNumber numberWithInt:value] forKey:[NSString stringWithFormat:@"%@[inc]", field]];
+}
+
+@end
+
 @implementation NSArray (StackMobAdditions)
 
 - (BOOL)isEmpty

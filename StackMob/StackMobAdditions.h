@@ -17,6 +17,10 @@
 - (NSString *)queryString;
 @end
 
+@interface NSMutableDictionary (StackMobAdditions)
+- (void)updateCounterForField:(NSString *)field by:(int)value;
+@end
+
 @interface NSArray (StackMobAdditions)
 - (BOOL)isEmpty;
 @end
