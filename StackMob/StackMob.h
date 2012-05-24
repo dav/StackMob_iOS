@@ -185,6 +185,14 @@ typedef void (^StackMobCallback)(BOOL success, id result);
  */
 - (StackMobRequest *)registerForPushWithUser:(NSString *)userId token:(NSString *)token andCallback:(StackMobCallback)callback;
 
+/* 
+ * Register a User for PUSH notifications
+ * @param userId the user's user Id or username
+ * @param token the device's PUSH notification token
+ * @param overwrite whether to overwrite existing entries
+ * @param arguments a Dictionary 
+ */
+- (StackMobRequest *)registerForPushWithUser:(NSString *)userId token:(NSString *)token overwrite:(BOOL)overwrite andCallback:(StackMobCallback)callback;
 
 /*
  * Send a push notification broadcast

@@ -296,12 +296,18 @@ static SMEnvironment environment;
 
 - (StackMobRequest *)registerForPushWithUser:(NSString *)userId token:(NSString *)token andCallback:(StackMobCallback)callback
 {
+    return [self registerForPushWithUser:userId token:token overwrite:false andCallback:callback];
+}
+
+- (StackMobRequest *)registerForPushWithUser:(NSString *)userId token:(NSString *)token overwrite:(BOOL)overwrite andCallback:(StackMobCallback)callback
+{
     NSDictionary *tokenDict = [NSDictionary dictionaryWithObjectsAndKeys:token, @"token",
                                @"ios", @"type",
                                nil];
     
     NSDictionary *body = [NSDictionary dictionaryWithObjectsAndKeys:userId, @"userId",
                           tokenDict, @"token",
+                          overwrite, @"overwrite",
                           nil];
     
     StackMobPushRequest *pushRequest = [StackMobPushRequest requestForMethod:@"register_device_token_universal"];
