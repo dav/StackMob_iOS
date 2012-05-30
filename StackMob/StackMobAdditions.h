@@ -15,6 +15,7 @@
 #import <Foundation/Foundation.h>
 @interface NSDictionary (StackMobAdditions)
 - (NSString *)queryString;
+- (NSDictionary *)updateCounterForFieldAndReturnDictionary:(NSString *)field by:(int)value;
 @end
 
 @interface NSMutableDictionary (StackMobAdditions)

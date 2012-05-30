@@ -21,6 +21,8 @@
 
 - (void)testNSMutableDictionaryAddition;
 
+- (void)testNSDictionaryAddition;
+
 - (void)testStackMobUpdateCounterMethod;
 
 
