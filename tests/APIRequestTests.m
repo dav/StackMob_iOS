@@ -109,7 +109,6 @@ StackMobSession *mySession = nil;
     [request sendRequest];
     //we need to loop until the request comes back, its just a test its OK
     [StackMobTestUtils runRunLoop:[NSRunLoop currentRunLoop] untilRequestFinished:request];
-    
     STAssertTrue([[request result] isKindOfClass:[NSArray class]], @"Did not get a valid GET result");
     
     for (NSDictionary *d in [request result]) {
@@ -353,7 +352,6 @@ StackMobSession *mySession = nil;
 
 - (void) testLoginLogout {
     STAssertFalse([[StackMob stackmob] isLoggedIn], @"Shouldn't be logged in yet");
-    STAssertFalse([[StackMob stackmob] isLoggedOut], @"Shouldn't be logged out yet");
     STAssertNil([[StackMob stackmob] loggedInUser], @"Shouldn't be logged in yet");
     STAssertFalse([[StackMob stackmob] isUserLoggedIn:@"Azure"], @"Shouldn't be logged in yet");
     NSMutableDictionary *loginRequest = [[NSMutableDictionary alloc] init];
@@ -375,7 +373,6 @@ StackMobSession *mySession = nil;
         }
     }];
     STAssertFalse([[StackMob stackmob] isLoggedIn], @"Shouldn't be logged in yet");
-    STAssertFalse([[StackMob stackmob] isLoggedOut], @"Shouldn't be logged out yet");
     STAssertNil([[StackMob stackmob] loggedInUser], @"Shouldn't be logged in yet");
     STAssertFalse([[StackMob stackmob] isUserLoggedIn:@"Azure"], @"Shouldn't be logged in yet");
     [StackMobTestUtils runRunLoop:[NSRunLoop currentRunLoop] untilRequestFinished:request];
