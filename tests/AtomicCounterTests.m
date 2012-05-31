@@ -49,7 +49,7 @@
     
 	//we need to loop until the request comes back, its just a test its OK
     result = [StackMobTestUtils runDefaultRunLoopAndGetDictionaryResultFromRequest:updateRequest];
-    NSLog(@"testNSMutableDictionaryAddition result was: %@", result);
+    SMLog(@"testNSMutableDictionaryAddition result was: %@", result);
     info = (NSDictionary *)result;
     int updateValue = [[info objectForKey:FIELD_TO_UPDATE] intValue];
     STAssertTrue(updateValue == (originalValue + 1), nil);
@@ -94,7 +94,7 @@
     
 	//we need to loop until the request comes back, its just a test its OK
     result = [StackMobTestUtils runDefaultRunLoopAndGetDictionaryResultFromRequest:updateRequest];
-    NSLog(@"testNSMutableDictionaryAddition result was: %@", result);
+    SMLog(@"testNSMutableDictionaryAddition result was: %@", result);
     info = (NSDictionary *)result;
     int updateValue = [[info objectForKey:FIELD_TO_UPDATE] intValue];
     STAssertTrue(updateValue == (originalValue + 1), nil);
@@ -137,7 +137,7 @@
     
 	//we need to loop until the request comes back, its just a test its OK
     result = [StackMobTestUtils runDefaultRunLoopAndGetDictionaryResultFromRequest:updateRequest];
-    NSLog(@"testNSMutableDictionaryAddition result was: %@", result);
+    SMLog(@"testNSMutableDictionaryAddition result was: %@", result);
     info = (NSDictionary *)result;
     int updateValue = [[info objectForKey:FIELD_TO_UPDATE] intValue];
     STAssertTrue(updateValue == (originalValue + 1), nil);
