@@ -1,5 +1,8 @@
 # Release Notes
 
+## 0.4.11
+* Fix memory leaks
+
 ## 0.4.10
 * Add support for atomic counter
 * Add logs for testing server time diff function
