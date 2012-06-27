@@ -119,6 +119,7 @@ static SMEnvironment environment;
         _sharedManager.callbacks = [NSMutableArray array];
         _sharedManager.cookieStore = [[[StackMobCookieStore alloc] initWithSession:_sharedManager.session] retain];
     }
+
     return _sharedManager;
 }
 
@@ -246,7 +247,9 @@ static SMEnvironment environment;
 
 - (StackMobRequest *)getFacebookUserInfoWithCallback:(StackMobCallback)callback
 {
-    return [self get:@"getFacebookUserInfo" withCallback:callback];
+    StackMobRequest *request = [StackMobRequest userRequestForMethod:@"getFacebookUserInfo"withHttpVerb:GET];
+    [self queueRequest:request andCallback:callback];
+    return request;
 }
 
 # pragma mark - Twitter methods
