@@ -320,10 +320,13 @@
                                                     withTemplate:@"$1$2(truncated)$4"];
         SMLog(@"POST Data: %@", postDataString);
 #endif
-        [request setHTTPBody:postData];	
-        NSString *contentType = [NSString stringWithFormat:@"application/json"];
-        [request addValue:contentType forHTTPHeaderField: @"Content-Type"]; 
+        [request setHTTPBody:postData];
+        [request addValue:[self contentType] forHTTPHeaderField: @"Content-Type"]; 
 	}
+}
+
+- (NSString *)contentType {
+    return @"application/json";
 }
 
 - (NSData *)postBody {

@@ -95,6 +95,8 @@
 		560BB28315224413004BB615 /* SecureUDID.m in Sources */ = {isa = PBXBuildFile; fileRef = 560BB27F152243DA004BB615 /* SecureUDID.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		560BB2B215250901004BB615 /* InneractiveAd.h in Headers */ = {isa = PBXBuildFile; fileRef = 560BB2AF15250901004BB615 /* InneractiveAd.h */; };
 		560BB2B315250901004BB615 /* InneractiveAdSDK-v112-S.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 560BB2B115250901004BB615 /* InneractiveAdSDK-v112-S.a */; };
+		5627196415A249810089382C /* StackMobAccessTokenRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 5627196215A249810089382C /* StackMobAccessTokenRequest.h */; };
+		5627196515A249810089382C /* StackMobAccessTokenRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 5627196315A249810089382C /* StackMobAccessTokenRequest.m */; };
 		564A6DE614F6BF6700DA1AE7 /* StackMobCookieStore.h in Headers */ = {isa = PBXBuildFile; fileRef = 564A6DE414F6BF6700DA1AE7 /* StackMobCookieStore.h */; };
 		564A6DE714F6BF6700DA1AE7 /* StackMobCookieStore.m in Sources */ = {isa = PBXBuildFile; fileRef = 564A6DE514F6BF6700DA1AE7 /* StackMobCookieStore.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		564EE37014F6D67F00D76EC1 /* StackMobCookieStore.h in Sources */ = {isa = PBXBuildFile; fileRef = 564A6DE414F6BF6700DA1AE7 /* StackMobCookieStore.h */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
@@ -193,6 +195,8 @@
 		560BB27F152243DA004BB615 /* SecureUDID.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SecureUDID.m; sourceTree = "<group>"; };
 		560BB2AF15250901004BB615 /* InneractiveAd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InneractiveAd.h; sourceTree = "<group>"; };
 		560BB2B115250901004BB615 /* InneractiveAdSDK-v112-S.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = "InneractiveAdSDK-v112-S.a"; sourceTree = "<group>"; };
+		5627196215A249810089382C /* StackMobAccessTokenRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StackMobAccessTokenRequest.h; sourceTree = "<group>"; };
+		5627196315A249810089382C /* StackMobAccessTokenRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = StackMobAccessTokenRequest.m; sourceTree = "<group>"; };
 		564A6DE414F6BF6700DA1AE7 /* StackMobCookieStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StackMobCookieStore.h; sourceTree = "<group>"; };
 		564A6DE514F6BF6700DA1AE7 /* StackMobCookieStore.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = StackMobCookieStore.m; sourceTree = "<group>"; };
 		57121D5D140FDE3F00686005 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
@@ -274,6 +278,8 @@
 				038CB1DE14283272001DEAC9 /* Utils */,
 				038CB1CF14283272001DEAC9 /* StackMob.h */,
 				038CB1D014283272001DEAC9 /* StackMob.m */,
+				5627196215A249810089382C /* StackMobAccessTokenRequest.h */,
+				5627196315A249810089382C /* StackMobAccessTokenRequest.m */,
 				038CB1D114283272001DEAC9 /* StackMobAdditions.h */,
 				038CB1D214283272001DEAC9 /* StackMobAdditions.m */,
 				E3897EC814885AC000E45FB7 /* StackMobBulkRequest.h */,
@@ -533,6 +539,7 @@
 				564A6DE614F6BF6700DA1AE7 /* StackMobCookieStore.h in Headers */,
 				560BB280152243DA004BB615 /* SecureUDID.h in Headers */,
 				560BB2B215250901004BB615 /* InneractiveAd.h in Headers */,
+				5627196415A249810089382C /* StackMobAccessTokenRequest.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -723,6 +730,7 @@
 				C63FB3521497EA4E007961C1 /* SMFile.m in Sources */,
 				564A6DE714F6BF6700DA1AE7 /* StackMobCookieStore.m in Sources */,
 				560BB281152243DA004BB615 /* SecureUDID.m in Sources */,
+				5627196515A249810089382C /* StackMobAccessTokenRequest.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

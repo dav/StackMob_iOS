@@ -59,12 +59,13 @@ static StackMob *_sharedManager = nil;
 static SMEnvironment environment;
 
 
-+ (StackMob *)setApplication:(NSString *)apiKey secret:(NSString *)apiSecret appName:(NSString *)appName subDomain:(NSString *)subDomain userObjectName:(NSString *)userObjectName apiVersionNumber:(NSNumber *)apiVersion
++ (StackMob *)setApplication:(int)oauthVersion key:(NSString *)apiKey secret:(NSString *)apiSecret appName:(NSString *)appName subDomain:(NSString *)subDomain userObjectName:(NSString *)userObjectName apiVersionNumber:(NSNumber *)apiVersion
 {
     if (_sharedManager == nil) {
         _sharedManager = [[super allocWithZone:NULL] init];
         environment = SMEnvironmentProduction;
-        _sharedManager.session = [StackMobSession sessionForApplication:apiKey
+        _sharedManager.session = [StackMobSession sessionForApplication:oauthVersion
+                                                                    key:apiKey
                                                                  secret:apiSecret
                                                                 appName:appName
                                                               subDomain:subDomain
@@ -88,7 +89,8 @@ static SMEnvironment environment;
         if(appInfo){
             NSLog(@"Loading applicatino info from StackMob.plist is being deprecated for security purposes.");
             NSLog(@"Please define your application info in your app's prefix.pch");
-            _sharedManager.session = [StackMobSession sessionForApplication:[appInfo objectForKey:@"publicKey"]
+            _sharedManager.session = [StackMobSession sessionForApplication:OAuth1
+                                                                        key:[appInfo objectForKey:@"publicKey"]
                                                                      secret:[appInfo objectForKey:@"privateKey"]
                                                                     appName:[appInfo objectForKey:@"appName"]
                                                                   subDomain:[appInfo objectForKey:@"appSubdomain"]
@@ -99,7 +101,8 @@ static SMEnvironment environment;
         }
         else{
 #ifdef STACKMOB_PUBLIC_KEY
-            _sharedManager.session = [StackMobSession sessionForApplication:STACKMOB_PUBLIC_KEY
+            _sharedManager.session = [StackMobSession sessionForApplication:STACKMOB_OAUTH_VERSION
+                                                                        key:STACKMOB_PUBLIC_KEY
                                                                      secret:STACKMOB_PRIVATE_KEY
                                                                     appName:STACKMOB_APP_NAME
 #ifdef STACKMOB_APP_MOB

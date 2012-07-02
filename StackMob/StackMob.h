@@ -25,6 +25,10 @@ typedef enum {
     SMEnvironmentDevelopment = 1
 } SMEnvironment;
 
+typedef enum {
+    OAuth1 = 1,
+    OAuth2 = 2
+} OAuthVersion;
 
 typedef void (^StackMobCallback)(BOOL success, id result);
 
@@ -49,7 +53,7 @@ typedef void (^StackMobCallback)(BOOL success, id result);
  * Manually configure your session.  Subsequent requests for the StackMob
  * singleton can use [StackMob stackmob]
  */
-+ (StackMob *)setApplication:(NSString *)apiKey secret:(NSString *)apiSecret appName:(NSString *)appName subDomain:(NSString *)subDomain userObjectName:(NSString *)userObjectName apiVersionNumber:(NSNumber *)apiVersion;
++ (StackMob *)setApplication:(int)oauthVersion key:(NSString *)apiKey secret:(NSString *)apiSecret appName:(NSString *)appName subDomain:(NSString *)subDomain userObjectName:(NSString *)userObjectName apiVersionNumber:(NSNumber *)apiVersion;
 
 /*
  * Returns the pre-configured or auto-configured singleton
