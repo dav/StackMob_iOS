@@ -435,7 +435,7 @@ StackMobSession *mySession = nil;
     [StackMobTestUtils runRunLoop:[NSRunLoop currentRunLoop] untilRequestFinished:request];
     
     int totalCount = [request totalObjectCountFromPagination];
-    STAssertTrue(totalCount > 800, @"totally wrong object count");
+    STAssertTrue(totalCount > 5, @"totally wrong object count");
     
     STAssertTrue([[request result] isKindOfClass:[NSArray class]], @"Did not get a valid GET result");
 	request = nil;
@@ -446,7 +446,7 @@ StackMobSession *mySession = nil;
     StackMobRequest *request = [[StackMob stackmob] count:@"user" withCallback:^(BOOL success, id result ) {
         if (success) {
             NSNumber *count = result;
-            STAssertTrue([count intValue] > 800, @"totally wrong object count");
+            STAssertTrue([count intValue] > 5, @"totally wrong object count");
         }
         else{
             STFail(@"CountFailed");
@@ -461,7 +461,7 @@ StackMobSession *mySession = nil;
     StackMobRequest *request = [[StackMob stackmob] count:@"user" withQuery:q andCallback:^(BOOL success, id result ) {
         if (success) {
             NSNumber *count = result;
-            STAssertTrue([count intValue] > 800, @"totally wrong object count");
+            STAssertTrue([count intValue] > 5, @"totally wrong object count");
         }
         else{
             STFail(@"CountFailed");
