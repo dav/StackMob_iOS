@@ -17,6 +17,9 @@
 @interface StackMobSession(Private)
 - (void)setup;
 
+- (NSString *)oauth2TokenKey;
+- (NSString *)oauth2TokenExpirationKey;
+
 @end
 
 @interface StackMobSession()
@@ -187,6 +190,8 @@ static NSString *const serverTimeDiffKey = @"stackmob.servertimediff";
     regularURL = [[NSString stringWithFormat:@"http://%@", url] retain];
     _serverTimeDiff = [[NSUserDefaults standardUserDefaults] doubleForKey:serverTimeDiffKey];
     _nextTimeCheck = [[NSDate date] retain];
+    _oauth2Token = [[NSUserDefaults standardUserDefaults] objectForKey:[self oauth2TokenKey]];
+    _oauth2TokenExpiration = [[NSUserDefaults standardUserDefaults] objectForKey:[self oauth2TokenExpirationKey]];
 }
 
 - (void)dealloc {
@@ -256,6 +261,24 @@ static NSString *const serverTimeDiffKey = @"stackmob.servertimediff";
             _nextTimeCheck = newDate;
         }
     }
+}
+
+- (NSString *)oauth2TokenKey
+{
+    return [NSString stringWithFormat:@"%@.token", _apiKey];
+}
+- (NSString *)oauth2TokenExpirationKey
+{
+    return [NSString stringWithFormat:@"%@.token.expiration", _apiKey];
+}
+
+-(void)saveOAuth2AccessToken:(NSString *)token withExpiration:(NSDate *)date
+{
+    self.oauth2Token = token;
+    self.oauth2TokenExpiration = date;
+    [[NSUserDefaults standardUserDefaults] setObject:token forKey:[self oauth2TokenKey]];
+    [[NSUserDefaults standardUserDefaults] setObject:date forKey:[self oauth2TokenExpirationKey]];
+    
 }
 
 @end

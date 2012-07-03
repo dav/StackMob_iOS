@@ -238,4 +238,6 @@ static NSString *const SMSubdomainDefault = @"mob1";
  */
 -(void)recordServerTimeDiffFromHeader:(NSString*)header;
 
+-(void)saveOAuth2AccessToken:(NSString *)token withExpiration:(NSDate *)date;
+
 @end
