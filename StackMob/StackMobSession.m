@@ -44,6 +44,9 @@ static NSString *const serverTimeDiffKey = @"stackmob.servertimediff";
 @synthesize nextTimeCheck = _nextTimeCheck;
 @synthesize serverTimeDiff = _serverTimeDiff;
 @synthesize lastUserLoginName = _lastUserLoginName;
+@synthesize oauthVersion = _oauthVersion;
+@synthesize oauth2Token = _oauth2Token;
+@synthesize oauth2TokenExpiration = _oauth2TokenExpiration;
 @synthesize pushURL;
 
 + (StackMobSession*)session {

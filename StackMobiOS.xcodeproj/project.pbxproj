@@ -96,7 +96,8 @@
 		560BB2B215250901004BB615 /* InneractiveAd.h in Headers */ = {isa = PBXBuildFile; fileRef = 560BB2AF15250901004BB615 /* InneractiveAd.h */; };
 		560BB2B315250901004BB615 /* InneractiveAdSDK-v112-S.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 560BB2B115250901004BB615 /* InneractiveAdSDK-v112-S.a */; };
 		5627196415A249810089382C /* StackMobAccessTokenRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 5627196215A249810089382C /* StackMobAccessTokenRequest.h */; };
-		5627196515A249810089382C /* StackMobAccessTokenRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 5627196315A249810089382C /* StackMobAccessTokenRequest.m */; };
+		5627196515A249810089382C /* StackMobAccessTokenRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 5627196315A249810089382C /* StackMobAccessTokenRequest.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		5627196715A276040089382C /* StackMobAccessTokenRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 5627196315A249810089382C /* StackMobAccessTokenRequest.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		564A6DE614F6BF6700DA1AE7 /* StackMobCookieStore.h in Headers */ = {isa = PBXBuildFile; fileRef = 564A6DE414F6BF6700DA1AE7 /* StackMobCookieStore.h */; };
 		564A6DE714F6BF6700DA1AE7 /* StackMobCookieStore.m in Sources */ = {isa = PBXBuildFile; fileRef = 564A6DE514F6BF6700DA1AE7 /* StackMobCookieStore.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		564EE37014F6D67F00D76EC1 /* StackMobCookieStore.h in Sources */ = {isa = PBXBuildFile; fileRef = 564A6DE414F6BF6700DA1AE7 /* StackMobCookieStore.h */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
@@ -656,6 +657,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5627196715A276040089382C /* StackMobAccessTokenRequest.m in Sources */,
 				93DE001114CFAC7B00764514 /* NSData+Base64.h in Sources */,
 				93DE001214CFAC7B00764514 /* NSData+Base64.m in Sources */,
 				93DE001314CFAC7B00764514 /* NSData+JSON.h in Sources */,

@@ -43,6 +43,8 @@ static NSString *const SMSubdomainDefault = @"mob1";
     NSTimeInterval _serverTimeDiff;
     NSString *_lastUserLoginName;
     int _oauthVersion;
+    NSString *_oauth2Token;
+    NSDate *_oauth2TokenExpiration;
 }
 
 /**
@@ -114,6 +116,12 @@ static NSString *const SMSubdomainDefault = @"mob1";
  * The last username that logged in
  */
 @property(nonatomic,retain) NSString* lastUserLoginName;
+
+@property(readwrite) int oauthVersion;
+
+@property(nonatomic,retain) NSString* oauth2Token;
+
+@property(nonatomic,retain) NSDate* oauth2TokenExpiration;
 
 
 /**

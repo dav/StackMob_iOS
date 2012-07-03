@@ -390,6 +390,11 @@
         [[self delegate] requestCompleted:self];
 }
 
+- (id) resultFromSuccessString:(NSString *)textResult
+{
+    return [textResult objectFromJSONString];
+}
+
 
 - (void)connectionDidFinishLoading:(NSURLConnection*)connection
 {
@@ -431,7 +436,7 @@
         @try{
             [mConnectionData setLength:0];
             if (statusCode < 400) {
-                result = [textResult objectFromJSONString];
+                result = [self resultFromSuccessString:textResult];
             } else {
                 NSDictionary *errResult = (NSDictionary *)[textResult objectFromJSONString]; 
                 NSString *failMsg;

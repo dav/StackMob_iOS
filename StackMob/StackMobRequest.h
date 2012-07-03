@@ -139,6 +139,8 @@ typedef enum {
 /* translate enum to string */
 + (NSString*)stringFromHttpVerb:(SMHttpVerb)httpVerb;
 
+- (id) resultFromSuccessString:(NSString *)textResult;
+
 @end
 
 @protocol SMRequestDelegate <NSObject>

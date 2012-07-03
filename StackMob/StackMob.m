@@ -20,6 +20,7 @@
 #import "StackMobClientData.h"
 #import "StackMobHerokuRequest.h"
 #import "StackMobBulkRequest.h"
+#import "StackMobAccessTokenRequest.h"
 
 @interface StackMob()
 
@@ -180,9 +181,19 @@ static SMEnvironment environment;
 
 - (StackMobRequest *)loginWithArguments:(NSDictionary *)arguments andCallback:(StackMobCallback)callback
 {
-    StackMobRequest *request = [StackMobRequest requestForMethod:[NSString stringWithFormat:@"%@/login", self.session.userObjectName]
-                                                   withArguments:arguments
-                                                    withHttpVerb:GET]; 
+    StackMobRequest *request;
+    
+    if(self.session.oauthVersion == OAuth2)
+    {
+        request = [StackMobAccessTokenRequest requestForMethod:[NSString stringWithFormat:@"%@/accessToken", [self.session userObjectName]] withArguments:arguments];
+    }
+    else 
+    {
+       request = [StackMobRequest requestForMethod:[NSString stringWithFormat:@"%@/login", [self.session userObjectName]]
+                              withArguments:arguments
+                               withHttpVerb:GET]; 
+    }
+
     request.isSecure = YES;
     _session.lastUserLoginName = [arguments valueForKey:@"username"];
     

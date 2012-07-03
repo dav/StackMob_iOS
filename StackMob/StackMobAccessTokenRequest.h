@@ -10,6 +10,6 @@
 
 @interface StackMobAccessTokenRequest : StackMobRequest
 
-+ (id)requestForMethod:(NSString *)method withArguments:(NSArray *)arguments;
++ (id)requestForMethod:(NSString *)method withArguments:(NSDictionary *)arguments;
 
 @end
