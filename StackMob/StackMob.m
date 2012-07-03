@@ -207,6 +207,7 @@ static SMEnvironment environment;
     StackMobRequest *request = [StackMobRequest requestForMethod:[NSString stringWithFormat:@"%@/logout", self.session.userObjectName]
                                                    withArguments:[NSDictionary dictionary]
                                                     withHttpVerb:GET]; 
+    self.session.oauth2TokenExpiration = [NSDate date];
     request.isSecure = YES;
     [self queueRequest:request andCallback:callback];
     
@@ -654,11 +655,18 @@ static SMEnvironment environment;
 
 - (BOOL) isLoggedIn
 {
-    NSHTTPCookie *sessionCookie = [[_sharedManager cookieStore] sessionCookie];
-    if(sessionCookie != nil) {
-        BOOL cookieIsStillValid = [[[NSDate date] laterDate:[sessionCookie expiresDate]] isEqualToDate:[sessionCookie expiresDate]];
-        return cookieIsStillValid && ![self isLoggedOut];
+    if(self.session.oauthVersion == OAuth2) {
+        return self.session.oauth2TokenExpiration != nil && [[self.session.oauth2TokenExpiration laterDate:[NSDate date]] isEqualToDate:self.session.oauth2TokenExpiration];
     }
+    else 
+    {
+        NSHTTPCookie *sessionCookie = [[_sharedManager cookieStore] sessionCookie];
+        if(sessionCookie != nil) {
+            BOOL cookieIsStillValid = [[[NSDate date] laterDate:[sessionCookie expiresDate]] isEqualToDate:[sessionCookie expiresDate]];
+            return cookieIsStillValid && ![self isLoggedOut];
+        }
+    }
+
     return false;
 }
 
@@ -669,9 +677,15 @@ static SMEnvironment environment;
 
 - (BOOL) isLoggedOut
 {
-    NSHTTPCookie *sessionCookie = [_cookieStore sessionCookie];
-    //The logged out cookie is a json string.
-    return sessionCookie != nil && [[sessionCookie value] rangeOfString:@":"].location != NSNotFound;
+    if(self.session.oauthVersion == OAuth2) {
+        return self.session.oauth2TokenExpiration != nil && ![self isLoggedIn];
+    }
+    else 
+    {
+        NSHTTPCookie *sessionCookie = [_cookieStore sessionCookie];
+        //The logged out cookie is a json string.
+        return sessionCookie != nil && [[sessionCookie value] rangeOfString:@":"].location != NSNotFound;
+    }
 }
 
 
