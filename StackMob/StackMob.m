@@ -656,7 +656,7 @@ static SMEnvironment environment;
 - (BOOL) isLoggedIn
 {
     if(self.session.oauthVersion == OAuth2) {
-        return self.session.oauth2TokenExpiration != nil && [[self.session.oauth2TokenExpiration laterDate:[NSDate date]] isEqualToDate:self.session.oauth2TokenExpiration];
+        return self.session.oauth2TokenValid;
     }
     else 
     {
@@ -678,7 +678,7 @@ static SMEnvironment environment;
 - (BOOL) isLoggedOut
 {
     if(self.session.oauthVersion == OAuth2) {
-        return self.session.oauth2TokenExpiration != nil && ![self isLoggedIn];
+        return self.session.oauth2TokenExpiration != nil && !self.session.oauth2TokenValid;
     }
     else 
     {

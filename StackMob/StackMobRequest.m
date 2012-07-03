@@ -293,7 +293,19 @@
     
     [request addValue:[[[StackMob stackmob] cookieStore] cookieHeader] forHTTPHeaderField:@"Cookie"];
     
-	[request prepare];
+    if(session.oauthVersion == OAuth2)
+    {
+        [request addValue:session.apiKey forHTTPHeaderField:@"X-StackMob-API-Key"];
+        if(session.oauth2TokenValid)
+        {
+            [request addValue:session.oauth2Token forHTTPHeaderField:@"Authorization"];
+        }
+    }
+    else
+    {
+        [request prepare];
+    }
+
     [self setBodyForRequest:request];
     
     

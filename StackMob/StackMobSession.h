@@ -231,6 +231,8 @@ static NSString *const SMSubdomainDefault = @"mob1";
  */
 - (NSString *)userAgentString;
 
+- (BOOL) oauth2TokenValid;
+
 /*
  * Update the server time diff
  */

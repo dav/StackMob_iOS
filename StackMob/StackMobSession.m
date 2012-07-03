@@ -223,6 +223,11 @@ static NSString *const serverTimeDiffKey = @"stackmob.servertimediff";
 	return secureURL;
 }
 
+- (BOOL) oauth2TokenValid
+{
+    return self.oauth2TokenExpiration != nil && [[self.oauth2TokenExpiration laterDate:[NSDate date]] isEqualToDate:self.oauth2TokenExpiration];
+}
+
 
 - (NSString *)userAgentString {
     return [NSString stringWithFormat:@"StackMob (iOS; %@)/%@", STACKMOB_SDK_VERSION, _appName];
