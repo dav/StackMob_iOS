@@ -191,10 +191,11 @@ static SMEnvironment environment;
     {
        request = [StackMobRequest requestForMethod:[NSString stringWithFormat:@"%@/login", [self.session userObjectName]]
                               withArguments:arguments
-                               withHttpVerb:GET]; 
+                               withHttpVerb:GET];
+       request.isSecure = YES;
     }
 
-    request.isSecure = YES;
+    
     _session.lastUserLoginName = [arguments valueForKey:@"username"];
     
     [self queueRequest:request andCallback:callback];
@@ -469,6 +470,7 @@ static SMEnvironment environment;
     StackMobRequest *request = [StackMobRequest requestForMethod:[self escapePath:path]
                                                    withArguments:arguments
                                                     withHttpVerb:POST];
+    
     [self queueRequest:request andCallback:callback];
     return request;
 }

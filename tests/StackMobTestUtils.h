@@ -15,6 +15,9 @@
 #import <Foundation/Foundation.h>
 #import "StackMob.h"
 
+#define USER_NAME @"bob"
+#define USER_PASSWORD @"bob"
+
 extern NSString * const kAPIKey;
 extern NSString * const kAPISecret;
 extern NSString * const kSubDomain;

@@ -15,16 +15,42 @@
 #import <UIKit/UIKit.h>
 #import "NSData+Base64.h"
 #import "StackMobLoginTest.h"
-
-#define USER_NAME @"USER_NAME_HERE"
-#define USER_PASSWORD @"USER_PASSWORD_HERE"
+#import "StackMobTestUtils.h"
 
 //#import "application_headers" as required
 
 @implementation StackMobLoginTest
 - (void)setUp {
     [super setUp];
+    [self createUser];
 }
+
+- (void)tearDown
+{
+    [self deleteUser];
+}
+
+- (void)createUser
+{
+    NSDictionary *createArgs = [NSDictionary dictionaryWithObjectsAndKeys:USER_NAME, @"username", USER_PASSWORD, @"password", nil];
+    StackMobRequest *createRequest = [[StackMob stackmob] post:@"user" withArguments:createArgs andCallback:^(BOOL success, id result) {
+        STAssertTrue(success, @"user not created");
+        
+    }];
+    
+    [StackMobTestUtils runRunLoop:[NSRunLoop currentRunLoop] untilRequestFinished:createRequest];
+}
+
+- (void)deleteUser
+{
+    NSDictionary *destroyArgs = [NSDictionary dictionaryWithObjectsAndKeys:USER_NAME, @"username", nil];
+    StackMobRequest *deleteRequest = [[StackMob stackmob] destroy:@"user" withArguments:destroyArgs andCallback:^(BOOL success, id result) {
+        STAssertTrue(success, @"object not deleted");
+    }];
+    
+    [StackMobTestUtils runRunLoop:[NSRunLoop currentRunLoop] untilRequestFinished:deleteRequest];
+}
+
 
 - (void)testSetCookieLoginLogout {
     NSMutableDictionary *loginRequest = [[NSMutableDictionary alloc] init];

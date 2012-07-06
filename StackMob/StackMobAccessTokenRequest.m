@@ -13,7 +13,10 @@
 + (id)requestForMethod:(NSString *)method withArguments:(NSDictionary *)arguments {
     StackMobAccessTokenRequest *request = [[[StackMobAccessTokenRequest alloc] init] autorelease];
     request.method = method;
-    [request setArguments: arguments];
+    request.isSecure = YES;
+    NSMutableDictionary *dict = [arguments mutableCopy];
+    [dict setObject:@"mac" forKey:@"token_type"];
+    [request setArguments: dict];
     request.httpMethod = [StackMobRequest stringFromHttpVerb:POST];
     
     return request;
@@ -24,7 +27,8 @@
     NSDictionary * result = [textResult objectFromJSONString];
     NSString *accessToken = [result valueForKey:@"access_token"];
     NSNumber *expiration = [result valueForKey:@"expires_in"];
-    [session saveOAuth2AccessToken:accessToken withExpiration:[NSDate dateWithTimeIntervalSinceNow:expiration.intValue]];
+    NSString *key = [result valueForKey:@"mac_key"];
+    [session saveOAuth2AccessToken:accessToken withExpiration:[NSDate dateWithTimeIntervalSinceNow:expiration.intValue] andKey:key];
     return [[result valueForKey:@"stackmob"] valueForKey:@"user"];
     
 }

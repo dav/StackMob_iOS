@@ -108,8 +108,6 @@
 		82CE43E41288F16700A73E9C /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AACBBE490F95108600F1A2B1 /* Foundation.framework */; };
 		82CE443E1288F17700A73E9C /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 82CE433A1288F02E00A73E9C /* SystemConfiguration.framework */; };
 		82CE45151289025B00A73E9C /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 82CE432C1288EFB900A73E9C /* UIKit.framework */; };
-		82CE45F412892FFA00A73E9C /* APIRequestTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 82CE45F212892FFA00A73E9C /* APIRequestTests.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
-		93694862147228B400575176 /* StackMobPushTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 9369485F147228B400575176 /* StackMobPushTests.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		93694863147228B400575176 /* StackMobTestUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 93694861147228B400575176 /* StackMobTestUtils.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		9369486514722C5C00575176 /* StackMobTestCommon.m in Sources */ = {isa = PBXBuildFile; fileRef = 9369485A1472286900575176 /* StackMobTestCommon.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		9369486614722C6500575176 /* StackMobTestCommon.h in Headers */ = {isa = PBXBuildFile; fileRef = 936948591472286900575176 /* StackMobTestCommon.h */; settings = {ATTRIBUTES = (); }; };
@@ -123,17 +121,20 @@
 		C63FB3511497EA4E007961C1 /* SMFile.h in Headers */ = {isa = PBXBuildFile; fileRef = C63FB34F1497EA4E007961C1 /* SMFile.h */; };
 		C63FB3521497EA4E007961C1 /* SMFile.m in Sources */ = {isa = PBXBuildFile; fileRef = C63FB3501497EA4E007961C1 /* SMFile.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		C63FB3561497EDF4007961C1 /* SMFileTest.h in Headers */ = {isa = PBXBuildFile; fileRef = C63FB3541497EDF4007961C1 /* SMFileTest.h */; };
-		C63FB3581497EF38007961C1 /* SMFileTest.m in Sources */ = {isa = PBXBuildFile; fileRef = C63FB3551497EDF4007961C1 /* SMFileTest.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		C63FB3591497F22A007961C1 /* SMFile.m in Sources */ = {isa = PBXBuildFile; fileRef = C63FB3501497EA4E007961C1 /* SMFile.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
-		C6A831E314981267001FB62F /* StackMobLoginTest.m in Sources */ = {isa = PBXBuildFile; fileRef = C6A831E214981267001FB62F /* StackMobLoginTest.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
-		DE1AEA2215705E7C000EC712 /* AtomicCounterTests.m in Sources */ = {isa = PBXBuildFile; fileRef = DE1AEA2115705E7C000EC712 /* AtomicCounterTests.m */; };
+		DE63FE9715A7781E003E9283 /* StackMobLoginTest.m in Sources */ = {isa = PBXBuildFile; fileRef = C6A831E214981267001FB62F /* StackMobLoginTest.m */; };
+		DE63FE9915A7785C003E9283 /* APIRequestTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 82CE45F212892FFA00A73E9C /* APIRequestTests.m */; };
+		DE63FE9B15A7843C003E9283 /* StackMobPushTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 9369485F147228B400575176 /* StackMobPushTests.m */; };
+		DE63FE9C15A78440003E9283 /* StackMobQueryTests.m in Sources */ = {isa = PBXBuildFile; fileRef = E3C7523D14871A18007CFEF1 /* StackMobQueryTests.m */; };
+		DE63FE9D15A78447003E9283 /* SMFileTest.m in Sources */ = {isa = PBXBuildFile; fileRef = C63FB3551497EDF4007961C1 /* SMFileTest.m */; };
+		DE63FE9E15A7844B003E9283 /* AtomicCounterTests.m in Sources */ = {isa = PBXBuildFile; fileRef = DE1AEA2115705E7C000EC712 /* AtomicCounterTests.m */; };
+		DEDE6A4E15A3A89D00703089 /* StackMobOAuth2Test.m in Sources */ = {isa = PBXBuildFile; fileRef = DEDE6A4D15A3A89D00703089 /* StackMobOAuth2Test.m */; };
 		E33D87DB144616CF00FBEB96 /* StackMobVersion.h in Headers */ = {isa = PBXBuildFile; fileRef = E33D87DA144616CF00FBEB96 /* StackMobVersion.h */; };
 		E3897ECA14885AC000E45FB7 /* StackMobBulkRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = E3897EC814885AC000E45FB7 /* StackMobBulkRequest.h */; };
 		E3897ECB14885AC000E45FB7 /* StackMobBulkRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = E3897EC914885AC000E45FB7 /* StackMobBulkRequest.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		E3897ECC14885AC000E45FB7 /* StackMobBulkRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = E3897EC914885AC000E45FB7 /* StackMobBulkRequest.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		E3C752391486FBA3007CFEF1 /* SMGeoPoint.h in Headers */ = {isa = PBXBuildFile; fileRef = E3C752371486FBA3007CFEF1 /* SMGeoPoint.h */; };
 		E3C7523A1486FBA3007CFEF1 /* SMGeoPoint.m in Sources */ = {isa = PBXBuildFile; fileRef = E3C752381486FBA3007CFEF1 /* SMGeoPoint.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
-		E3C7523E14871A19007CFEF1 /* StackMobQueryTests.m in Sources */ = {isa = PBXBuildFile; fileRef = E3C7523D14871A18007CFEF1 /* StackMobQueryTests.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		E3C7523F14873321007CFEF1 /* SMGeoPoint.m in Sources */ = {isa = PBXBuildFile; fileRef = E3C752381486FBA3007CFEF1 /* SMGeoPoint.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		E3D728D71448BE5700804149 /* StackMobQuery.h in Headers */ = {isa = PBXBuildFile; fileRef = E3D728D51448BE5700804149 /* StackMobQuery.h */; };
 		E3D728D81448BE5700804149 /* StackMobQuery.m in Sources */ = {isa = PBXBuildFile; fileRef = E3D728D61448BE5700804149 /* StackMobQuery.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
@@ -226,6 +227,8 @@
 		D2AAC07E0554694100DB518D /* libStackMobiOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libStackMobiOS.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		DE1AEA2015705E7C000EC712 /* AtomicCounterTests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AtomicCounterTests.h; path = tests/AtomicCounterTests.h; sourceTree = "<group>"; };
 		DE1AEA2115705E7C000EC712 /* AtomicCounterTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AtomicCounterTests.m; path = tests/AtomicCounterTests.m; sourceTree = "<group>"; };
+		DEDE6A4C15A3A89D00703089 /* StackMobOAuth2Test.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StackMobOAuth2Test.h; path = tests/StackMobOAuth2Test.h; sourceTree = "<group>"; };
+		DEDE6A4D15A3A89D00703089 /* StackMobOAuth2Test.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = StackMobOAuth2Test.m; path = tests/StackMobOAuth2Test.m; sourceTree = "<group>"; };
 		E33D87DA144616CF00FBEB96 /* StackMobVersion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StackMobVersion.h; sourceTree = "<group>"; };
 		E3897EC814885AC000E45FB7 /* StackMobBulkRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StackMobBulkRequest.h; sourceTree = "<group>"; };
 		E3897EC914885AC000E45FB7 /* StackMobBulkRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = StackMobBulkRequest.m; sourceTree = "<group>"; };
@@ -490,6 +493,8 @@
 				C63FB3551497EDF4007961C1 /* SMFileTest.m */,
 				DE1AEA2015705E7C000EC712 /* AtomicCounterTests.h */,
 				DE1AEA2115705E7C000EC712 /* AtomicCounterTests.m */,
+				DEDE6A4C15A3A89D00703089 /* StackMobOAuth2Test.h */,
+				DEDE6A4D15A3A89D00703089 /* StackMobOAuth2Test.m */,
 			);
 			name = Tests;
 			sourceTree = "<group>";
@@ -682,19 +687,20 @@
 				038CB29614284F04001DEAC9 /* StackMobSession.m in Sources */,
 				038CB29314284C97001DEAC9 /* StackMob.m in Sources */,
 				038CB29414284C97001DEAC9 /* StackMobRequest.m in Sources */,
-				82CE45F412892FFA00A73E9C /* APIRequestTests.m in Sources */,
 				E3C7523F14873321007CFEF1 /* SMGeoPoint.m in Sources */,
 				E3D728D91448BE5700804149 /* StackMobQuery.m in Sources */,
-				93694862147228B400575176 /* StackMobPushTests.m in Sources */,
 				93694863147228B400575176 /* StackMobTestUtils.m in Sources */,
 				9369486514722C5C00575176 /* StackMobTestCommon.m in Sources */,
 				E3897ECC14885AC000E45FB7 /* StackMobBulkRequest.m in Sources */,
-				E3C7523E14871A19007CFEF1 /* StackMobQueryTests.m in Sources */,
-				C63FB3581497EF38007961C1 /* SMFileTest.m in Sources */,
 				C63FB3591497F22A007961C1 /* SMFile.m in Sources */,
-				C6A831E314981267001FB62F /* StackMobLoginTest.m in Sources */,
 				560BB28315224413004BB615 /* SecureUDID.m in Sources */,
-				DE1AEA2215705E7C000EC712 /* AtomicCounterTests.m in Sources */,
+				DEDE6A4E15A3A89D00703089 /* StackMobOAuth2Test.m in Sources */,
+				DE63FE9715A7781E003E9283 /* StackMobLoginTest.m in Sources */,
+				DE63FE9915A7785C003E9283 /* APIRequestTests.m in Sources */,
+				DE63FE9B15A7843C003E9283 /* StackMobPushTests.m in Sources */,
+				DE63FE9C15A78440003E9283 /* StackMobQueryTests.m in Sources */,
+				DE63FE9D15A78447003E9283 /* SMFileTest.m in Sources */,
+				DE63FE9E15A7844B003E9283 /* AtomicCounterTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

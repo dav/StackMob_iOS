@@ -15,6 +15,7 @@
 #import <Foundation/Foundation.h>
 #import "StackMobSession.h"
 #import "StackMobRequest.h"
+#import "StackMobAccessTokenRequest.h"
 #import "StackMobQuery.h"
 #import "StackMobConfiguration.h"
 #import "StackMobCookieStore.h"

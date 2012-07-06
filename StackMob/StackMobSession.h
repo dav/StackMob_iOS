@@ -45,6 +45,7 @@ static NSString *const SMSubdomainDefault = @"mob1";
     int _oauthVersion;
     NSString *_oauth2Token;
     NSDate *_oauth2TokenExpiration;
+    NSString *_oauth2Key;
 }
 
 /**
@@ -122,6 +123,8 @@ static NSString *const SMSubdomainDefault = @"mob1";
 @property(nonatomic,retain) NSString* oauth2Token;
 
 @property(nonatomic,retain) NSDate* oauth2TokenExpiration;
+
+@property(nonatomic,retain) NSString* oauth2Key;
 
 
 /**
@@ -238,6 +241,6 @@ static NSString *const SMSubdomainDefault = @"mob1";
  */
 -(void)recordServerTimeDiffFromHeader:(NSString*)header;
 
--(void)saveOAuth2AccessToken:(NSString *)token withExpiration:(NSDate *)date;
+-(void)saveOAuth2AccessToken:(NSString *)token withExpiration:(NSDate *)date andKey:(NSString *)key;
 
 @end

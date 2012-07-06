@@ -15,10 +15,12 @@
 #import "StackMobTestCommon.h"
 #import <UIKit/UIKit.h>
 
+
 @implementation StackMobTestCommon
 
 - (void)setUp {
     [StackMob setApplication:OAuth1 key:kAPIKey secret:kAPISecret appName:kAppName subDomain:@"mob1" userObjectName:@"user" apiVersionNumber:[NSNumber numberWithInt:kVersion]];
+    [[[StackMob stackmob] session] setOauthVersion:OAuth1];
     emptyCallback = ^(BOOL success, id result) {};
 }
 
