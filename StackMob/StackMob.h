@@ -55,7 +55,7 @@ typedef void (^StackMobCallback)(BOOL success, id result);
  * Manually configure your session.  Subsequent requests for the StackMob
  * singleton can use [StackMob stackmob]
  */
-+ (StackMob *)setApplication:(int)oauthVersion key:(NSString *)apiKey secret:(NSString *)apiSecret appName:(NSString *)appName subDomain:(NSString *)subDomain userObjectName:(NSString *)userObjectName apiVersionNumber:(NSNumber *)apiVersion;
++ (StackMob *)setApplication:(OAuthVersion)oauthVersion key:(NSString *)apiKey secret:(NSString *)apiSecret appName:(NSString *)appName subDomain:(NSString *)subDomain userObjectName:(NSString *)userObjectName apiVersionNumber:(NSNumber *)apiVersion;
 
 /*
  * Returns the pre-configured or auto-configured singleton

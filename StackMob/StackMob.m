@@ -60,7 +60,7 @@ static StackMob *_sharedManager = nil;
 static SMEnvironment environment;
 
 
-+ (StackMob *)setApplication:(int)oauthVersion key:(NSString *)apiKey secret:(NSString *)apiSecret appName:(NSString *)appName subDomain:(NSString *)subDomain userObjectName:(NSString *)userObjectName apiVersionNumber:(NSNumber *)apiVersion
++ (StackMob *)setApplication:(OAuthVersion)oauthVersion key:(NSString *)apiKey secret:(NSString *)apiSecret appName:(NSString *)appName subDomain:(NSString *)subDomain userObjectName:(NSString *)userObjectName apiVersionNumber:(NSNumber *)apiVersion
 {
     if (_sharedManager == nil) {
         _sharedManager = [[super allocWithZone:NULL] init];
