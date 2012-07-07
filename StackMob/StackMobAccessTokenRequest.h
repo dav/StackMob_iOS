@@ -7,6 +7,7 @@
 //
 
 #import "StackMobRequest.h"
+//#import "StackMob.h"
 
 @interface StackMobAccessTokenRequest : StackMobRequest
 

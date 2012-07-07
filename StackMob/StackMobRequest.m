@@ -592,7 +592,7 @@
     //bstring through bin to string using crypto
     OAHMAC_SHA1SignatureProvider *provider = [[OAHMAC_SHA1SignatureProvider alloc] init];
     NSString *mac = [provider signClearText:baseString withSecret:key];
-    
+    [provider release];
     //return 'MAC id="' + id + '",ts="' + ts + '",nonce="' + nonce + '",mac="' + mac + '"'
     unichar quotes = 0x22;
     NSString *returnString = [NSString stringWithFormat:@"MAC id=%C%@%C,ts=%C%.f%C,nonce=%C%@%C,mac=%C%@%C", quotes, access_token, quotes, quotes, timestamp, quotes, quotes, nonce, quotes, quotes, mac, quotes];

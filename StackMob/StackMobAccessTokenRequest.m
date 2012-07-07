@@ -7,6 +7,7 @@
 //
 
 #import "StackMobAccessTokenRequest.h"
+#import "StackMobAdditions.h"
 
 @implementation StackMobAccessTokenRequest
 
@@ -17,6 +18,7 @@
     NSMutableDictionary *dict = [arguments mutableCopy];
     [dict setObject:@"mac" forKey:@"token_type"];
     [request setArguments: dict];
+    [dict release];
     request.httpMethod = [StackMobRequest stringFromHttpVerb:POST];
     
     return request;

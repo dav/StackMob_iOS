@@ -20,6 +20,7 @@
 #import "StackMobConfiguration.h"
 #import "StackMobCookieStore.h"
 #import "SMFile.h"
+#import "StackMobAdditions.h"
 
 typedef enum {
     SMEnvironmentProduction = 0,
