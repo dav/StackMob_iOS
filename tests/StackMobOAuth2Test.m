@@ -35,9 +35,8 @@
 - (void)createUser
 {
     NSDictionary *createArgs = [NSDictionary dictionaryWithObjectsAndKeys:USER_NAME, @"username", USER_PASSWORD, @"password", nil];
-    StackMobRequest *createRequest = [[StackMob stackmob] post:@"user" withArguments:createArgs andCallback:^(BOOL success, id result) {
+    StackMobRequest *createRequest = [[StackMob stackmob] registerWithArguments:createArgs andCallback:^(BOOL success, id result) {
         STAssertTrue(success, @"user not created");
-        
     }];
     
     [StackMobTestUtils runRunLoop:[NSRunLoop currentRunLoop] untilRequestFinished:createRequest];

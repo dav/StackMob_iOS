@@ -97,10 +97,6 @@
 	if (arguments != nil) {
 		[request setArguments:arguments];
 	}
-    if ([[[StackMob stackmob] session] oauthVersion] == 2 && [[StackMob stackmob] isLoggedOut]) {
-        // any call using oauth2 to a schema that is open will be sent over https
-        request.isSecure = YES;
-    }
 	return request;
 }
 
