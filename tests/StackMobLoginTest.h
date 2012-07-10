@@ -26,6 +26,8 @@
 @interface StackMobLoginTest : StackMobTestCommon
 
 - (void)testSetCookieLoginLogout;
+- (void)createUser;
+- (void)deleteUser;
 
 @end
 

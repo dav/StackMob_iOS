@@ -179,15 +179,28 @@ StackMobSession *mySession = nil;
 
 - (void)testRelatedPut {
     NSArray *putArry = [NSArray arrayWithObjects:@"one", @"two", nil];
-    StackMobRequest *r = [[StackMob stackmob] put:@"primary_schema" withId:@"primary_key1" andField:@"array" andArguments:putArry andCallback:^(BOOL success, id result) {}];
+    StackMobRequest *r = [[StackMob stackmob] put:@"primary_schema" withId:@"primary_key2" andField:@"related_many" andArguments:putArry andCallback:^(BOOL success, id result) {}];
     
     [self assertNotNSError:[StackMobTestUtils runDefaultRunLoopAndGetDictionaryResultFromRequest:r]];
 }
 
 - (void)testRelatedDelete {
-    StackMobRequest *r = [[StackMob stackmob] removeIds:[NSArray arrayWithObjects:@"one", @"two", nil] forSchema:@"primary_schema" andId:@"primary_key2" andField:@"related_many" shouldCascade:YES withCallback:^(BOOL success, id result) {}];
+    NSDictionary *one = [NSDictionary dictionaryWithObjectsAndKeys:@"abc", @"name", nil];
+    NSArray *argsArray = [NSArray arrayWithObjects:one, one, nil];
+    __block NSString *id1;
+    __block NSString *id2;
+    StackMobRequest *r = [[StackMob stackmob] post:@"primary_schema" withId:@"primary_key2" andField:@"related_many" andBulkArguments:argsArray andCallback:^(BOOL success, id result) {
+        STAssertTrue(success, @"unsuccessful post to create related objects");
+        NSArray *resultSuccessDict = [(NSDictionary *)result objectForKey:@"success"];
+        id1 = [resultSuccessDict objectAtIndex:0];
+        id2 = [resultSuccessDict objectAtIndex:1];
+    }];
     
     [self assertNotNSError:[StackMobTestUtils runDefaultRunLoopAndGetDictionaryResultFromRequest:r]];
+    
+    StackMobRequest *r2 = [[StackMob stackmob] removeIds:[NSArray arrayWithObjects:id1, id2, nil] forSchema:@"primary_schema" andId:@"primary_key2" andField:@"related_many" shouldCascade:YES withCallback:^(BOOL success, id result) {}];
+    
+    [self assertNotNSError:[StackMobTestUtils runDefaultRunLoopAndGetDictionaryResultFromRequest:r2]];
 }
 
 - (void) testDoubleFieldSet {
@@ -435,7 +448,7 @@ StackMobSession *mySession = nil;
     [StackMobTestUtils runRunLoop:[NSRunLoop currentRunLoop] untilRequestFinished:request];
     
     int totalCount = [request totalObjectCountFromPagination];
-    STAssertTrue(totalCount > 800, @"totally wrong object count");
+    STAssertTrue(totalCount > 5, @"totally wrong object count");
     
     STAssertTrue([[request result] isKindOfClass:[NSArray class]], @"Did not get a valid GET result");
 	request = nil;
@@ -446,7 +459,7 @@ StackMobSession *mySession = nil;
     StackMobRequest *request = [[StackMob stackmob] count:@"user" withCallback:^(BOOL success, id result ) {
         if (success) {
             NSNumber *count = result;
-            STAssertTrue([count intValue] > 800, @"totally wrong object count");
+            STAssertTrue([count intValue] > 5, @"totally wrong object count");
         }
         else{
             STFail(@"CountFailed");
@@ -461,7 +474,7 @@ StackMobSession *mySession = nil;
     StackMobRequest *request = [[StackMob stackmob] count:@"user" withQuery:q andCallback:^(BOOL success, id result ) {
         if (success) {
             NSNumber *count = result;
-            STAssertTrue([count intValue] > 800, @"totally wrong object count");
+            STAssertTrue([count intValue] > 5, @"totally wrong object count");
         }
         else{
             STFail(@"CountFailed");
