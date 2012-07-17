@@ -1,5 +1,11 @@
 # Release Notes
 
+## 0.5.1
+* Update user logout for OAuth2
+
+## 0.5.0
+* Add support for OAuth2
+
 ## 0.4.11
 * Fix memory leaks
 
