@@ -1,5 +1,8 @@
 # Release Notes
 
+## 0.5.2
+* Push uses Oauth1
+
 ## 0.5.1
 * Update user logout for OAuth2
 
