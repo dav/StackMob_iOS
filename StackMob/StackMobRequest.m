@@ -521,7 +521,7 @@
 	
 	[request addValue:@"gzip" forHTTPHeaderField:@"Accept-Encoding"];
 	[request addValue:@"deflate" forHTTPHeaderField:@"Accept-Encoding"];
-	if(session.oauthVersion == OAuth2)
+	if([self useOAuth2])
     {
         [request addValue:session.apiKey forHTTPHeaderField:@"X-StackMob-API-Key"];
         if(session.oauth2TokenValid)

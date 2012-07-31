@@ -34,8 +34,8 @@
     return r;
 }
 
-- (BOOL) useOAuth2 {
-    return false;
+- (BOOL)useOAuth2 {
+    return NO;
 }
 
 - (NSString *)getBaseURL {
