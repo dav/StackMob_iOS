@@ -298,7 +298,7 @@
     
     [request addValue:[[[StackMob stackmob] cookieStore] cookieHeader] forHTTPHeaderField:@"Cookie"];
     
-    if(session.oauthVersion == OAuth2)
+    if([self useOAuth2])
     {
         [request addValue:session.apiKey forHTTPHeaderField:@"X-StackMob-API-Key"];
         if(session.oauth2TokenValid)
@@ -585,6 +585,10 @@
     } 
     NSString *httpVerb = self.httpMethod;
     NSString *uri = [NSString stringWithFormat:@"/%@", self.method];
+    if(self.userBased) {
+        uri = [NSString stringWithFormat:@"/%@%@", session.userObjectName, uri];
+    }
+    
     
     if (([[self httpMethod] isEqualToString:@"GET"] || [[self httpMethod] isEqualToString:@"DELETE"]) &&    
 		[mArguments count] > 0) {
