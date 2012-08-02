@@ -16,6 +16,16 @@
 
 @interface StackMobSession(Private)
 - (void)setup;
+
+- (NSString *)oauth2TokenKey;
+- (NSString *)oauth2TokenExpirationKey;
+- (NSString *)oauth2Key;
+
+@end
+
+@interface StackMobSession()
+@property(nonatomic,readonly) NSDate* nextTimeCheck;
+@property(nonatomic,assign) NSTimeInterval serverTimeDiff;
 @end
 
 @implementation StackMobSession
@@ -24,6 +34,7 @@ static const int kMaxBurstRequests = 3;
 static const NSTimeInterval kBurstDuration = 2;
 
 static StackMobSession* sharedSession = nil;
+static NSString *const serverTimeDiffKey = @"stackmob.servertimediff";
 
 @synthesize apiKey = _apiKey;
 @synthesize apiSecret = _apiSecret;
@@ -34,39 +45,50 @@ static StackMobSession* sharedSession = nil;
 @synthesize apiVersionNumber = _apiVersionNumber;
 @synthesize sessionKey = _sessionKey;
 @synthesize expirationDate = _expirationDate;
+@synthesize nextTimeCheck = _nextTimeCheck;
+@synthesize serverTimeDiff = _serverTimeDiff;
+@synthesize lastUserLoginName = _lastUserLoginName;
+@synthesize oauthVersion = _oauthVersion;
+@synthesize oauth2Token = _oauth2Token;
+@synthesize oauth2TokenExpiration = _oauth2TokenExpiration;
+@synthesize oauth2Key = _oauth2Key;
 @synthesize pushURL;
 
 + (StackMobSession*)session {
 	return sharedSession;
 }
 
-+ (StackMobSession*)sessionForApplication:(NSString*)key 
++ (StackMobSession*)sessionForApplication:(int)oauthVersion 
+                                      key:(NSString*)key 
                                    secret:(NSString*)secret
                                   appName:(NSString*)appName
                                 subDomain:(NSString*)subDomain
                          apiVersionNumber:(NSNumber*)apiVersionNumber 
 {
-	return [self sessionForApplication:key secret:secret appName:appName 
+	return [self sessionForApplication:oauthVersion key:key secret:secret appName:appName 
 							 subDomain:subDomain domain:SMDefaultDomain apiVersionNumber:apiVersionNumber];
 }
 
-+ (StackMobSession*)sessionForApplication:(NSString*)key 
++ (StackMobSession*)sessionForApplication:(int)oauthVersion 
+                                      key:(NSString*)key 
                                    secret:(NSString*)secret 
                                   appName:(NSString*)appName
                                 subDomain:(NSString*)subDomain 
                                    domain:(NSString*)domain 
                          apiVersionNumber:(NSNumber*)apiVersionNumber
 {
-	StackMobSession* session = [[[StackMobSession alloc] initWithKey:key 
-                                                              secret:secret 
-                                                             appName:appName
-                                                           subDomain:subDomain 
-                                                              domain:domain
-                                                    apiVersionNumber:apiVersionNumber] autorelease];
+	StackMobSession* session = [[[StackMobSession alloc] initWithVersion:oauthVersion
+                                                                    key:key 
+                                                                  secret:secret 
+                                                                 appName:appName
+                                                               subDomain:subDomain 
+                                                                  domain:domain
+                                                        apiVersionNumber:apiVersionNumber] autorelease];
 	return session;
 }
 
-+ (StackMobSession*)sessionForApplication:(NSString*)key 
++ (StackMobSession*)sessionForApplication:(int)oauthVersion 
+                                      key:(NSString*)key 
                                    secret:(NSString*)secret 
                                   appName:(NSString*)appName
                                 subDomain:(NSString*)subDomain 
@@ -74,14 +96,16 @@ static StackMobSession* sharedSession = nil;
                            userObjectName:(NSString*)userObjectName
                          apiVersionNumber:(NSNumber*)apiVersionNumber
 {
-	StackMobSession* session = [[[StackMobSession alloc] initWithKey:key 
-                                                              secret:secret 
-                                                             appName:appName
-                                                           subDomain:subDomain 
-                                                              domain:domain
-                                                      userObjectName:userObjectName
-                                                    apiVersionNumber:apiVersionNumber] autorelease];
+	StackMobSession* session = [[[StackMobSession alloc] initWithVersion:oauthVersion
+                                                                     key:key 
+                                                                  secret:secret 
+                                                                 appName:appName
+                                                               subDomain:subDomain 
+                                                                  domain:domain
+                                                          userObjectName:userObjectName
+                                                        apiVersionNumber:apiVersionNumber] autorelease];
     SMLog(@"apiVersionNumber %@", apiVersionNumber);
+    
 	return session;
 }
 
@@ -105,17 +129,19 @@ static StackMobSession* sharedSession = nil;
   return  [self urlForMethod:method isUserBased:userBasedRequest isSecure:NO];
 }
 
-- (StackMobSession*)initWithKey:(NSString*)key 
-                         secret:(NSString*)secret 
-                        appName:(NSString*)appName
-                      subDomain:(NSString*)subDomain 
-                         domain:(NSString*)domain 
-               apiVersionNumber:(NSNumber*)apiVersionNumber
+- (StackMobSession*)initWithVersion:(int)oauthVersion 
+                                key:(NSString*)key 
+                             secret:(NSString*)secret 
+                            appName:(NSString*)appName
+                          subDomain:(NSString*)subDomain 
+                             domain:(NSString*)domain 
+                   apiVersionNumber:(NSNumber*)apiVersionNumber
 {
 	if ((self = [super init])) {
 		if (!sharedSession) {
 			sharedSession = self;
 		}
+        _oauthVersion = oauthVersion;
 		_apiKey = [key copy];
 		_apiSecret = [secret copy];
 		_appName = [appName copy];
@@ -127,18 +153,20 @@ static StackMobSession* sharedSession = nil;
 	return self;
 }
 
-- (StackMobSession*)initWithKey:(NSString*)key 
-                         secret:(NSString*)secret 
-                        appName:(NSString*)appName
-                      subDomain:(NSString*)subDomain 
-                         domain:(NSString*)domain 
-                 userObjectName:(NSString *)userObjectName
-               apiVersionNumber:(NSNumber*)apiVersionNumber
+- (StackMobSession*)initWithVersion:(int)oauthVersion 
+                                key:(NSString*)key 
+                             secret:(NSString*)secret 
+                            appName:(NSString*)appName
+                          subDomain:(NSString*)subDomain 
+                             domain:(NSString*)domain 
+                     userObjectName:(NSString *)userObjectName
+                   apiVersionNumber:(NSNumber*)apiVersionNumber
 {
 	if ((self = [super init])) {
 		if (!sharedSession) {
 			sharedSession = self;
 		}
+        _oauthVersion = oauthVersion;
         _apiKey = [key copy];
         _apiSecret = [secret copy];
         _appName = [appName copy];
@@ -162,6 +190,10 @@ static StackMobSession* sharedSession = nil;
     pushURL = [[NSString stringWithFormat:@"http://push.%@.%@", _subDomain, _domain] retain];
     secureURL = [[NSString stringWithFormat:@"https://%@", url] retain];
     regularURL = [[NSString stringWithFormat:@"http://%@", url] retain];
+    _serverTimeDiff = [[NSUserDefaults standardUserDefaults] doubleForKey:serverTimeDiffKey];
+    _nextTimeCheck = [[NSDate date] retain];
+    _oauth2Token = [[NSUserDefaults standardUserDefaults] objectForKey:[self oauth2TokenKey]];
+    _oauth2TokenExpiration = [[NSUserDefaults standardUserDefaults] objectForKey:[self oauth2TokenExpirationKey]];
 }
 
 - (void)dealloc {
@@ -181,7 +213,8 @@ static StackMobSession* sharedSession = nil;
 	[_expirationDate release];
 	[_lastRequestTime release];
 	[_requestQueue release];
-	[_requestTimer release]; 
+	[_requestTimer release];
+    [_lastUserLoginName release];
 	[url release];
 	[secureURL release];
 	[regularURL release];
@@ -197,9 +230,63 @@ static StackMobSession* sharedSession = nil;
 	return secureURL;
 }
 
+- (BOOL) oauth2TokenValid
+{
+    return self.oauth2TokenExpiration != nil && [[self.oauth2TokenExpiration laterDate:[NSDate date]] isEqualToDate:self.oauth2TokenExpiration];
+}
+
 
 - (NSString *)userAgentString {
     return [NSString stringWithFormat:@"StackMob (iOS; %@)/%@", STACKMOB_SDK_VERSION, _appName];
+}
+
+- (NSDate *)getServerTime {
+    SMLog(@"Applying a time difference of %f", _serverTimeDiff);
+    return [NSDate dateWithTimeIntervalSinceNow:_serverTimeDiff];
+}
+
+-(void)recordServerTimeDiffFromHeader:(NSString*)header {
+    if (header != nil) {
+        
+        NSDateFormatter *rfcFormatter = [[NSDateFormatter alloc] init];
+        [rfcFormatter setDateFormat:@"EEE, dd MMM yyyy HH:mm:ss zzz"];
+        NSDate *serverTime = [rfcFormatter dateFromString:header];
+        [rfcFormatter release];
+        _serverTimeDiff = [serverTime timeIntervalSinceDate:[NSDate date]];
+        SMLog(@"Server time is %@ and diff is %f", serverTime, _serverTimeDiff);
+        if([[NSDate date] earlierDate:_nextTimeCheck] == _nextTimeCheck) {
+            // Save the date to persistent storage every ten minutes
+            [[NSUserDefaults standardUserDefaults] setDouble:_serverTimeDiff forKey:serverTimeDiffKey];
+            SMLog(@"Server time diff after saving to NSUSerDefaults is %f", [[NSUserDefaults standardUserDefaults] doubleForKey:serverTimeDiffKey]);
+            NSDate *newDate = [[NSDate dateWithTimeIntervalSinceNow:10 * 60] retain];
+            [_nextTimeCheck release];
+            _nextTimeCheck = newDate;
+        }
+    }
+}
+
+- (NSString *)oauth2TokenKey
+{
+    return [NSString stringWithFormat:@"%@.token", _apiKey];
+}
+- (NSString *)oauth2TokenExpirationKey
+{
+    return [NSString stringWithFormat:@"%@.token.expiration", _apiKey];
+}
+
+-(void)saveOAuth2AccessToken:(NSString *)token withExpiration:(NSDate *)date andKey:(NSString *)key
+{
+    self.oauth2Key = key;
+    self.oauth2Token = token;
+    self.oauth2TokenExpiration = date;
+    [[NSUserDefaults standardUserDefaults] setObject:token forKey:[self oauth2TokenKey]];
+    [[NSUserDefaults standardUserDefaults] setObject:date forKey:[self oauth2TokenExpirationKey]];
+    
+}
+
+-(BOOL)useOAuth2
+{
+    return [self oauthVersion] == 2;
 }
 
 @end

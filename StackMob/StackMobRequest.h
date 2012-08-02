@@ -30,21 +30,21 @@ typedef enum {
 
 @interface StackMobRequest : NSObject
 {
-	NSURLConnection*		mConnection;
-	id<SMRequestDelegate>	mDelegate;
-	SEL						mSelector;
-  BOOL          mIsSecure;
-	NSString*				mMethod;
-	NSMutableDictionary*	mArguments;
-  NSMutableDictionary*    mHeaders;
-  NSData*                 mBody;
-	NSMutableData*			mConnectionData;
-	NSDictionary*			mResult;
-  NSError*                mConnectionError;
-	BOOL					_requestFinished;
-	NSString*				mHttpMethod;
-	NSHTTPURLResponse*		mHttpResponse;
-  
+    NSURLConnection*        mConnection;
+    id<SMRequestDelegate>   mDelegate;
+    SEL                     mSelector;
+    BOOL                    mIsSecure;
+    NSString*               mMethod;
+    NSMutableDictionary*    mArguments;
+    NSMutableDictionary*    mHeaders;
+    NSData*                 mBody;
+    NSMutableData*          mConnectionData;
+    NSDictionary*           mResult;
+    NSError*                mConnectionError;
+    BOOL                    _requestFinished;
+    NSString*               mHttpMethod;
+    NSHTTPURLResponse*      mHttpResponse;
+	
 	@protected
     BOOL userBased;
 	StackMobSession *session;
@@ -129,11 +129,21 @@ typedef enum {
 - (id)sendSynchronousRequestProvidingError:(NSError**)error __attribute__((deprecated));
 - (id)sendSynchronousRequest;
 
+- (NSString *)contentType;
+
 // return the post body as NSData
 - (NSData *)postBody;
 
+- (int)totalObjectCountFromPagination;
+
 /* translate enum to string */
 + (NSString*)stringFromHttpVerb:(SMHttpVerb)httpVerb;
+
+- (id) resultFromSuccessString:(NSString *)textResult;
+
+- (BOOL)useOAuth2;
+
+- (NSString *)createMACHeaderForOAuth2;
 
 @end
 

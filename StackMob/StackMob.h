@@ -15,16 +15,22 @@
 #import <Foundation/Foundation.h>
 #import "StackMobSession.h"
 #import "StackMobRequest.h"
+#import "StackMobAccessTokenRequest.h"
 #import "StackMobQuery.h"
 #import "StackMobConfiguration.h"
 #import "StackMobCookieStore.h"
 #import "SMFile.h"
+#import "StackMobAdditions.h"
 
 typedef enum {
     SMEnvironmentProduction = 0,
     SMEnvironmentDevelopment = 1
 } SMEnvironment;
 
+typedef enum {
+    OAuth1 = 1,
+    OAuth2 = 2
+} OAuthVersion;
 
 typedef void (^StackMobCallback)(BOOL success, id result);
 
@@ -49,7 +55,7 @@ typedef void (^StackMobCallback)(BOOL success, id result);
  * Manually configure your session.  Subsequent requests for the StackMob
  * singleton can use [StackMob stackmob]
  */
-+ (StackMob *)setApplication:(NSString *)apiKey secret:(NSString *)apiSecret appName:(NSString *)appName subDomain:(NSString *)subDomain userObjectName:(NSString *)userObjectName apiVersionNumber:(NSNumber *)apiVersion;
++ (StackMob *)setApplication:(OAuthVersion)oauthVersion key:(NSString *)apiKey secret:(NSString *)apiSecret appName:(NSString *)appName subDomain:(NSString *)subDomain userObjectName:(NSString *)userObjectName apiVersionNumber:(NSNumber *)apiVersion;
 
 /*
  * Returns the pre-configured or auto-configured singleton
@@ -185,6 +191,14 @@ typedef void (^StackMobCallback)(BOOL success, id result);
  */
 - (StackMobRequest *)registerForPushWithUser:(NSString *)userId token:(NSString *)token andCallback:(StackMobCallback)callback;
 
+/* 
+ * Register a User for PUSH notifications
+ * @param userId the user's user Id or username
+ * @param token the device's PUSH notification token
+ * @param overwrite whether to overwrite existing entries
+ * @param arguments a Dictionary 
+ */
+- (StackMobRequest *)registerForPushWithUser:(NSString *)userId token:(NSString *)token overwrite:(BOOL)overwrite andCallback:(StackMobCallback)callback;
 
 /*
  * Send a push notification broadcast
@@ -304,6 +318,15 @@ typedef void (^StackMobCallback)(BOOL success, id result);
             andArguments:(NSArray *)args 
              andCallback:(StackMobCallback)callback;
 
+/*
+ * Uses the PUT operation to update the atomic counter of the supplied field name
+ * @param path the name of the object in your Stackmob app
+ * @param objId the id of the object to update
+ * @param field the name of the field whose counter will be updated
+ * @param value the value the the field's counter will be inc/dec by
+ */
+- (StackMobRequest *)put:(NSString *)path withId:(NSString *)objectId updateCounterForField:(NSString *)field by:(int)value andCallback:(StackMobCallback)callback;
+
 /* 
  * DELETE the object at the given path
  * @path the name of the object in your stackmob app
@@ -350,6 +373,13 @@ typedef void (^StackMobCallback)(BOOL success, id result);
                      andField:(NSString *)relField 
                 shouldCascade:(BOOL)isCascade
                  withCallback:(StackMobCallback)callback;
+
+- (StackMobRequest *)count:(NSString *)schema 
+              withCallback:(StackMobCallback)callback;
+
+- (StackMobRequest *)count:(NSString *)schema
+                 withQuery:(StackMobQuery *)query
+              andCallback:(StackMobCallback)callback;
 
 
 
@@ -399,6 +429,16 @@ typedef void (^StackMobCallback)(BOOL success, id result);
  * Resets the password of a logged in user
  */
 - (StackMobRequest *)resetPasswordWithOldPassword:(NSString*)oldPassword newPassword:(NSString*)newPassword andCallback:(StackMobCallback)callback;
+
+// Logged in user checking
+- (NSString *) loggedInUser;
+
+- (BOOL) isLoggedIn;
+
+- (BOOL) isUserLoggedIn:(NSString *)username;
+
+- (BOOL) isLoggedOut;
+
 
 @end
 

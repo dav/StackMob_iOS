@@ -20,6 +20,7 @@
 #import "StackMobClientData.h"
 #import "StackMobHerokuRequest.h"
 #import "StackMobBulkRequest.h"
+#import "StackMobAccessTokenRequest.h"
 
 @interface StackMob()
 
@@ -32,7 +33,7 @@
 - (void)next;
 - (NSDictionary *)loadInfo;
 - (StackMobRequest *)destroy:(NSString *)path withArguments:(NSDictionary *)arguments andHeaders:(NSDictionary *)headers andCallback:(StackMobCallback)callback;
-
+- (NSString *) escapePath:(NSString *)path;
 @end
 
 #define ENVIRONMENTS [NSArray arrayWithObjects:@"production", @"development", nil]
@@ -59,12 +60,13 @@ static StackMob *_sharedManager = nil;
 static SMEnvironment environment;
 
 
-+ (StackMob *)setApplication:(NSString *)apiKey secret:(NSString *)apiSecret appName:(NSString *)appName subDomain:(NSString *)subDomain userObjectName:(NSString *)userObjectName apiVersionNumber:(NSNumber *)apiVersion
++ (StackMob *)setApplication:(OAuthVersion)oauthVersion key:(NSString *)apiKey secret:(NSString *)apiSecret appName:(NSString *)appName subDomain:(NSString *)subDomain userObjectName:(NSString *)userObjectName apiVersionNumber:(NSNumber *)apiVersion
 {
     if (_sharedManager == nil) {
         _sharedManager = [[super allocWithZone:NULL] init];
         environment = SMEnvironmentProduction;
-        _sharedManager.session = [StackMobSession sessionForApplication:apiKey
+        _sharedManager.session = [StackMobSession sessionForApplication:oauthVersion
+                                                                    key:apiKey
                                                                  secret:apiSecret
                                                                 appName:appName
                                                               subDomain:subDomain
@@ -74,6 +76,7 @@ static SMEnvironment environment;
         _sharedManager.requests = [NSMutableArray array];
         _sharedManager.callbacks = [NSMutableArray array];
         _sharedManager.queueLock = [[[NSLock alloc] init] autorelease];
+        _sharedManager.cookieStore = [[[StackMobCookieStore alloc] initWithSession:_sharedManager.session] retain];
     }
     return _sharedManager;
 }
@@ -87,7 +90,8 @@ static SMEnvironment environment;
         if(appInfo){
             NSLog(@"Loading applicatino info from StackMob.plist is being deprecated for security purposes.");
             NSLog(@"Please define your application info in your app's prefix.pch");
-            _sharedManager.session = [StackMobSession sessionForApplication:[appInfo objectForKey:@"publicKey"]
+            _sharedManager.session = [StackMobSession sessionForApplication:OAuth1
+                                                                        key:[appInfo objectForKey:@"publicKey"]
                                                                      secret:[appInfo objectForKey:@"privateKey"]
                                                                     appName:[appInfo objectForKey:@"appName"]
                                                                   subDomain:[appInfo objectForKey:@"appSubdomain"]
@@ -98,7 +102,8 @@ static SMEnvironment environment;
         }
         else{
 #ifdef STACKMOB_PUBLIC_KEY
-            _sharedManager.session = [StackMobSession sessionForApplication:STACKMOB_PUBLIC_KEY
+            _sharedManager.session = [StackMobSession sessionForApplication:STACKMOB_OAUTH_VERSION
+                                                                        key:STACKMOB_PUBLIC_KEY
                                                                      secret:STACKMOB_PRIVATE_KEY
                                                                     appName:STACKMOB_APP_NAME
 #ifdef STACKMOB_APP_MOB
@@ -118,6 +123,7 @@ static SMEnvironment environment;
         _sharedManager.callbacks = [NSMutableArray array];
         _sharedManager.cookieStore = [[[StackMobCookieStore alloc] initWithSession:_sharedManager.session] autorelease];
     }
+
     return _sharedManager;
 }
 
@@ -175,10 +181,22 @@ static SMEnvironment environment;
 
 - (StackMobRequest *)loginWithArguments:(NSDictionary *)arguments andCallback:(StackMobCallback)callback
 {
-    StackMobRequest *request = [StackMobRequest requestForMethod:[NSString stringWithFormat:@"%@/login", self.session.userObjectName]
-                                                   withArguments:arguments
-                                                    withHttpVerb:GET]; 
-    request.isSecure = YES;
+    StackMobRequest *request;
+    
+    if(self.session.oauthVersion == OAuth2)
+    {
+        request = [StackMobAccessTokenRequest requestForMethod:[NSString stringWithFormat:@"%@/accessToken", [self.session userObjectName]] withArguments:arguments];
+    }
+    else 
+    {
+       request = [StackMobRequest requestForMethod:[NSString stringWithFormat:@"%@/login", [self.session userObjectName]]
+                              withArguments:arguments
+                               withHttpVerb:GET];
+       request.isSecure = YES;
+    }
+
+    
+    _session.lastUserLoginName = [arguments valueForKey:@"username"];
     
     [self queueRequest:request andCallback:callback];
     
@@ -190,9 +208,20 @@ static SMEnvironment environment;
     StackMobRequest *request = [StackMobRequest requestForMethod:[NSString stringWithFormat:@"%@/logout", self.session.userObjectName]
                                                    withArguments:[NSDictionary dictionary]
                                                     withHttpVerb:GET]; 
-    request.isSecure = YES;
-    [self queueRequest:request andCallback:callback];
     
+    if (self.session.oauthVersion == OAuth2) {
+        [self queueRequest:request andCallback:^(BOOL success, id result) {
+            self.session.oauth2TokenExpiration = [NSDate date];
+            callback(success, result);
+        }];
+
+    }
+    else {
+        request.isSecure = YES;
+        [self queueRequest:request andCallback:callback];
+    }
+    
+        
     return request;
     
 }
@@ -244,7 +273,9 @@ static SMEnvironment environment;
 
 - (StackMobRequest *)getFacebookUserInfoWithCallback:(StackMobCallback)callback
 {
-    return [self get:@"getFacebookUserInfo" withCallback:callback];
+    StackMobRequest *request = [StackMobRequest userRequestForMethod:@"getFacebookUserInfo"withHttpVerb:GET];
+    [self queueRequest:request andCallback:callback];
+    return request;
 }
 
 # pragma mark - Twitter methods
@@ -294,12 +325,18 @@ static SMEnvironment environment;
 
 - (StackMobRequest *)registerForPushWithUser:(NSString *)userId token:(NSString *)token andCallback:(StackMobCallback)callback
 {
+    return [self registerForPushWithUser:userId token:token overwrite:false andCallback:callback];
+}
+
+- (StackMobRequest *)registerForPushWithUser:(NSString *)userId token:(NSString *)token overwrite:(BOOL)overwrite andCallback:(StackMobCallback)callback
+{
     NSDictionary *tokenDict = [NSDictionary dictionaryWithObjectsAndKeys:token, @"token",
                                @"ios", @"type",
                                nil];
     
     NSDictionary *body = [NSDictionary dictionaryWithObjectsAndKeys:userId, @"userId",
                           tokenDict, @"token",
+                          overwrite, @"overwrite",
                           nil];
     
     StackMobPushRequest *pushRequest = [StackMobPushRequest requestForMethod:@"register_device_token_universal"];
@@ -410,8 +447,13 @@ static SMEnvironment environment;
 
 # pragma mark - CRUD methods
 
+- (NSString *) escapePath:(NSString *)path
+{
+    return [(NSString*)CFURLCreateStringByAddingPercentEscapes(NULL, (CFStringRef)path, NULL, CFSTR("?=&+;|"), CFStringConvertNSStringEncodingToEncoding(NSUTF8StringEncoding)) autorelease];   
+}
+
 - (StackMobRequest *)get:(NSString *)path withArguments:(NSDictionary *)arguments andCallback:(StackMobCallback)callback{
-    StackMobRequest *request = [StackMobRequest requestForMethod:path
+    StackMobRequest *request = [StackMobRequest requestForMethod:[self escapePath:path]
                                                    withArguments:arguments
                                                     withHttpVerb:GET]; 
     [self queueRequest:request andCallback:callback];
@@ -419,14 +461,14 @@ static SMEnvironment environment;
 }
 
 - (StackMobRequest *)get:(NSString *)path withQuery:(StackMobQuery *)query andCallback:(StackMobCallback)callback {
-    StackMobRequest *request = [StackMobRequest requestForMethod:path withQuery:query withHttpVerb:GET];
+    StackMobRequest *request = [StackMobRequest requestForMethod:[self escapePath:path] withQuery:query withHttpVerb:GET];
     [self queueRequest:request andCallback:callback];
     return request;
 }
 
 - (StackMobRequest *)get:(NSString *)path withCallback:(StackMobCallback)callback
 {
-    StackMobRequest *request = [StackMobRequest requestForMethod:path
+    StackMobRequest *request = [StackMobRequest requestForMethod:[self escapePath:path]
                                                    withArguments:NULL
                                                     withHttpVerb:GET];
     [self queueRequest:request andCallback:callback];
@@ -435,9 +477,10 @@ static SMEnvironment environment;
 
 - (StackMobRequest *)post:(NSString *)path withArguments:(NSDictionary *)arguments andCallback:(StackMobCallback)callback
 {
-    StackMobRequest *request = [StackMobRequest requestForMethod:path
+    StackMobRequest *request = [StackMobRequest requestForMethod:[self escapePath:path]
                                                    withArguments:arguments
                                                     withHttpVerb:POST];
+    
     [self queueRequest:request andCallback:callback];
     return request;
 }
@@ -446,7 +489,7 @@ static SMEnvironment environment;
 {
     NSDictionary *modifiedArguments = [NSMutableDictionary dictionaryWithDictionary:arguments];
     [modifiedArguments setValue:user forKey:self.session.userObjectName];
-    StackMobRequest *request = [StackMobRequest requestForMethod:[NSString stringWithFormat:@"%@/%@", self.session.userObjectName, path]
+    StackMobRequest *request = [StackMobRequest requestForMethod:[NSString stringWithFormat:@"%@/%@", self.session.userObjectName, [self escapePath:path]]
                                                    withArguments:modifiedArguments
                                                     withHttpVerb:POST];
     [self queueRequest:request andCallback:callback];
@@ -454,24 +497,24 @@ static SMEnvironment environment;
 }
 
 - (StackMobRequest *)post:(NSString *)path withBulkArguments:(NSArray *)arguments andCallback:(StackMobCallback)callback {
-    StackMobBulkRequest *request = [StackMobBulkRequest requestForMethod:path withArguments:arguments];
+    StackMobBulkRequest *request = [StackMobBulkRequest requestForMethod:[self escapePath:path] withArguments:arguments];
     [self queueRequest:request andCallback:callback];
     
     return request;
 }
 
 - (StackMobRequest *)post:(NSString *)path withId:(NSString *)primaryId andField:(NSString *)relField andArguments:(NSDictionary *)args andCallback:(StackMobCallback)callback {
-    NSString *fullPath = [NSString stringWithFormat:@"%@/%@/%@", path, primaryId, relField];
+    NSString *fullPath = [NSString stringWithFormat:@"%@/%@/%@", [self escapePath:path], primaryId, relField];
     return [self post:fullPath withArguments:args andCallback:callback];
 }
 
 - (StackMobRequest *)post:(NSString *)path withId:(NSString *)primaryId andField:(NSString *)relField andBulkArguments:(NSArray *)arguments andCallback:(StackMobCallback)callback {
-    NSString *fullPath = [NSString stringWithFormat:@"%@/%@/%@", path, primaryId, relField];
+    NSString *fullPath = [NSString stringWithFormat:@"%@/%@/%@", [self escapePath:path], primaryId, relField];
     return [self post:fullPath withBulkArguments:arguments andCallback:callback];
 }
 
 - (StackMobRequest *)put:(NSString *)path withId:(NSString *)objectId andArguments:(NSDictionary *)arguments andCallback:(StackMobCallback)callback {
-    NSString *fullPath = [NSString stringWithFormat:@"%@/%@", path, objectId];
+    NSString *fullPath = [NSString stringWithFormat:@"%@/%@", [self escapePath:path], objectId];
     
     StackMobRequest *request = [StackMobRequest requestForMethod:fullPath withArguments:arguments withHttpVerb:PUT];
     [self queueRequest:request andCallback:callback];
@@ -479,7 +522,7 @@ static SMEnvironment environment;
 }
 
 - (StackMobRequest *)put:(NSString *)path withArguments:(NSDictionary *)arguments andCallback:(StackMobCallback)callback{
-    StackMobRequest *request = [StackMobRequest requestForMethod:path
+    StackMobRequest *request = [StackMobRequest requestForMethod:[self escapePath:path]
                                                    withArguments:arguments
                                                     withHttpVerb:PUT];
     [self queueRequest:request andCallback:callback];
@@ -487,7 +530,7 @@ static SMEnvironment environment;
 }
 
 - (StackMobRequest *)put:(NSString *)path withId:(id)primaryId andField:(NSString *)relField andArguments:(NSArray *)args andCallback:(StackMobCallback)callback {
-    NSString *fullPath = [NSString stringWithFormat:@"%@/%@/%@", path, primaryId, relField];
+    NSString *fullPath = [NSString stringWithFormat:@"%@/%@/%@", [self escapePath:path], primaryId, relField];
     StackMobBulkRequest *request = [StackMobBulkRequest requestForMethod:fullPath withArguments:args];
     request.httpMethod = [StackMobRequest stringFromHttpVerb:PUT];
     
@@ -496,12 +539,21 @@ static SMEnvironment environment;
     return request;
 }
 
+- (StackMobRequest *)put:(NSString *)path withId:(NSString *)objectId updateCounterForField:(NSString *)field by:(int)value andCallback:(StackMobCallback)callback {
+    
+    NSString *fullPath = [NSString stringWithFormat:@"%@/%@", [self escapePath:path], objectId];
+    NSDictionary *arguments = [NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithInt:value], [NSString stringWithFormat:@"%@[inc]", field], nil];
+    StackMobRequest *request = [StackMobRequest requestForMethod:fullPath withArguments:arguments withHttpVerb:PUT];
+    [self queueRequest:request andCallback:callback];
+    return request;
+}
+
 - (StackMobRequest *)destroy:(NSString *)path withArguments:(NSDictionary *)arguments andCallback:(StackMobCallback)callback{
-    return [self destroy:path withArguments:arguments andHeaders:[NSDictionary dictionary] andCallback:callback];
+    return [self destroy:[self escapePath:path] withArguments:arguments andHeaders:[NSDictionary dictionary] andCallback:callback];
 }
 
 - (StackMobRequest *)destroy:(NSString *)path withArguments:(NSDictionary *)arguments andHeaders:(NSDictionary *)headers andCallback:(StackMobCallback)callback {
-    StackMobRequest *request = [StackMobRequest requestForMethod:path
+    StackMobRequest *request = [StackMobRequest requestForMethod:[self escapePath:path]
                                                    withArguments:arguments
                                                     withHttpVerb:DELETE];
     [request setHeaders:headers];
@@ -515,7 +567,7 @@ static SMEnvironment environment;
 }
 
 - (StackMobRequest *)removeIds:(NSArray *)removeIds forSchema:(NSString *)schema andId:(NSString *)primaryId andField:(NSString *)relField shouldCascade:(BOOL)isCascade withCallback:(StackMobCallback)callback {
-    NSString *fullPath = [NSString stringWithFormat:@"%@/%@/%@/%@", schema, primaryId, relField, [removeIds componentsJoinedByString:@","]];
+    NSString *fullPath = [NSString stringWithFormat:@"%@/%@/%@/%@", schema, primaryId, relField, [self escapePath:[removeIds componentsJoinedByString:@","]]];
     NSDictionary *headers;
     if (isCascade == YES) {
         headers = [NSDictionary dictionaryWithObjectsAndKeys:@"true", @"X-StackMob-CascadeDelete", nil];
@@ -549,6 +601,40 @@ static SMEnvironment environment;
     
 }
 
+- (StackMobRequest *)count:(NSString *)schema 
+              withCallback:(StackMobCallback)callback
+{
+    return [self count:schema withQuery:[StackMobQuery query] andCallback:callback];
+}
+
+- (StackMobRequest *)count:(NSString *)schema
+                 withQuery:(StackMobQuery *)query
+              andCallback:(StackMobCallback)callback
+{
+    [query setRangeStart:0 andEnd:0];
+
+    StackMobCallback userCallback = Block_copy(callback);
+    __block StackMobRequest *request = [self get:schema withQuery:query andCallback:^(BOOL success, id result ) 
+    {
+        if(success)
+        {
+            int count = [request totalObjectCountFromPagination];
+            if(count < 0)
+            {
+                // no header means we've got the results right here
+                count = [((NSArray *) result) count];
+            }
+            userCallback(success, [NSNumber numberWithInt:count]);
+        }
+        else
+        {
+            userCallback(success, result);
+        }
+    }];
+    
+    return request;
+}
+
 # pragma mark - Forgot/Reset password
 
 - (StackMobRequest *)forgotPasswordByUser:(NSString *)username andCallback:(StackMobCallback)callback
@@ -570,6 +656,50 @@ static SMEnvironment environment;
     [self queueRequest:request andCallback:callback];
     return request;
 }
+
+# pragma mark - login checking
+
+// Logged in user checking
+- (NSString *) loggedInUser
+{
+    return [self isLoggedIn] ? _session.lastUserLoginName : nil;
+}
+
+- (BOOL) isLoggedIn
+{
+    if(self.session.oauthVersion == OAuth2) {
+        return self.session.oauth2TokenValid;
+    }
+    else 
+    {
+        NSHTTPCookie *sessionCookie = [[_sharedManager cookieStore] sessionCookie];
+        if(sessionCookie != nil) {
+            BOOL cookieIsStillValid = [[[NSDate date] laterDate:[sessionCookie expiresDate]] isEqualToDate:[sessionCookie expiresDate]];
+            return cookieIsStillValid && ![self isLoggedOut];
+        }
+    }
+
+    return false;
+}
+
+- (BOOL) isUserLoggedIn:(NSString *)username
+{
+    return [username isEqualToString:[self loggedInUser]];
+}
+
+- (BOOL) isLoggedOut
+{
+    if(self.session.oauthVersion == OAuth2) {
+        return self.session.oauth2TokenExpiration != nil && !self.session.oauth2TokenValid;
+    }
+    else 
+    {
+        NSHTTPCookie *sessionCookie = [_cookieStore sessionCookie];
+        //The logged out cookie is a json string.
+        return sessionCookie != nil && [[sessionCookie value] rangeOfString:@":"].location != NSNotFound;
+    }
+}
+
 
 
 # pragma mark - Private methods

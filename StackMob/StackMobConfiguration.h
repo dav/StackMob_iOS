@@ -20,12 +20,14 @@
 #define StackMobDebug(format, ...)
 #endif
 
+#define STACKMOB_OAUTH_VERSION      OAuth2
 // Defining these in my own prefix file
 //#define STACKMOB_PUBLIC_KEY         @"YOUR_PUBLIC_KEY"
 //#define STACKMOB_PRIVATE_KEY        @"YOUR_PRIVATE_KEY"
 //#define STACKMOB_APP_NAME           @"YOUR_APP_NAME"
 //#define STACKMOB_APP_SUBDOMAIN      @"YOUR_SUBDOMAIN"
+//#define STACKMOB_UDID_SALT          @"YOUR_SALT_HERE"
 //#define STACKMOB_APP_DOMAIN         @"stackmob.com"
+#define STACKMOB_APP_MOB            @"mob1"
 //#define STACKMOB_USER_OBJECT_NAME   @"YOUR_USER_OBJECT_NAME"
 //#define STACKMOB_API_VERSION        0
-

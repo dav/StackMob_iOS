@@ -1,5 +1,39 @@
 # Release Notes
 
+## 0.5.3
+* Fix bugs for user based requests
+
+## 0.5.2
+* Push uses Oauth1
+
+## 0.5.1
+* Update user logout for OAuth2
+
+## 0.5.0
+* Add support for OAuth2
+
+## 0.4.11
+* Fix memory leaks
+
+## 0.4.10
+* Add support for atomic counter
+* Add logs for testing server time diff function
+
+## 0.4.9
+* Fix bugs
+
+## 0.4.7
+* Inneractive integration
+
+## 0.4.6
+* Count methods
+* Null and Not Equal Queries
+* Logged-in user checks
+
+## 0.4.5
+* Update SecureUDID
+* Minor fixes
+
 ## 0.4.4
 * Remove apple UDID in favor of SecureUDID
 * Switch to new-style urls

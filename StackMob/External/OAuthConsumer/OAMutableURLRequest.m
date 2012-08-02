@@ -107,7 +107,10 @@ signatureProvider:(id<OASignatureProviding, NSObject>)aProvider
 			signatureProvider = [aProvider retain];
 		
 		timestamp = [aTimestamp retain];
-		nonce = [aNonce retain];
+		if (nonce == nil)
+            [self _generateNonce];
+        else
+            nonce = [aNonce retain];
 	}
     return self;
 }
@@ -192,7 +195,6 @@ signatureProvider:(id<OASignatureProviding, NSObject>)aProvider
     CFStringRef string = CFUUIDCreateString(NULL, theUUID);
     NSMakeCollectable(theUUID);
     nonce = (NSString *)string;
-    [nonce retain];
     CFRelease(theUUID); // Ignore warning for now
 }
 

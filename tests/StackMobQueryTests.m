@@ -16,26 +16,34 @@
 - (void)testBasicOperators {
     StackMobQuery *q = [StackMobQuery query];
     [q field:@"equal" mustEqualValue:@"a"];
+    [q field:@"ne" mustNotEqualValue:@"a"];
     [q field:@"lt" mustBeLessThanValue:[NSNumber numberWithInt:1]];
     [q field:@"lte" mustBeLessThanOrEqualToValue:[NSNumber numberWithInt:2]];
     [q field:@"gt" mustBeGreaterThanValue:[NSNumber numberWithInt:3]];
     [q field:@"gte" mustBeGreaterThanOrEqualToValue:[NSNumber numberWithInt:4]];
     [q field:@"in" mustBeOneOf:[NSArray arrayWithObject:@"hi"]];
+    [q fieldMustBeNull:@"null"];
+    [q fieldMustNotBeNull:@"notNull"];
     
     NSString *equal = [q.params objectForKey:@"equal"];
+    NSString *ne = [q.params objectForKey:@"ne[ne]"];
     NSNumber *lt = [q.params objectForKey:@"lt[lt]"];
     NSNumber *lte = [q.params objectForKey:@"lte[lte]"];
     NSNumber *gt = [q.params objectForKey:@"gt[gt]"];
     NSNumber *gte = [q.params objectForKey:@"gte[gte]"];
     NSArray *ina = [q.params objectForKey:@"in[in]"];
-
+    NSString *null = [q.params objectForKey:@"null[null]"];
+    NSString *notNull = [q.params objectForKey:@"notNull[null]"];
 
     STAssertTrue([equal isEqualToString:@"a"], @"equal failed");
+    STAssertTrue([ne isEqualToString:@"a"], @"not equal failed");
     STAssertTrue([lt isEqualToNumber:[NSNumber numberWithInt:1]], @"lt failed");
     STAssertTrue([lte isEqualToNumber:[NSNumber numberWithInt:2]], @"lte failed");
     STAssertTrue([gt isEqualToNumber:[NSNumber numberWithInt:3]], @"gt failed");
     STAssertTrue([gte isEqualToNumber:[NSNumber numberWithInt:4]], @"gte failed");
     STAssertTrue([ina isEqualToArray:[NSArray arrayWithObject:@"hi"]], @"in failed");
+    STAssertTrue([null isEqualToString:@"true"], @"null failed");
+    STAssertTrue([notNull isEqualToString:@"false"], @"not null failed");
 }
 
 - (void)testGeoOperators {
@@ -69,7 +77,6 @@
     
     NSString *withinBox = [q.params objectForKey:@"withinbox[within]"];
     STAssertTrue([withinBox isEqualToString:@"2.1,1,0,0"], @"within box failed");
-    
 }
 
 @end

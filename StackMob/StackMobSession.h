@@ -38,7 +38,14 @@ static NSString *const SMSubdomainDefault = @"mob1";
 	NSDate* _lastRequestTime;
 	int _requestBurstCount;
 	NSTimer* _requestTimer;
-  NSNumber* _apiVersionNumber;
+    NSNumber* _apiVersionNumber;
+    NSDate* _nextTimeCheck;
+    NSTimeInterval _serverTimeDiff;
+    NSString *_lastUserLoginName;
+    int _oauthVersion;
+    NSString *_oauth2Token;
+    NSDate *_oauth2TokenExpiration;
+    NSString *_oauth2Key;
 }
 
 /**
@@ -101,6 +108,24 @@ static NSString *const SMSubdomainDefault = @"mob1";
  */
 @property(nonatomic,readonly) NSDate* expirationDate;
 
+/**
+ * The approximate time on the server
+ */
+@property(nonatomic,readonly, getter = getServerTime) NSDate* serverTime;
+
+/**
+ * The last username that logged in
+ */
+@property(nonatomic,retain) NSString* lastUserLoginName;
+
+@property(readwrite) int oauthVersion;
+
+@property(nonatomic,retain) NSString* oauth2Token;
+
+@property(nonatomic,retain) NSDate* oauth2TokenExpiration;
+
+@property(nonatomic,retain) NSString* oauth2Key;
+
 
 /**
  * The globally shared session instance.
@@ -117,7 +142,7 @@ static NSString *const SMSubdomainDefault = @"mob1";
  * @param subDomain the application subDomain
  *
  */
-+ (StackMobSession*)sessionForApplication:(NSString*)key secret:(NSString*)secret
++ (StackMobSession*)sessionForApplication:(int)oauthVersion key:(NSString*)key secret:(NSString*)secret
 						   appName:(NSString*)appName subDomain:(NSString*)subDomain apiVersionNumber:(NSNumber*)apiVersionNumber;
 
 /**
@@ -131,7 +156,7 @@ static NSString *const SMSubdomainDefault = @"mob1";
  * @param domain overwrites the stackmob.com domain
  *
  */
-+ (StackMobSession*)sessionForApplication:(NSString*)key secret:(NSString*)secret
++ (StackMobSession*)sessionForApplication:(int)oauthVersion key:(NSString*)key secret:(NSString*)secret
 								  appName:(NSString*)appName 
 								  subDomain:(NSString*)subDomain
 					  			  domain:(NSString*)domain
@@ -145,7 +170,7 @@ static NSString *const SMSubdomainDefault = @"mob1";
  * @param subDomain the application subDomain
  * @param domain overwrites the stackmob.com domain
  */
-- (StackMobSession*)initWithKey:(NSString*)key secret:(NSString*)secret appName:(NSString*)appName
+- (StackMobSession*)initWithVersion:(int)oauthVersion key:(NSString*)key secret:(NSString*)secret appName:(NSString*)appName
 					  subDomain:(NSString*)subDomain domain:(NSString*)domain apiVersionNumber:(NSNumber*)apiVersionNumber;
 
 /**
@@ -158,7 +183,8 @@ static NSString *const SMSubdomainDefault = @"mob1";
  * @param domain overwrites the stackmob.com domain
  * @param userObjectName the name of the user object in your StackMob App
  */
-+ (StackMobSession*)sessionForApplication:(NSString*)key 
++ (StackMobSession*)sessionForApplication:(int)oauthVersion 
+                                      key:(NSString*)key 
                                    secret:(NSString*)secret 
                                   appName:(NSString*)appName
                                 subDomain:(NSString*)subDomain 
@@ -176,13 +202,14 @@ static NSString *const SMSubdomainDefault = @"mob1";
  * @param domain overwrites the stackmob.com domain
  * @param userObjectName the name you gave to your user object on stackmob.com
  */
-- (StackMobSession*)initWithKey:(NSString*)key 
-                         secret:(NSString*)secret 
-                        appName:(NSString*)appName
-                      subDomain:(NSString*)subDomain 
-                         domain:(NSString*)domain 
-                 userObjectName:(NSString*)userObjectName
-               apiVersionNumber:(NSNumber*)apiVersionNumber;
+- (StackMobSession*)initWithVersion:(int)oauthVersion 
+                                key:(NSString*)key 
+                             secret:(NSString*)secret 
+                            appName:(NSString*)appName
+                          subDomain:(NSString*)subDomain 
+                             domain:(NSString*)domain 
+                     userObjectName:(NSString*)userObjectName
+                   apiVersionNumber:(NSNumber*)apiVersionNumber;
 
 /**
  * Returns the formatted url for the passedMethod.
@@ -206,5 +233,16 @@ static NSString *const SMSubdomainDefault = @"mob1";
  * Returns the User-Agent String
  */
 - (NSString *)userAgentString;
+
+- (BOOL) oauth2TokenValid;
+
+/*
+ * Update the server time diff
+ */
+-(void)recordServerTimeDiffFromHeader:(NSString*)header;
+
+-(void)saveOAuth2AccessToken:(NSString *)token withExpiration:(NSDate *)date andKey:(NSString *)key;
+
+-(BOOL)useOAuth2;
 
 @end
