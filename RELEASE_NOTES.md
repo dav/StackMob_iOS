@@ -1,5 +1,8 @@
 # Release Notes
 
+## 0.5.3
+* Fix bugs for user based requests
+
 ## 0.5.2
 * Push uses Oauth1
 
