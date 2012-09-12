@@ -468,14 +468,14 @@
           failMsg = [errResult objectForKey:@"error"];
         }
         result = [NSError errorWithDomain:@"StackMob"         
-                                     code:1 
+                                     code:statusCode 
                                  userInfo:[NSDictionary dictionaryWithObjectsAndKeys:failMsg, NSLocalizedDescriptionKey, nil]];   
       }
     }
     @catch (NSException *e) { // catch parsing errors
       NSString *failMsg = [NSString stringWithFormat:@"Response failed with code: %d", statusCode];
       result = [NSError errorWithDomain:@"StackMob"         
-                                   code:1 
+                                   code:statusCode 
                                userInfo:[NSDictionary dictionaryWithObjectsAndKeys:failMsg, NSLocalizedDescriptionKey, nil]];
       SMLog(@"Unable to parse json '%@'", textResult);
     }
