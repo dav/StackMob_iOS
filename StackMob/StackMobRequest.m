@@ -281,7 +281,7 @@
                                                                     realm:nil
                                                         signatureProvider:nil // use the default method, HMAC-SHA1
                                                                     nonce:nil
-                                                                timestamp:[NSString stringWithFormat:@"%d", (long) [session.serverTime timeIntervalSince1970]]];
+                                                                timestamp:[NSString stringWithFormat:@"%ld", (long) [session.serverTime timeIntervalSince1970]]];
   SMLog(@"httpMethod %@", [self httpMethod]);
   if([self.method isEqualToString:@"startsession"]){
     [mArguments setValue:[StackMobClientData sharedClientData].clientDataString forKey:@"cd"];
@@ -339,7 +339,7 @@
                                                      options:0
                                                        range:NSMakeRange(0, [postDataString length])
                                                 withTemplate:@"$1$2(truncated)$4"];
-    SMLog(@"POST Data: %@", postDataString);
+    SMLog(@"Request Body: %@", postDataString);
 #endif
     [request setHTTPBody:postData];
     [request addValue:[self contentType] forHTTPHeaderField: @"Content-Type"]; 
@@ -517,7 +517,7 @@
                                                                      realm:nil   // should we set a realm?
                                                          signatureProvider:nil
                                                                      nonce:nil
-                                                                 timestamp:[NSString stringWithFormat:@"%d", (long) [session.serverTime timeIntervalSince1970]]] autorelease]; // use the default method, HMAC-SHA1
+                                                                 timestamp:[NSString stringWithFormat:@"%ld", (long) [session.serverTime timeIntervalSince1970]]] autorelease]; // use the default method, HMAC-SHA1
 	[consumer release];
 	[request setHTTPMethod:[self httpMethod]];
 	
