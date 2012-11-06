@@ -276,13 +276,15 @@ NSData* SUUIDModelHash(void) {
         
         // now get the value
         if (sysctlbyname("hw.machine", value, &size, NULL, 0) != 0) {
-            break;
+          free(value);
+          break;
         }
         
         // convert the value to an NSString
         result = [NSString stringWithCString:value encoding:NSUTF8StringEncoding];
         if (!result) {
-            break;
+          free(value);
+          break;
         }
         
         // free our buffer
