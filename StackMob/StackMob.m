@@ -185,7 +185,9 @@ static SMEnvironment environment;
     
     if(self.session.oauthVersion == OAuth2)
     {
-        request = [StackMobAccessTokenRequest requestForMethod:[NSString stringWithFormat:@"%@/accessToken", [self.session userObjectName]] withArguments:arguments];
+      BOOL debugSignInOK = YES;
+      NSString* method = (debugSignInOK) ? [NSString stringWithFormat:@"%@/accessToken", [self.session userObjectName]] : @"debug-failing-url";
+        request = [StackMobAccessTokenRequest requestForMethod:method withArguments:arguments];
     }
     else 
     {
@@ -195,8 +197,8 @@ static SMEnvironment environment;
        request.isSecure = YES;
     }
 
-    
-    _session.lastUserLoginName = [arguments valueForKey:@"username"];
+    // Note: setting the lastUserLoginName before we know if login succeeded or not.
+    _session.lastUserLoginName = [arguments valueForKey:STACKMOB_USER_OBJECT_ID_NAME];
     
     [self queueRequest:request andCallback:callback];
     
@@ -668,7 +670,9 @@ static SMEnvironment environment;
 - (BOOL) isLoggedIn
 {
     if(self.session.oauthVersion == OAuth2) {
-        return self.session.oauth2TokenValid;
+      BOOL isOK = self.session.oauth2TokenValid;
+      if (!isOK) self.session.lastUserLoginName = nil; // I can see no good reason to keep this around if we know the login is bad. If this causes problems should at least rename tha property.
+      return isOK;
     }
     else 
     {
