@@ -20,7 +20,7 @@
 #define StackMobDebug(format, ...)
 #endif
 
-#define STACKMOB_OAUTH_VERSION      OAuth2
+//#define STACKMOB_OAUTH_VERSION      OAuth2
 // Defining these in my own prefix file
 //#define STACKMOB_PUBLIC_KEY         @"YOUR_PUBLIC_KEY"
 //#define STACKMOB_PRIVATE_KEY        @"YOUR_PRIVATE_KEY"
