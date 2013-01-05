@@ -785,7 +785,11 @@ static SMEnvironment environment;
         }else{
             SMLog(@"no callback found");
         }
-        [self.callbacks removeObjectAtIndex:idx];
+        if ([self.callbacks containsObject:callback]) {
+          [self.callbacks removeObject:callback];
+        } else {
+          NSLog(@"Callback has dissapeared???");
+        }
         [self.requests removeObject:request];
         [self next];
     }
