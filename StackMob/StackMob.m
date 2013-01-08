@@ -76,7 +76,7 @@ static SMEnvironment environment;
         _sharedManager.requests = [NSMutableArray array];
         _sharedManager.callbacks = [NSMutableArray array];
         _sharedManager.queueLock = [[[NSLock alloc] init] autorelease];
-        _sharedManager.cookieStore = [[[StackMobCookieStore alloc] initWithSession:_sharedManager.session] retain];
+      _sharedManager.cookieStore = [[[StackMobCookieStore alloc] initWithSession:_sharedManager.session] retain]; // this is surely a leak?
     }
     return _sharedManager;
 }
