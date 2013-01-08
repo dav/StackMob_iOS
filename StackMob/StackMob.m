@@ -719,7 +719,7 @@ static SMEnvironment environment;
         [self.callbacks addObject:[NSNull null]];
     [_queueLock unlock];
     
-    [callback release];
+  // why releasing? this was passed in! [callback release];
     
     [self run];
 }
