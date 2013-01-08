@@ -338,7 +338,7 @@ static SMEnvironment environment;
     
     NSDictionary *body = [NSDictionary dictionaryWithObjectsAndKeys:userId, @"userId",
                           tokenDict, @"token",
-                          overwrite, @"overwrite",
+                          [NSNumber numberWithBool:overwrite], @"overwrite",
                           nil];
     
     StackMobPushRequest *pushRequest = [StackMobPushRequest requestForMethod:@"register_device_token_universal"];
